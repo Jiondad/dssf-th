@@ -18,7 +18,9 @@ import {
   Gauge,
   Plus,
   X,
-  Loader2
+  Loader2,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { 
   ResponsiveContainer, 
@@ -60,7 +62,18 @@ const CustomDewActiveDot = (props: any) => {
 };
 
 export default function App() {
+  const [selectedYear, setSelectedYear] = useState<number>(2026);
+  const [selectedMonth, setSelectedMonth] = useState<number>(7);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState<boolean>(false);
+
   const [mockData, setMockData] = useState<DailyRecord[]>(() => getMonthlyMockData());
+
+  useEffect(() => {
+    // Re-generate mock data when year or month changes to simulate data fetching
+    setMockData(getMonthlyMockData());
+    // setSelectedDay(1); // Optionally reset to day 1 when month changes
+  }, [selectedYear, selectedMonth]);
+
   const [selectedDay, setSelectedDay] = useState<number>(13); // Default to July 13th
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [activeAmPm, setActiveAmPm] = useState<'am' | 'pm'>('am'); // For mobile toggle details
@@ -69,7 +82,7 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formData, setFormData] = useState({
-    date: "2026-07-13",
+    date: `${selectedYear}-${String(selectedMonth).padStart(2, '0')}-13`,
     amAirTemp: "23.5",
     amSurfaceTemp: "21.2",
     amHumidity: "72",
@@ -295,9 +308,73 @@ export default function App() {
           
           {/* Quick Info & Sim Controls */}
           <div className="flex items-center gap-3 bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/50">
-            <div className="text-right">
+            <div className="text-right flex flex-col items-end">
               <span className="text-[10px] text-slate-400 block font-mono">SIMULATION PANEL</span>
-              <span className="text-sm font-semibold text-slate-200">7월 {selectedDay}일 모니터링 중</span>
+              
+              <div className="relative z-50 flex items-center gap-1">
+                <button 
+                  onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
+                  className="flex items-center gap-1.5 hover:bg-slate-700 p-1 -ml-1 rounded-md transition-colors"
+                  title="연/월 변경"
+                >
+                  <span className="text-sm font-bold text-blue-300">{selectedYear}년 {selectedMonth}월</span>
+                  <Calendar className="w-3.5 h-3.5 text-blue-400/80" />
+                </button>
+                <span className="text-sm font-semibold text-slate-200">{selectedDay}일 모니터링 중</span>
+
+                <AnimatePresence>
+                  {isDatePickerOpen && (
+                    <>
+                      {/* Invisible overlay for closing */}
+                      <div 
+                        className="fixed inset-0 z-40"
+                        onClick={() => setIsDatePickerOpen(false)}
+                      />
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden origin-top-right text-slate-900 z-50"
+                      >
+                        <div className="flex items-center justify-between p-3 border-b border-slate-100 bg-slate-50">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setSelectedYear(y => y - 1); }}
+                          className="p-1.5 hover:bg-slate-200 rounded-md text-slate-600 transition-colors"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <span className="font-bold text-slate-800 text-sm">{selectedYear}년</span>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setSelectedYear(y => y + 1); }}
+                          className="p-1.5 hover:bg-slate-200 rounded-md text-slate-600 transition-colors"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <div className="p-3 grid grid-cols-4 gap-1.5">
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                          <button
+                            key={month}
+                            onClick={() => {
+                              setSelectedMonth(month);
+                              setIsDatePickerOpen(false);
+                            }}
+                            className={`py-2 rounded-lg text-xs font-semibold transition-all ${
+                              selectedMonth === month 
+                                ? "bg-blue-600 text-white shadow-md ring-1 ring-blue-600 ring-offset-1"
+                                : "text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+                            }`}
+                          >
+                            {month}월
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
             <div className="flex gap-1.5 ml-2 border-l border-slate-700 pl-3">
               <button
@@ -345,7 +422,7 @@ export default function App() {
             <div className="flex justify-between items-center border-b border-slate-100 pb-2 mb-2">
               <span className="text-xs text-slate-500 font-semibold flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                7월 종합 지표 통계
+                {selectedMonth}월 종합 지표 통계
               </span>
               <span className="text-[10px] font-mono text-slate-400">Total 31 Days</span>
             </div>
@@ -372,7 +449,7 @@ export default function App() {
             <div>
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span className="h-5 w-1 bg-blue-600 rounded-full inline-block"></span>
-                실시간 환경 모니터링 현황 (7월 {selectedDay}일)
+                실시간 환경 모니터링 현황 ({selectedMonth}월 {selectedDay}일)
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">선택된 일자의 오전(AM) 및 오후(PM) 코일센터 환경 측정치 요약입니다.</p>
             </div>
@@ -621,7 +698,7 @@ export default function App() {
             <div>
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span className="h-5 w-1 bg-blue-600 rounded-full inline-block"></span>
-                7월 온습도 및 결로지수 분석 그래프 (Line Chart)
+                {selectedMonth}월 온습도 및 결로지수 분석 그래프 (Line Chart)
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">X축은 1일부터 31일까지의 일자이며, 각 선을 클릭하여 가시성을 제어할 수 있습니다.</p>
             </div>
@@ -929,7 +1006,7 @@ export default function App() {
             <div>
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <FileSpreadsheet className="w-5.5 h-5.5 text-blue-600" />
-                7월 온습도 및 결로지수 대장 (Monthly Excel Ledger)
+                {selectedMonth}월 온습도 및 결로지수 대장 (Monthly Excel Ledger)
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
                 오전(AM)/오후(PM) 그룹별 측정대장입니다. 결로지수는 위험도 수준에 맞춰 조건부 서식이 적용되어 있으며 날짜 헤더 클릭 시 상세 데이터로 바인딩됩니다.
@@ -940,7 +1017,8 @@ export default function App() {
               <button
                 onClick={() => {
                   const dayStr = selectedDay < 10 ? `0${selectedDay}` : `${selectedDay}`;
-                  const fullDate = `2026-07-${dayStr}`;
+                  const monthStr = selectedMonth < 10 ? `0${selectedMonth}` : `${selectedMonth}`;
+                  const fullDate = `${selectedYear}-${monthStr}-${dayStr}`;
                   handleDateChange(fullDate);
                   setIsModalOpen(true);
                 }}
