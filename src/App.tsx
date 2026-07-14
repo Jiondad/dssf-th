@@ -397,7 +397,7 @@ export default function App() {
             {/* Card 1: 대기온도 */}
             <motion.div 
               layoutId="card_air_temp"
-              className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
+              className="bg-blue-50/50 rounded-2xl border border-blue-100 p-5 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
               id="card_air_temp"
             >
               <div className="flex justify-between items-start mb-3">
@@ -442,7 +442,7 @@ export default function App() {
             {/* Card 2: 코일표면온도 */}
             <motion.div 
               layoutId="card_surface_temp"
-              className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
+              className="bg-teal-50/50 rounded-2xl border border-teal-100 p-5 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
               id="card_surface_temp"
             >
               <div className="flex justify-between items-start mb-3">
@@ -487,7 +487,7 @@ export default function App() {
             {/* Card 3: 상대습도 */}
             <motion.div 
               layoutId="card_humidity"
-              className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
+              className="bg-violet-50/50 rounded-2xl border border-violet-100 p-5 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
               id="card_humidity"
             >
               <div className="flex justify-between items-start mb-3">
@@ -652,7 +652,7 @@ export default function App() {
               {/* Air Temp toggles */}
               <button 
                 onClick={() => toggleLine('오전 대기온도')}
-                className={`flex items-center gap-1.5 p-1.5 rounded-lg text-[10px] xl:text-[11px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
+                className={`flex items-center gap-2 p-1.5 xl:p-2 rounded-lg text-xs xl:text-sm font-medium border transition-all whitespace-nowrap overflow-hidden ${
                   visibleLines['오전 대기온도'] 
                     ? 'bg-white text-slate-900 border-blue-400 shadow-xs' 
                     : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
@@ -664,7 +664,7 @@ export default function App() {
               </button>
               <button 
                 onClick={() => toggleLine('오후 대기온도')}
-                className={`flex items-center gap-1.5 p-1.5 rounded-lg text-[10px] xl:text-[11px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
+                className={`flex items-center gap-2 p-1.5 xl:p-2 rounded-lg text-xs xl:text-sm font-medium border transition-all whitespace-nowrap overflow-hidden ${
                   visibleLines['오후 대기온도'] 
                     ? 'bg-white text-slate-900 border-blue-600 shadow-xs' 
                     : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
@@ -678,7 +678,7 @@ export default function App() {
               {/* Surface Temp toggles */}
               <button 
                 onClick={() => toggleLine('오전 표면온도')}
-                className={`flex items-center gap-1.5 p-1.5 rounded-lg text-[10px] xl:text-[11px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
+                className={`flex items-center gap-2 p-1.5 xl:p-2 rounded-lg text-xs xl:text-sm font-medium border transition-all whitespace-nowrap overflow-hidden ${
                   visibleLines['오전 표면온도'] 
                     ? 'bg-white text-slate-900 border-teal-400 shadow-xs' 
                     : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
@@ -690,7 +690,7 @@ export default function App() {
               </button>
               <button 
                 onClick={() => toggleLine('오후 표면온도')}
-                className={`flex items-center gap-1.5 p-1.5 rounded-lg text-[10px] xl:text-[11px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
+                className={`flex items-center gap-2 p-1.5 xl:p-2 rounded-lg text-xs xl:text-sm font-medium border transition-all whitespace-nowrap overflow-hidden ${
                   visibleLines['오후 표면온도'] 
                     ? 'bg-white text-slate-900 border-teal-700 shadow-xs' 
                     : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
@@ -704,7 +704,7 @@ export default function App() {
               {/* Humidity toggles */}
               <button 
                 onClick={() => toggleLine('오전 상대습도')}
-                className={`flex items-center gap-1.5 p-1.5 rounded-lg text-[10px] xl:text-[11px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
+                className={`flex items-center gap-2 p-1.5 xl:p-2 rounded-lg text-xs xl:text-sm font-medium border transition-all whitespace-nowrap overflow-hidden ${
                   visibleLines['오전 상대습도'] 
                     ? 'bg-white text-slate-900 border-violet-400 shadow-xs' 
                     : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
@@ -716,7 +716,7 @@ export default function App() {
               </button>
               <button 
                 onClick={() => toggleLine('오후 상대습도')}
-                className={`flex items-center gap-1.5 p-1.5 rounded-lg text-[10px] xl:text-[11px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
+                className={`flex items-center gap-2 p-1.5 xl:p-2 rounded-lg text-xs xl:text-sm font-medium border transition-all whitespace-nowrap overflow-hidden ${
                   visibleLines['오후 상대습도'] 
                     ? 'bg-white text-slate-900 border-violet-700 shadow-xs' 
                     : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
@@ -730,7 +730,7 @@ export default function App() {
               {/* Dew Index toggles */}
               <button 
                 onClick={() => toggleLine('오전 결로지수')}
-                className={`flex items-center gap-1.5 p-1.5 rounded-lg text-[10px] xl:text-[11px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
+                className={`flex items-center gap-2 p-1.5 xl:p-2 rounded-lg text-xs xl:text-sm font-medium border transition-all whitespace-nowrap overflow-hidden ${
                   visibleLines['오전 결로지수'] 
                     ? 'bg-white text-slate-900 border-amber-500 shadow-xs' 
                     : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
@@ -742,7 +742,7 @@ export default function App() {
               </button>
               <button 
                 onClick={() => toggleLine('오후 결로지수')}
-                className={`flex items-center gap-1.5 p-1.5 rounded-lg text-[10px] xl:text-[11px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
+                className={`flex items-center gap-2 p-1.5 xl:p-2 rounded-lg text-xs xl:text-sm font-medium border transition-all whitespace-nowrap overflow-hidden ${
                   visibleLines['오후 결로지수'] 
                     ? 'bg-white text-slate-900 border-rose-600 shadow-xs' 
                     : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
@@ -788,7 +788,7 @@ export default function App() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis 
                   dataKey="name" 
-                  tick={{ fill: '#64748b', fontSize: 11 }}
+                  tick={{ fill: '#64748b', fontSize: 13 }}
                   axisLine={{ stroke: '#cbd5e1' }}
                 />
                 
@@ -796,18 +796,18 @@ export default function App() {
                 <YAxis 
                   yAxisId="left"
                   domain={[0, 100]}
-                  tick={{ fill: '#475569', fontSize: 11 }}
+                  tick={{ fill: '#475569', fontSize: 13 }}
                   axisLine={{ stroke: '#cbd5e1' }}
-                  label={{ value: '온도(℃) / 지수(Point)', angle: -90, position: 'insideLeft', offset: 10, fill: '#475569', style: { textAnchor: 'middle', fontSize: 11, fontWeight: 'bold' } }}
+                  label={{ value: '온도(℃) / 지수(Point)', angle: -90, position: 'insideLeft', offset: 10, fill: '#475569', style: { textAnchor: 'middle', fontSize: 13, fontWeight: 'bold' } }}
                 />
 
                 {/* Right Axis for Humidity % */}
                 <YAxis 
                   yAxisId="right"
                   orientation="right"
-                  tick={{ fill: '#4d4d4d', fontSize: 11 }}
+                  tick={{ fill: '#4d4d4d', fontSize: 13 }}
                   axisLine={{ stroke: '#cbd5e1' }}
-                  label={{ value: '상대습도(%)', angle: 90, position: 'insideRight', offset: 10, fill: '#4d4d4d', style: { textAnchor: 'middle', fontSize: 11, fontWeight: 'bold' } }}
+                  label={{ value: '상대습도(%)', angle: 90, position: 'insideRight', offset: 10, fill: '#4d4d4d', style: { textAnchor: 'middle', fontSize: 13, fontWeight: 'bold' } }}
                 />
 
                 {/* Custom Tooltip */}
@@ -820,8 +820,8 @@ export default function App() {
                     boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                     padding: '12px'
                   }}
-                  itemStyle={{ fontSize: '11px', padding: '1px 0' }}
-                  labelStyle={{ fontSize: '12px', fontWeight: 'bold', color: '#94a3b8', marginBottom: '4px' }}
+                  itemStyle={{ fontSize: '13px', padding: '2px 0' }}
+                  labelStyle={{ fontSize: '14px', fontWeight: 'bold', color: '#94a3b8', marginBottom: '6px' }}
                 />
 
                 {/* Reference highlight for selected day */}
@@ -918,7 +918,7 @@ export default function App() {
             </ResponsiveContainer>
           </div>
 
-          <p className="text-[11px] text-slate-400 text-center mt-3 font-mono">
+          <p className="text-xs text-slate-400 text-center mt-3 font-mono">
             * 차트상의 수직 파선은 현재 선택되어 상단 카드로 시각화 중인 일자({selectedDay}일)를 표시합니다.
           </p>
         </section>
@@ -972,8 +972,8 @@ export default function App() {
             <table className="w-full text-[10px] xl:text-xs text-center border-collapse table-fixed min-w-[800px]">
               <thead>
                 <tr className="bg-slate-900 text-white font-sans text-center">
-                  <th className="sticky left-0 bg-slate-900 border border-slate-700 p-1 xl:p-1.5 z-20 font-bold w-[40px] xl:w-[60px] break-keep">구분</th>
-                  <th className="sticky left-[40px] xl:left-[60px] bg-slate-900 border border-slate-700 p-1 xl:p-1.5 z-20 font-bold w-[75px] xl:w-[100px] break-keep">측정 항목</th>
+                  <th className="sticky left-0 bg-slate-900 border border-slate-700 p-1 xl:p-1.5 z-20 font-bold w-[35px] xl:w-[45px] break-keep">구분</th>
+                  <th className="sticky left-[35px] xl:left-[45px] bg-slate-900 border border-slate-700 p-1 xl:p-1.5 z-20 font-bold w-[80px] xl:w-[115px] break-keep">측정 항목</th>
                   {mockData.map((item) => (
                     <th 
                       key={item.day}
@@ -996,7 +996,7 @@ export default function App() {
                   <td className="sticky left-0 bg-slate-100 font-bold border border-slate-200 p-1 xl:p-1.5 text-slate-700 z-10 text-center shadow-xs" rowSpan={4}>
                     오전<br/><span className="text-[10px] font-mono text-slate-500 font-normal">(AM)</span>
                   </td>
-                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     대기온도 (℃)
                   </td>
                   {mockData.map((item) => (
@@ -1014,7 +1014,7 @@ export default function App() {
 
                 {/* 표면온도 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     코일표면온도 (℃)
                   </td>
                   {mockData.map((item) => (
@@ -1032,7 +1032,7 @@ export default function App() {
 
                 {/* 상대습도 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     상대습도 (%)
                   </td>
                   {mockData.map((item) => (
@@ -1050,7 +1050,7 @@ export default function App() {
 
                 {/* 결로지수 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs">
                     결로지수 (Pt)
                   </td>
                   {mockData.map((item) => {
@@ -1078,7 +1078,7 @@ export default function App() {
                 {/* Separator row */}
                 <tr className="bg-slate-200 text-center h-2">
                   <td className="sticky left-0 bg-slate-200 p-0" colSpan={1}></td>
-                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-200 p-0" colSpan={1}></td>
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-200 p-0" colSpan={1}></td>
                   <td colSpan={31} className="p-0"></td>
                 </tr>
 
@@ -1090,7 +1090,7 @@ export default function App() {
                   <td className="sticky left-0 bg-slate-100 font-bold border border-slate-200 p-1 xl:p-1.5 text-slate-700 z-10 text-center shadow-xs" rowSpan={4}>
                     오후<br/><span className="text-[10px] font-mono text-slate-500 font-normal">(PM)</span>
                   </td>
-                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     대기온도 (℃)
                   </td>
                   {mockData.map((item) => (
@@ -1108,7 +1108,7 @@ export default function App() {
 
                 {/* 표면온도 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     코일표면온도 (℃)
                   </td>
                   {mockData.map((item) => (
@@ -1126,7 +1126,7 @@ export default function App() {
 
                 {/* 상대습도 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     상대습도 (%)
                   </td>
                   {mockData.map((item) => (
@@ -1144,7 +1144,7 @@ export default function App() {
 
                 {/* 결로지수 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs">
                     결로지수 (Pt)
                   </td>
                   {mockData.map((item) => {
