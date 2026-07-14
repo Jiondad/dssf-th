@@ -1,0 +1,6 @@
+{
+  "name": "코일센터 온습도 관리 시스템",
+  "description": "(주)대성스틸 코일센터의 온습도 및 결로지수를 실시간 모니터링하고 분석하는 스마트팩토리 대시보드입니다.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
