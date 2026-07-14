@@ -34,6 +34,31 @@ import { motion, AnimatePresence } from "motion/react";
 import { getMonthlyMockData, getCondensationStatus, CondensationStatus } from "./data";
 import { DailyRecord, SensorKey } from "./types";
 
+// --- Custom Dew Index Colors & Dots ---
+const getDewColor = (value: number, isAm: boolean) => {
+  if (value <= 60) return isAm ? '#10b981' : '#6ee7b7'; // Safe (Green / Light Green)
+  if (value <= 80) return isAm ? '#f59e0b' : '#fcd34d'; // Caution (Orange / Light Orange)
+  return isAm ? '#ef4444' : '#fda4af'; // Danger (Red / Light Red)
+};
+
+const CustomDewDot = (props: any) => {
+  const { cx, cy, value, isAm } = props;
+  if (!cx || !cy || value === undefined) return null;
+  const color = getDewColor(value, isAm);
+  return (
+    <circle cx={cx} cy={cy} r={4} fill={color} stroke="#fff" strokeWidth={1} />
+  );
+};
+
+const CustomDewActiveDot = (props: any) => {
+  const { cx, cy, value, isAm } = props;
+  if (!cx || !cy || value === undefined) return null;
+  const color = getDewColor(value, isAm);
+  return (
+    <circle cx={cx} cy={cy} r={8} fill={color} stroke="#fff" strokeWidth={2} style={{ filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.3))' }} />
+  );
+};
+
 export default function App() {
   const [mockData, setMockData] = useState<DailyRecord[]>(() => getMonthlyMockData());
   const [selectedDay, setSelectedDay] = useState<number>(13); // Default to July 13th
@@ -725,6 +750,24 @@ export default function App() {
                   }
                 }}
               >
+                <defs>
+                  <linearGradient id="amDewGradient" x1="0" y1="1" x2="0" y2="0">
+                    <stop offset="0%" stopColor="#10b981" />
+                    <stop offset="60%" stopColor="#10b981" />
+                    <stop offset="60%" stopColor="#f59e0b" />
+                    <stop offset="80%" stopColor="#f59e0b" />
+                    <stop offset="80%" stopColor="#ef4444" />
+                    <stop offset="100%" stopColor="#ef4444" />
+                  </linearGradient>
+                  <linearGradient id="pmDewGradient" x1="0" y1="1" x2="0" y2="0">
+                    <stop offset="0%" stopColor="#6ee7b7" />
+                    <stop offset="60%" stopColor="#6ee7b7" />
+                    <stop offset="60%" stopColor="#fcd34d" />
+                    <stop offset="80%" stopColor="#fcd34d" />
+                    <stop offset="80%" stopColor="#fda4af" />
+                    <stop offset="100%" stopColor="#fda4af" />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis 
                   dataKey="name" 
@@ -735,6 +778,7 @@ export default function App() {
                 {/* Left Axis for Temp & Dew Index */}
                 <YAxis 
                   yAxisId="left"
+                  domain={[0, 100]}
                   tick={{ fill: '#475569', fontSize: 11 }}
                   axisLine={{ stroke: '#cbd5e1' }}
                   label={{ value: '온도(℃) / 지수(Point)', angle: -90, position: 'insideLeft', offset: 10, fill: '#475569', style: { textAnchor: 'middle', fontSize: 11, fontWeight: 'bold' } }}
@@ -837,20 +881,20 @@ export default function App() {
                   yAxisId="left"
                   type="monotone" 
                   dataKey="오전 결로지수" 
-                  stroke="#fb923c" 
+                  stroke="url(#amDewGradient)" 
                   strokeWidth={3}
-                  dot={{ r: 3 }}
-                  activeDot={{ r: 8 }}
+                  dot={(props: any) => <CustomDewDot {...props} isAm={true} />}
+                  activeDot={(props: any) => <CustomDewActiveDot {...props} isAm={true} />}
                   hide={!visibleLines['오전 결로지수']}
                 />
                 <Line 
                   yAxisId="left"
                   type="monotone" 
                   dataKey="오후 결로지수" 
-                  stroke="#e11d48" 
+                  stroke="url(#pmDewGradient)" 
                   strokeWidth={3}
-                  dot={{ r: 3 }}
-                  activeDot={{ r: 8 }}
+                  dot={(props: any) => <CustomDewDot {...props} isAm={false} />}
+                  activeDot={(props: any) => <CustomDewActiveDot {...props} isAm={false} />}
                   hide={!visibleLines['오후 결로지수']}
                 />
               </LineChart>
