@@ -252,7 +252,7 @@ export default function App() {
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-12" id="app_root">
       {/* Top Professional Header */}
       <header className="bg-slate-900 text-white shadow-md border-b border-slate-800" id="header_section">
-        <div className="max-w-7xl mx-auto px-4 py-4 md:py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="max-w-[1920px] mx-auto px-4 py-4 md:py-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
             <div className="bg-blue-600 text-white p-2.5 rounded-lg shadow-inner flex items-center justify-center">
               <Layers className="w-6 h-6" />
@@ -304,7 +304,7 @@ export default function App() {
       </header>
 
       {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 mt-6 space-y-6">
+      <main className="max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 mt-6 space-y-6">
         
         {/* Upper Info Alert or Quick Stats */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -908,16 +908,16 @@ export default function App() {
 
           {/* Scrollable Ledger Wrapper */}
           <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-inner" id="ledger_table_wrapper">
-            <table className="w-full text-xs text-left border-collapse min-w-[1500px]">
+            <table className="w-full text-[10px] xl:text-xs text-center border-collapse table-fixed min-w-[800px]">
               <thead>
                 <tr className="bg-slate-900 text-white font-sans text-center">
-                  <th className="sticky left-0 bg-slate-900 border border-slate-700 p-2.5 z-20 font-bold min-w-[70px]">구분</th>
-                  <th className="sticky left-[70px] bg-slate-900 border border-slate-700 p-2.5 z-20 font-bold min-w-[130px]">측정 항목</th>
+                  <th className="sticky left-0 bg-slate-900 border border-slate-700 p-1 xl:p-1.5 z-20 font-bold w-[40px] xl:w-[60px] break-keep">구분</th>
+                  <th className="sticky left-[40px] xl:left-[60px] bg-slate-900 border border-slate-700 p-1 xl:p-1.5 z-20 font-bold w-[75px] xl:w-[100px] break-keep">측정 항목</th>
                   {mockData.map((item) => (
                     <th 
                       key={item.day}
                       onClick={() => setSelectedDay(item.day)}
-                      className={`border border-slate-700 p-2.5 font-bold font-mono cursor-pointer transition-all hover:bg-blue-800 ${
+                      className={`border border-slate-700 p-1 xl:p-1.5 font-bold font-mono cursor-pointer transition-all hover:bg-blue-800 ${
                         item.day === selectedDay ? "bg-blue-600 text-white" : "bg-slate-800/85"
                       }`}
                       title={`${item.day}일 정밀조회`}
@@ -932,17 +932,17 @@ export default function App() {
                 
                 {/* 대기온도 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-0 bg-slate-100 font-bold border border-slate-200 p-2.5 text-slate-700 z-10 text-center shadow-xs" rowSpan={4}>
+                  <td className="sticky left-0 bg-slate-100 font-bold border border-slate-200 p-1 xl:p-1.5 text-slate-700 z-10 text-center shadow-xs" rowSpan={4}>
                     오전<br/><span className="text-[10px] font-mono text-slate-500 font-normal">(AM)</span>
                   </td>
-                  <td className="sticky left-[70px] bg-slate-50 border border-slate-200 p-2.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     대기온도 (℃)
                   </td>
                   {mockData.map((item) => (
                     <td 
                       key={item.day} 
                       onClick={() => setSelectedDay(item.day)}
-                      className={`border border-slate-200 p-2.5 font-mono cursor-pointer transition-colors ${
+                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
                         item.day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
@@ -953,14 +953,14 @@ export default function App() {
 
                 {/* 표면온도 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[70px] bg-slate-50 border border-slate-200 p-2.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     코일표면온도 (℃)
                   </td>
                   {mockData.map((item) => (
                     <td 
                       key={item.day} 
                       onClick={() => setSelectedDay(item.day)}
-                      className={`border border-slate-200 p-2.5 font-mono cursor-pointer transition-colors ${
+                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
                         item.day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
@@ -971,14 +971,14 @@ export default function App() {
 
                 {/* 상대습도 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[70px] bg-slate-50 border border-slate-200 p-2.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     상대습도 (%)
                   </td>
                   {mockData.map((item) => (
                     <td 
                       key={item.day} 
                       onClick={() => setSelectedDay(item.day)}
-                      className={`border border-slate-200 p-2.5 font-mono cursor-pointer transition-colors ${
+                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
                         item.day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
@@ -989,7 +989,7 @@ export default function App() {
 
                 {/* 결로지수 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[70px] bg-slate-50 border border-slate-200 p-2.5 font-bold text-slate-800 text-left z-10 shadow-xs">
+                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs">
                     결로지수 (Pt)
                   </td>
                   {mockData.map((item) => {
@@ -1002,7 +1002,7 @@ export default function App() {
                       <td 
                         key={item.day} 
                         onClick={() => setSelectedDay(item.day)}
-                        className={`border border-slate-200 p-2.5 font-mono cursor-pointer font-semibold transition-all hover:opacity-80 ${cellColor} ${
+                        className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer font-semibold transition-all hover:opacity-80 ${cellColor} ${
                           item.day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""
                         }`}
                         title={`${item.day}일 오전 결로지수: ${indexVal} Pt`}
@@ -1017,7 +1017,7 @@ export default function App() {
                 {/* Separator row */}
                 <tr className="bg-slate-200 text-center h-2">
                   <td className="sticky left-0 bg-slate-200 p-0" colSpan={1}></td>
-                  <td className="sticky left-[70px] bg-slate-200 p-0" colSpan={1}></td>
+                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-200 p-0" colSpan={1}></td>
                   <td colSpan={31} className="p-0"></td>
                 </tr>
 
@@ -1026,17 +1026,17 @@ export default function App() {
                 
                 {/* 대기온도 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-0 bg-slate-100 font-bold border border-slate-200 p-2.5 text-slate-700 z-10 text-center shadow-xs" rowSpan={4}>
+                  <td className="sticky left-0 bg-slate-100 font-bold border border-slate-200 p-1 xl:p-1.5 text-slate-700 z-10 text-center shadow-xs" rowSpan={4}>
                     오후<br/><span className="text-[10px] font-mono text-slate-500 font-normal">(PM)</span>
                   </td>
-                  <td className="sticky left-[70px] bg-slate-50 border border-slate-200 p-2.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     대기온도 (℃)
                   </td>
                   {mockData.map((item) => (
                     <td 
                       key={item.day} 
                       onClick={() => setSelectedDay(item.day)}
-                      className={`border border-slate-200 p-2.5 font-mono cursor-pointer transition-colors ${
+                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
                         item.day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
@@ -1047,14 +1047,14 @@ export default function App() {
 
                 {/* 표면온도 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[70px] bg-slate-50 border border-slate-200 p-2.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     코일표면온도 (℃)
                   </td>
                   {mockData.map((item) => (
                     <td 
                       key={item.day} 
                       onClick={() => setSelectedDay(item.day)}
-                      className={`border border-slate-200 p-2.5 font-mono cursor-pointer transition-colors ${
+                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
                         item.day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
@@ -1065,14 +1065,14 @@ export default function App() {
 
                 {/* 상대습도 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[70px] bg-slate-50 border border-slate-200 p-2.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     상대습도 (%)
                   </td>
                   {mockData.map((item) => (
                     <td 
                       key={item.day} 
                       onClick={() => setSelectedDay(item.day)}
-                      className={`border border-slate-200 p-2.5 font-mono cursor-pointer transition-colors ${
+                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
                         item.day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
@@ -1083,7 +1083,7 @@ export default function App() {
 
                 {/* 결로지수 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[70px] bg-slate-50 border border-slate-200 p-2.5 font-bold text-slate-800 text-left z-10 shadow-xs">
+                  <td className="sticky left-[40px] xl:left-[60px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs">
                     결로지수 (Pt)
                   </td>
                   {mockData.map((item) => {
@@ -1096,7 +1096,7 @@ export default function App() {
                       <td 
                         key={item.day} 
                         onClick={() => setSelectedDay(item.day)}
-                        className={`border border-slate-200 p-2.5 font-mono cursor-pointer font-semibold transition-all hover:opacity-80 ${cellColor} ${
+                        className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer font-semibold transition-all hover:opacity-80 ${cellColor} ${
                           item.day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""
                         }`}
                         title={`${item.day}일 오후 결로지수: ${indexVal} Pt`}
