@@ -5,7 +5,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
-    base: process.env.NODE_ENV === 'production' ? '/dssf-th/' : '/',
+    base: '/dssf-th/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
