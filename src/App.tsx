@@ -474,12 +474,12 @@ export default function App() {
 
               {/* Technical Indicator */}
               <div className="mt-4 pt-3.5 border-t border-slate-50 flex justify-between items-center text-xs text-slate-500">
-                <span className="flex items-center gap-1 text-slate-600 font-medium">
-                  <ArrowRight className="w-3.5 h-3.5 text-teal-500" />
-                  대기대비차: 오전 {Math.round((currentRecord.am.airTemp - currentRecord.am.surfaceTemp) * 10) / 10}℃
+                <span className="flex items-center gap-1.5 text-slate-600 font-medium whitespace-nowrap">
+                  <ArrowRight className="w-3.5 h-3.5 text-teal-500 shrink-0" />
+                  <span>대기대비차: 오전 {Math.round((currentRecord.am.airTemp - currentRecord.am.surfaceTemp) * 10) / 10}℃ <span className="text-slate-300 mx-1">|</span> 오후 {Math.round((currentRecord.pm.airTemp - currentRecord.pm.surfaceTemp) * 10) / 10}℃</span>
                 </span>
-                <span className="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px]">
-                  Steel Spec
+                <span className="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px] shrink-0">
+                  
                 </span>
               </div>
             </motion.div>
@@ -534,7 +534,7 @@ export default function App() {
               layoutId="card_dew_index"
               animate={{ backgroundColor: condensationStatus.bgColor.includes('emerald') ? '#d1fae5' : condensationStatus.bgColor.includes('amber') ? '#fef3c7' : '#ffe4e6' }}
               transition={{ duration: 0.3 }}
-              className={`rounded-2xl border p-5 shadow-xs hover:shadow-md transition-all relative overflow-hidden flex flex-col justify-between ${condensationStatus.borderColor}`}
+              className={`rounded-2xl border p-5 shadow-xs hover:shadow-md transition-all relative z-10 overflow-visible flex flex-col justify-between ${condensationStatus.borderColor}`}
               id="card_dew_index"
             >
               <div>
@@ -543,8 +543,31 @@ export default function App() {
                     <span className="text-xs font-semibold uppercase tracking-wider opacity-85 text-slate-700">결로 위험 지수</span>
                     <h3 className="text-lg font-bold mt-0.5 text-slate-900">Condensation Index</h3>
                   </div>
-                  <div className={`p-2 rounded-xl bg-white/80`}>
-                    <AlertTriangle className="w-6 h-6 text-slate-900" />
+                  <div className="relative group p-2 rounded-xl bg-white/80 cursor-help">
+                    <AlertTriangle className="w-6 h-6 text-slate-900 transition-transform group-hover:scale-110" />
+                    
+                    {/* Tooltip Content */}
+                    <div className="absolute right-0 top-full mt-2 w-72 md:w-80 bg-slate-900 text-white p-4 rounded-xl shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 z-50 transform origin-top-right scale-95 group-hover:scale-100">
+                      <h4 className="font-bold text-sm mb-3 text-blue-300 border-b border-slate-700 pb-2">결로지수 산출 및 환산 원리</h4>
+                      <div className="space-y-3 text-xs">
+                        <div>
+                          <p className="font-semibold text-slate-300">1단계 (이슬점 약식 계산)</p>
+                          <p className="font-mono text-[11px] bg-slate-800 text-slate-200 p-1.5 rounded mt-1 border border-slate-700">T_dew ≈ T_air - ((100 - H) / 5)</p>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-slate-300">2단계 (마진 산출)</p>
+                          <p className="font-mono text-[11px] bg-slate-800 text-slate-200 p-1.5 rounded mt-1 border border-slate-700">Margin = T_surface - T_dew</p>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-slate-300 mb-1">3단계 (지수 환산 기준)</p>
+                          <ul className="space-y-1.5 text-[11px] bg-slate-800 p-2 rounded border border-slate-700">
+                            <li className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]"></span> <span className="text-emerald-100 font-medium">0~60 (안전)</span> <span className="text-slate-400 ml-auto">Margin &gt; 5℃</span></li>
+                            <li className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_4px_rgba(245,158,11,0.5)]"></span> <span className="text-amber-100 font-medium">61~80 (주의)</span> <span className="text-slate-400 ml-auto">0 &lt; Margin ≤ 5℃</span></li>
+                            <li className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_4px_rgba(225,29,72,0.5)]"></span> <span className="text-rose-100 font-medium">81~100 (위험)</span> <span className="text-slate-400 ml-auto">Margin ≤ 0℃</span></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -622,119 +645,113 @@ export default function App() {
             </div>
           </div>
 
-          {/* Dynamic Interactive Legend Panel */}
           <div className="mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200/60">
             <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">차트 범례 필터링 (클릭하여 켜기/끄기)</span>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1.5">
               
               {/* Air Temp toggles */}
               <button 
                 onClick={() => toggleLine('오전 대기온도')}
-                className={`flex items-center gap-2 p-2 rounded-lg text-xs font-medium border transition-all ${
+                className={`flex items-center gap-1.5 p-1.5 rounded-lg text-[10px] xl:text-[11px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
                   visibleLines['오전 대기온도'] 
                     ? 'bg-white text-slate-900 border-blue-400 shadow-xs' 
                     : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
                 }`}
                 id="toggle_am_air"
               >
-                <span className="w-3 h-1.5 rounded-full bg-[#60a5fa]"></span>
-                <span className="flex-1 text-left">오전 대기온도 (℃)</span>
+                <span className="w-2.5 h-1.5 rounded-full bg-[#60a5fa] shrink-0"></span>
+                <span className="flex-1 text-left truncate">오전 대기온도 (℃)</span>
               </button>
-
               <button 
                 onClick={() => toggleLine('오후 대기온도')}
-                className={`flex items-center gap-2 p-2 rounded-lg text-xs font-medium border transition-all ${
+                className={`flex items-center gap-1.5 p-1.5 rounded-lg text-[10px] xl:text-[11px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
                   visibleLines['오후 대기온도'] 
                     ? 'bg-white text-slate-900 border-blue-600 shadow-xs' 
                     : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
                 }`}
                 id="toggle_pm_air"
               >
-                <span className="w-3 h-1.5 rounded-full bg-[#2563eb]"></span>
-                <span className="flex-1 text-left">오후 대기온도 (℃)</span>
+                <span className="w-2.5 h-1.5 rounded-full bg-[#2563eb] shrink-0"></span>
+                <span className="flex-1 text-left truncate">오후 대기온도 (℃)</span>
               </button>
 
               {/* Surface Temp toggles */}
               <button 
                 onClick={() => toggleLine('오전 표면온도')}
-                className={`flex items-center gap-2 p-2 rounded-lg text-xs font-medium border transition-all ${
+                className={`flex items-center gap-1.5 p-1.5 rounded-lg text-[10px] xl:text-[11px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
                   visibleLines['오전 표면온도'] 
                     ? 'bg-white text-slate-900 border-teal-400 shadow-xs' 
                     : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
                 }`}
                 id="toggle_am_surface"
               >
-                <span className="w-3 h-1.5 rounded-full bg-[#2dd4bf]"></span>
-                <span className="flex-1 text-left">오전 표면온도 (℃)</span>
+                <span className="w-2.5 h-1.5 rounded-full bg-[#2dd4bf] shrink-0"></span>
+                <span className="flex-1 text-left truncate">오전 표면온도 (℃)</span>
               </button>
-
               <button 
                 onClick={() => toggleLine('오후 표면온도')}
-                className={`flex items-center gap-2 p-2 rounded-lg text-xs font-medium border transition-all ${
+                className={`flex items-center gap-1.5 p-1.5 rounded-lg text-[10px] xl:text-[11px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
                   visibleLines['오후 표면온도'] 
                     ? 'bg-white text-slate-900 border-teal-700 shadow-xs' 
                     : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
                 }`}
                 id="toggle_pm_surface"
               >
-                <span className="w-3 h-1.5 rounded-full bg-[#0f766e]"></span>
-                <span className="flex-1 text-left">오후 표면온도 (℃)</span>
+                <span className="w-2.5 h-1.5 rounded-full bg-[#0f766e] shrink-0"></span>
+                <span className="flex-1 text-left truncate">오후 표면온도 (℃)</span>
               </button>
 
               {/* Humidity toggles */}
               <button 
                 onClick={() => toggleLine('오전 상대습도')}
-                className={`flex items-center gap-2 p-2 rounded-lg text-xs font-medium border transition-all ${
+                className={`flex items-center gap-1.5 p-1.5 rounded-lg text-[10px] xl:text-[11px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
                   visibleLines['오전 상대습도'] 
                     ? 'bg-white text-slate-900 border-violet-400 shadow-xs' 
                     : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
                 }`}
                 id="toggle_am_humidity"
               >
-                <span className="w-3 h-1.5 rounded-full bg-[#a78bfa]"></span>
-                <span className="flex-1 text-left">오전 상대습도 (%)</span>
+                <span className="w-2.5 h-1.5 rounded-full bg-[#a78bfa] shrink-0"></span>
+                <span className="flex-1 text-left truncate">오전 상대습도 (%)</span>
               </button>
-
               <button 
                 onClick={() => toggleLine('오후 상대습도')}
-                className={`flex items-center gap-2 p-2 rounded-lg text-xs font-medium border transition-all ${
+                className={`flex items-center gap-1.5 p-1.5 rounded-lg text-[10px] xl:text-[11px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
                   visibleLines['오후 상대습도'] 
                     ? 'bg-white text-slate-900 border-violet-700 shadow-xs' 
                     : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
                 }`}
                 id="toggle_pm_humidity"
               >
-                <span className="w-3 h-1.5 rounded-full bg-[#6d28d9]"></span>
-                <span className="flex-1 text-left">오후 상대습도 (%)</span>
+                <span className="w-2.5 h-1.5 rounded-full bg-[#6d28d9] shrink-0"></span>
+                <span className="flex-1 text-left truncate">오후 상대습도 (%)</span>
               </button>
 
               {/* Dew Index toggles */}
               <button 
                 onClick={() => toggleLine('오전 결로지수')}
-                className={`flex items-center gap-2 p-2 rounded-lg text-xs font-medium border transition-all ${
+                className={`flex items-center gap-1.5 p-1.5 rounded-lg text-[10px] xl:text-[11px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
                   visibleLines['오전 결로지수'] 
                     ? 'bg-white text-slate-900 border-amber-500 shadow-xs' 
                     : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
                 }`}
                 id="toggle_am_dew"
               >
-                <span className="w-3 h-1.5 rounded-full bg-[#fb923c]"></span>
-                <span className="flex-1 text-left">오전 결로지수 (Pt)</span>
+                <span className="w-2.5 h-1.5 rounded-full bg-[#fb923c] shrink-0"></span>
+                <span className="flex-1 text-left truncate">오전 결로지수 (Pt)</span>
               </button>
-
               <button 
                 onClick={() => toggleLine('오후 결로지수')}
-                className={`flex items-center gap-2 p-2 rounded-lg text-xs font-medium border transition-all ${
+                className={`flex items-center gap-1.5 p-1.5 rounded-lg text-[10px] xl:text-[11px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
                   visibleLines['오후 결로지수'] 
                     ? 'bg-white text-slate-900 border-rose-600 shadow-xs' 
                     : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
                 }`}
                 id="toggle_pm_dew"
               >
-                <span className="w-3 h-1.5 rounded-full bg-[#e11d48]"></span>
-                <span className="flex-1 text-left">오후 결로지수 (Pt)</span>
+                <span className="w-2.5 h-1.5 rounded-full bg-[#e11d48] shrink-0"></span>
+                <span className="flex-1 text-left truncate">오후 결로지수 (Pt)</span>
               </button>
-
             </div>
           </div>
 
