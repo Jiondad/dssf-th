@@ -71,7 +71,7 @@ export default function App() {
   const [selectedFactory, setSelectedFactory] = useState<'평택포승공장' | '아산인주공장'>('평택포승공장');
   const [isFactoryPickerOpen, setIsFactoryPickerOpen] = useState<boolean>(false);
 
-  const [mockData, setMockData] = useState<DailyRecord[]>([]);
+  const [sheetData, setSheetData] = useState<DailyRecord[]>([]);
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
 
   useEffect(() => {
@@ -84,7 +84,7 @@ export default function App() {
       
       const newData = await fetchSpreadsheetData(sheetName, selectedYear, selectedMonth);
       if (isMounted) {
-        setMockData(newData);
+        setSheetData(newData);
         
         // Ensure selectedDay is within the valid range of the new data
         setSelectedDay(prev => {
@@ -112,6 +112,7 @@ export default function App() {
   
   // New Data Entry States
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalFactory, setModalFactory] = useState<'평택포승공장' | '아산인주공장'>('평택포승공장');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`,
@@ -131,16 +132,16 @@ export default function App() {
       const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;
       const adjustedDate = new Date(dateObj.getTime() + userTimezoneOffset);
       const day = adjustedDate.getDate();
-      const existing = mockData.find(r => r.day === day);
+      const existing = sheetData.find(r => r.day === day);
       if (existing) {
         return {
           ...updated,
-          amAirTemp: existing.am.airTemp.toString(),
-          amSurfaceTemp: existing.am.surfaceTemp.toString(),
-          amHumidity: existing.am.humidity.toString(),
-          pmAirTemp: existing.pm.airTemp.toString(),
-          pmSurfaceTemp: existing.pm.surfaceTemp.toString(),
-          pmHumidity: existing.pm.humidity.toString(),
+          amAirTemp: existing.am.airTemp !== null ? existing.am.airTemp.toString() : "",
+          amSurfaceTemp: existing.am.surfaceTemp !== null ? existing.am.surfaceTemp.toString() : "",
+          amHumidity: existing.am.humidity !== null ? existing.am.humidity.toString() : "",
+          pmAirTemp: existing.pm.airTemp !== null ? existing.pm.airTemp.toString() : "",
+          pmSurfaceTemp: existing.pm.surfaceTemp !== null ? existing.pm.surfaceTemp.toString() : "",
+          pmHumidity: existing.pm.humidity !== null ? existing.pm.humidity.toString() : "",
          };
       }
       return updated;
@@ -152,7 +153,8 @@ export default function App() {
     try {
       setIsSubmitting(true);
       
-      const calculateLocalDewIndex = (air: number, surf: number, hum: number) => {
+      const calculateLocalDewIndex = (air: any, surf: any, hum: any) => {
+        if (air === null || surf === null || hum === null || air === "" || surf === "" || hum === "" || isNaN(Number(air)) || isNaN(Number(surf)) || isNaN(Number(hum)) || air === undefined || surf === undefined || hum === undefined) return null;
         const dewPoint = air - ((100 - hum) / 5);
         const diff = surf - dewPoint;
         if (diff <= 0) return 95;
@@ -160,16 +162,16 @@ export default function App() {
         return Math.max(0, Math.min(100, Math.round(95 - (diff * 10))));
       };
 
-      const amAirTemp = Number(formData.amAirTemp);
-      const amSurfaceTemp = Number(formData.amSurfaceTemp);
-      const amHumidity = Number(formData.amHumidity);
-      const pmAirTemp = Number(formData.pmAirTemp);
-      const pmSurfaceTemp = Number(formData.pmSurfaceTemp);
-      const pmHumidity = Number(formData.pmHumidity);
+      const amAirTemp = formData.amAirTemp === "" ? null : Number(formData.amAirTemp);
+      const amSurfaceTemp = formData.amSurfaceTemp === "" ? null : Number(formData.amSurfaceTemp);
+      const amHumidity = formData.amHumidity === "" ? null : Number(formData.amHumidity);
+      const pmAirTemp = formData.pmAirTemp === "" ? null : Number(formData.pmAirTemp);
+      const pmSurfaceTemp = formData.pmSurfaceTemp === "" ? null : Number(formData.pmSurfaceTemp);
+      const pmHumidity = formData.pmHumidity === "" ? null : Number(formData.pmHumidity);
 
       const payload = {
-        sheetName: selectedFactory === '평택포승공장' ? 'Data' : 'Data2',
-        factory: selectedFactory,
+        sheetName: modalFactory === '평택포승공장' ? 'Data' : 'Data2',
+        factory: modalFactory,
         date: formData.date,
         amAirTemp,
         amSurfaceTemp,
@@ -187,8 +189,8 @@ export default function App() {
       const parsedDay = adjustedDate.getDate();
 
       // Optimistic Update
-      if (adjustedDate.getFullYear() === selectedYear && (adjustedDate.getMonth() + 1) === selectedMonth) {
-        setMockData(prev => {
+      if (modalFactory === selectedFactory && adjustedDate.getFullYear() === selectedYear && (adjustedDate.getMonth() + 1) === selectedMonth) {
+        setSheetData(prev => {
           const newData = [...prev];
           const existingIdx = newData.findIndex(r => r.day === parsedDay);
           const updatedRecord = {
@@ -239,7 +241,7 @@ export default function App() {
       try {
         const sheetName = selectedFactory === '평택포승공장' ? 'Data' : 'Data2';
         const newData = await fetchSpreadsheetData(sheetName, selectedYear, selectedMonth);
-        setMockData(newData);
+        setSheetData(newData);
       } catch (err) {
         console.error("Failed to refetch data:", err);
       }
@@ -265,7 +267,7 @@ export default function App() {
   // Flat data for Recharts
   const chartData = useMemo(() => {
     return fixedDays.map(day => {
-      const record = mockData.find(r => r.day === day);
+      const record = sheetData.find(r => r.day === day);
       if (!record) {
         return {
           name: `${day}일`,
@@ -293,22 +295,25 @@ export default function App() {
         '오후 결로지수': record.pm.dewIndex,
       };
     });
-  }, [mockData, fixedDays]);
+  }, [sheetData, fixedDays]);
 
   // Current record details based on selected day
   const currentRecord = useMemo(() => {
-    const found = mockData.find(r => r.day === selectedDay);
+    const found = sheetData.find(r => r.day === selectedDay);
     if (found) return found;
     return {
       day: selectedDay,
-      am: { airTemp: 0, surfaceTemp: 0, humidity: 0, dewIndex: 0 },
-      pm: { airTemp: 0, surfaceTemp: 0, humidity: 0, dewIndex: 0 }
+      am: { airTemp: null, surfaceTemp: null, humidity: null, dewIndex: null },
+      pm: { airTemp: null, surfaceTemp: null, humidity: null, dewIndex: null }
     };
-  }, [selectedDay, mockData]);
+  }, [selectedDay, sheetData]);
 
   // Max condensation index of the selected day to determine card safety level
   const maxDewIndexToday = useMemo(() => {
     if (!currentRecord) return 0;
+    if (currentRecord.am.dewIndex === null && currentRecord.pm.dewIndex === null) return 0;
+    if (currentRecord.am.dewIndex === null) return currentRecord.pm.dewIndex;
+    if (currentRecord.pm.dewIndex === null) return currentRecord.am.dewIndex;
     return Math.max(currentRecord.am.dewIndex, currentRecord.pm.dewIndex);
   }, [currentRecord]);
 
@@ -355,15 +360,19 @@ export default function App() {
     let cautionCount = 0;
     let dangerCount = 0;
 
-    mockData.forEach(r => {
-      const maxIndex = Math.max(r.am.dewIndex, r.pm.dewIndex);
+    sheetData.forEach(r => {
+      if (r.am.dewIndex === null && r.pm.dewIndex === null) return;
+      const amDew = r.am.dewIndex !== null ? r.am.dewIndex : -1;
+      const pmDew = r.pm.dewIndex !== null ? r.pm.dewIndex : -1;
+      const maxIndex = Math.max(amDew, pmDew);
+      if (maxIndex < 0) return;
       if (maxIndex <= 60) safeCount++;
       else if (maxIndex <= 80) cautionCount++;
       else dangerCount++;
     });
 
     return { safeCount, cautionCount, dangerCount };
-  }, [mockData]);
+  }, [sheetData]);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-12" id="app_root">
@@ -552,18 +561,6 @@ export default function App() {
               <p className="text-slate-600 font-semibold text-sm">데이터를 불러오는 중입니다...</p>
             </div>
           </div>
-        ) : mockData.length === 0 ? (
-          <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-50 min-h-[600px] rounded-2xl border border-slate-200 shadow-sm">
-            <div className="flex flex-col items-center gap-4 p-8 text-center max-w-md">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-2">
-                <FileSpreadsheet className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-800">측정 데이터가 없습니다.</h3>
-              <p className="text-slate-500 font-medium leading-relaxed">
-                우측 상단의 <strong className="text-blue-600 font-bold">'새 데이터 입력'</strong> 버튼을 통해 첫 데이터를 등록해 주세요.
-              </p>
-            </div>
-          </div>
         ) : null}
 
         {/* Upper Info Alert or Quick Stats */}
@@ -649,14 +646,14 @@ export default function App() {
                 <div className="flex flex-col justify-center">
                   <span className="text-[11px] text-slate-400 font-semibold block uppercase">오전 (AM)</span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.am.airTemp}</span>
+                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.am.airTemp !== null ? currentRecord.am.airTemp : "-"}</span>
                     <span className="text-xs text-slate-500 font-bold">℃</span>
                   </div>
                 </div>
                 <div className="pl-4 flex flex-col justify-center">
                   <span className="text-[11px] text-slate-400 font-semibold block uppercase">오후 (PM)</span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.pm.airTemp}</span>
+                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.pm.airTemp !== null ? currentRecord.pm.airTemp : "-"}</span>
                     <span className="text-xs text-slate-500 font-bold">℃</span>
                   </div>
                 </div>
@@ -666,7 +663,7 @@ export default function App() {
               <div className="mt-4 pt-3.5 border-t border-slate-50 flex justify-between items-center text-xs text-slate-500">
                 <span className="flex items-center gap-1">
                   <TrendingUp className="w-3.5 h-3.5 text-blue-500" />
-                  일교차: {Math.round((currentRecord.pm.airTemp - currentRecord.am.airTemp) * 10) / 10}℃
+                  일교차: {currentRecord.pm.airTemp !== null && currentRecord.am.airTemp !== null ? Math.round((currentRecord.pm.airTemp - currentRecord.am.airTemp) * 10) / 10 + "℃" : "-"}
                 </span>
                 <span className="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px]">
                   Target: 18~28℃
@@ -694,14 +691,14 @@ export default function App() {
                 <div className="flex flex-col justify-center">
                   <span className="text-[11px] text-slate-400 font-semibold block uppercase">오전 (AM)</span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.am.surfaceTemp}</span>
+                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.am.surfaceTemp !== null ? currentRecord.am.surfaceTemp : "-"}</span>
                     <span className="text-xs text-slate-500 font-bold">℃</span>
                   </div>
                 </div>
                 <div className="pl-4 flex flex-col justify-center">
                   <span className="text-[11px] text-slate-400 font-semibold block uppercase">오후 (PM)</span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.pm.surfaceTemp}</span>
+                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.pm.surfaceTemp !== null ? currentRecord.pm.surfaceTemp : "-"}</span>
                     <span className="text-xs text-slate-500 font-bold">℃</span>
                   </div>
                 </div>
@@ -711,7 +708,7 @@ export default function App() {
               <div className="mt-4 pt-3.5 border-t border-slate-50 flex justify-between items-center text-xs text-slate-500">
                 <span className="flex items-center gap-1.5 text-slate-600 font-medium whitespace-nowrap">
                   <ArrowRight className="w-3.5 h-3.5 text-teal-500 shrink-0" />
-                  <span>대기대비차: 오전 {Math.round((currentRecord.am.airTemp - currentRecord.am.surfaceTemp) * 10) / 10}℃ <span className="text-slate-300 mx-1">|</span> 오후 {Math.round((currentRecord.pm.airTemp - currentRecord.pm.surfaceTemp) * 10) / 10}℃</span>
+                  <span>대기대비차: 오전 {currentRecord.am.airTemp !== null && currentRecord.am.surfaceTemp !== null ? Math.round((currentRecord.am.airTemp - currentRecord.am.surfaceTemp) * 10) / 10 + "℃" : "-"} <span className="text-slate-300 mx-1">|</span> 오후 {currentRecord.pm.airTemp !== null && currentRecord.pm.surfaceTemp !== null ? Math.round((currentRecord.pm.airTemp - currentRecord.pm.surfaceTemp) * 10) / 10 + "℃" : "-"}</span>
                 </span>
                 <span className="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px] shrink-0">
                   
@@ -739,14 +736,14 @@ export default function App() {
                 <div className="flex flex-col justify-center">
                   <span className="text-[11px] text-slate-400 font-semibold block uppercase">오전 (AM)</span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.am.humidity}</span>
+                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.am.humidity !== null ? currentRecord.am.humidity : "-"}</span>
                     <span className="text-xs text-slate-500 font-bold">%</span>
                   </div>
                 </div>
                 <div className="pl-4 flex flex-col justify-center">
                   <span className="text-[11px] text-slate-400 font-semibold block uppercase">오후 (PM)</span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.pm.humidity}</span>
+                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.pm.humidity !== null ? currentRecord.pm.humidity : "-"}</span>
                     <span className="text-xs text-slate-500 font-bold">%</span>
                   </div>
                 </div>
@@ -756,7 +753,7 @@ export default function App() {
               <div className="mt-4 pt-3.5 border-t border-slate-50 flex justify-between items-center text-xs text-slate-500">
                 <span className="flex items-center gap-1">
                   <TrendingDown className="w-3.5 h-3.5 text-violet-500" />
-                  일교차: {currentRecord.am.humidity - currentRecord.pm.humidity}%
+                  일교차: {currentRecord.am.humidity !== null && currentRecord.pm.humidity !== null ? (currentRecord.am.humidity - currentRecord.pm.humidity) + "%" : "-"}
                 </span>
                 <span className="font-mono bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded text-[10px] font-bold">
                   Target: &lt;65%
@@ -810,14 +807,14 @@ export default function App() {
                   <div className="flex flex-col justify-center">
                     <span className="text-[11px] text-slate-600 font-semibold block uppercase">오전 (AM)</span>
                     <div className="flex items-baseline gap-1 mt-0.5">
-                      <span className="text-2xl font-black font-mono text-slate-900">{currentRecord.am.dewIndex}</span>
+                      <span className="text-2xl font-black font-mono text-slate-900">{currentRecord.am.dewIndex !== null ? currentRecord.am.dewIndex : "-"}</span>
                       <span className="text-xs text-slate-600 font-bold">Pt</span>
                     </div>
                   </div>
                   <div className="pl-4 flex flex-col justify-center">
                     <span className="text-[11px] text-slate-600 font-semibold block uppercase">오후 (PM)</span>
                     <div className="flex items-baseline gap-1 mt-0.5">
-                      <span className="text-2xl font-black font-mono text-slate-900">{currentRecord.pm.dewIndex}</span>
+                      <span className="text-2xl font-black font-mono text-slate-900">{currentRecord.pm.dewIndex !== null ? currentRecord.pm.dewIndex : "-"}</span>
                       <span className="text-xs text-slate-600 font-bold">Pt</span>
                     </div>
                   </div>
@@ -1178,6 +1175,7 @@ export default function App() {
                   const monthStr = selectedMonth < 10 ? `0${selectedMonth}` : `${selectedMonth}`;
                   const fullDate = `${selectedYear}-${monthStr}-${dayStr}`;
                   handleDateChange(fullDate);
+                  setModalFactory(selectedFactory);
                   setIsModalOpen(true);
                 }}
                 className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-semibold text-sm rounded-xl shadow-md transition-all shrink-0 cursor-pointer"
@@ -1236,7 +1234,7 @@ export default function App() {
                     대기온도 (℃)
                   </td>
                   {fixedDays.map((day) => {
-                    const item = mockData.find(r => r.day === day);
+                    const item = sheetData.find(r => r.day === day);
                     return (
                     <td 
                       key={day} 
@@ -1245,7 +1243,7 @@ export default function App() {
                         day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
-                      {item ? item.am.airTemp.toFixed(1) : '-'}
+                      {item ? item.am.airTemp !== null ? item.am.airTemp.toFixed(1) : '-' : '-'}
                     </td>
                   )
 })}
@@ -1257,7 +1255,7 @@ export default function App() {
                     코일표면온도 (℃)
                   </td>
                   {fixedDays.map((day) => {
-                    const item = mockData.find(r => r.day === day);
+                    const item = sheetData.find(r => r.day === day);
                     return (
                     <td 
                       key={day} 
@@ -1266,7 +1264,7 @@ export default function App() {
                         day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
-                      {item ? item.am.surfaceTemp.toFixed(1) : '-'}
+                      {item ? item.am.surfaceTemp !== null ? item.am.surfaceTemp.toFixed(1) : '-' : '-'}
                     </td>
                   )
 })}
@@ -1278,7 +1276,7 @@ export default function App() {
                     상대습도 (%)
                   </td>
                   {fixedDays.map((day) => {
-                    const item = mockData.find(r => r.day === day);
+                    const item = sheetData.find(r => r.day === day);
                     return (
                     <td 
                       key={day} 
@@ -1287,7 +1285,7 @@ export default function App() {
                         day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
-                      {item ? item.am.humidity : '-'}
+                      {item ? (item.am.humidity !== null ? item.am.humidity : '-') : '-'}
                     </td>
                   )
 })}
@@ -1299,7 +1297,7 @@ export default function App() {
                     결로지수 (Pt)
                   </td>
                   {fixedDays.map((day) => {
-                    const item = mockData.find(r => r.day === day);
+                    const item = sheetData.find(r => r.day === day);
                     if (!item) {
                       return (
                         <td key={day} onClick={() => setSelectedDay(day)} className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-all ${day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""}`}>
@@ -1308,6 +1306,13 @@ export default function App() {
                       );
                     }
                     const indexVal = item.am.dewIndex;
+                    if (indexVal === null || indexVal === undefined || indexVal === "") {
+                      return (
+                        <td key={day} onClick={() => setSelectedDay(day)} className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-all ${day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""}`}>
+                          -
+                        </td>
+                      );
+                    }
                     let cellColor = "bg-[#d1fae5] text-[#065f46]"; // Safe
                     if (indexVal > 80) cellColor = "bg-[#ffe4e6] text-[#9f1239] font-black animate-pulse"; // Danger
                     else if (indexVal > 60) cellColor = "bg-[#fef3c7] text-[#92400e] font-bold"; // Caution
@@ -1346,7 +1351,7 @@ export default function App() {
                     대기온도 (℃)
                   </td>
                   {fixedDays.map((day) => {
-                    const item = mockData.find(r => r.day === day);
+                    const item = sheetData.find(r => r.day === day);
                     return (
                     <td 
                       key={day} 
@@ -1355,7 +1360,7 @@ export default function App() {
                         day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
-                      {item ? item.pm.airTemp.toFixed(1) : '-'}
+                      {item ? item.pm.airTemp !== null ? item.pm.airTemp.toFixed(1) : '-' : '-'}
                     </td>
                   )
 })}
@@ -1367,7 +1372,7 @@ export default function App() {
                     코일표면온도 (℃)
                   </td>
                   {fixedDays.map((day) => {
-                    const item = mockData.find(r => r.day === day);
+                    const item = sheetData.find(r => r.day === day);
                     return (
                     <td 
                       key={day} 
@@ -1376,7 +1381,7 @@ export default function App() {
                         day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
-                      {item ? item.pm.surfaceTemp.toFixed(1) : '-'}
+                      {item ? item.pm.surfaceTemp !== null ? item.pm.surfaceTemp.toFixed(1) : '-' : '-'}
                     </td>
                   )
 })}
@@ -1388,7 +1393,7 @@ export default function App() {
                     상대습도 (%)
                   </td>
                   {fixedDays.map((day) => {
-                    const item = mockData.find(r => r.day === day);
+                    const item = sheetData.find(r => r.day === day);
                     return (
                     <td 
                       key={day} 
@@ -1397,7 +1402,7 @@ export default function App() {
                         day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
-                      {item ? item.pm.humidity : '-'}
+                      {item ? (item.pm.humidity !== null ? item.pm.humidity : '-') : '-'}
                     </td>
                   )
 })}
@@ -1409,7 +1414,7 @@ export default function App() {
                     결로지수 (Pt)
                   </td>
                   {fixedDays.map((day) => {
-                    const item = mockData.find(r => r.day === day);
+                    const item = sheetData.find(r => r.day === day);
                     if (!item) {
                       return (
                         <td key={day} onClick={() => setSelectedDay(day)} className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-all ${day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""}`}>
@@ -1418,6 +1423,13 @@ export default function App() {
                       );
                     }
                     const indexVal = item.pm.dewIndex;
+                    if (indexVal === null || indexVal === undefined || indexVal === "") {
+                      return (
+                        <td key={day} onClick={() => setSelectedDay(day)} className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-all ${day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""}`}>
+                          -
+                        </td>
+                      );
+                    }
                     let cellColor = "bg-[#d1fae5] text-[#065f46]"; // Safe
                     if (indexVal > 80) cellColor = "bg-[#ffe4e6] text-[#9f1239] font-black animate-pulse"; // Danger
                     else if (indexVal > 60) cellColor = "bg-[#fef3c7] text-[#92400e] font-bold"; // Caution
@@ -1488,6 +1500,22 @@ export default function App() {
 
               {/* Form Content */}
               <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
+                {/* 0. Factory Select */}
+                <div className="space-y-1.5 mb-4">
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                    <Factory className="w-4 h-4 text-blue-600" />
+                    공장 선택 (Factory Select)
+                  </label>
+                  <select
+                    value={modalFactory}
+                    onChange={(e) => setModalFactory(e.target.value as '평택포승공장' | '아산인주공장')}
+                    className="w-full px-3 py-2.5 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-slate-800 transition-all font-mono appearance-none"
+                    style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724%27 height=%2724%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23475569%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpolyline points=%276 9 12 15 18 9%27%3E%3C/polyline%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '1.2em 1.2em' }}
+                  >
+                    <option value="평택포승공장">평택포승공장</option>
+                    <option value="아산인주공장">아산인주공장</option>
+                  </select>
+                </div>
                 {/* 1. Date Select */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
@@ -1495,8 +1523,8 @@ export default function App() {
                     측정 일자 선택 (Date Select)
                   </label>
                   <input
-                    type="date"
-                    required
+                    type="date" required
+                    
                     value={formData.date}
                     onChange={(e) => handleDateChange(e.target.value)}
                     className="w-full px-3 py-2.5 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-slate-800 transition-all font-mono"
@@ -1518,7 +1546,7 @@ export default function App() {
                       <input
                         type="number"
                         step="0.1"
-                        required
+                        
                         value={formData.amAirTemp}
                         onChange={(e) => setFormData(prev => ({ ...prev, amAirTemp: e.target.value }))}
                         className="w-full px-2 py-1.5 border border-slate-200 rounded-lg bg-white text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none text-center"
@@ -1529,7 +1557,7 @@ export default function App() {
                       <input
                         type="number"
                         step="0.1"
-                        required
+                        
                         value={formData.amSurfaceTemp}
                         onChange={(e) => setFormData(prev => ({ ...prev, amSurfaceTemp: e.target.value }))}
                         className="w-full px-2 py-1.5 border border-slate-200 rounded-lg bg-white text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none text-center"
@@ -1541,7 +1569,7 @@ export default function App() {
                         type="number"
                         min="0"
                         max="100"
-                        required
+                        
                         value={formData.amHumidity}
                         onChange={(e) => setFormData(prev => ({ ...prev, amHumidity: e.target.value }))}
                         className="w-full px-2 py-1.5 border border-slate-200 rounded-lg bg-white text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none text-center"
@@ -1562,7 +1590,7 @@ export default function App() {
                       <input
                         type="number"
                         step="0.1"
-                        required
+                        
                         value={formData.pmAirTemp}
                         onChange={(e) => setFormData(prev => ({ ...prev, pmAirTemp: e.target.value }))}
                         className="w-full px-2 py-1.5 border border-slate-200 rounded-lg bg-white text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none text-center"
@@ -1573,7 +1601,7 @@ export default function App() {
                       <input
                         type="number"
                         step="0.1"
-                        required
+                        
                         value={formData.pmSurfaceTemp}
                         onChange={(e) => setFormData(prev => ({ ...prev, pmSurfaceTemp: e.target.value }))}
                         className="w-full px-2 py-1.5 border border-slate-200 rounded-lg bg-white text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none text-center"
@@ -1585,7 +1613,7 @@ export default function App() {
                         type="number"
                         min="0"
                         max="100"
-                        required
+                        
                         value={formData.pmHumidity}
                         onChange={(e) => setFormData(prev => ({ ...prev, pmHumidity: e.target.value }))}
                         className="w-full px-2 py-1.5 border border-slate-200 rounded-lg bg-white text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none text-center"

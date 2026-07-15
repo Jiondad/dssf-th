@@ -46,7 +46,7 @@ export function getCondensationStatus(val: number): CondensationStatus {
 }
 
 export async function fetchSpreadsheetData(sheetName: string, year: number, month: number): Promise<DailyRecord[]> {
-  const url = `https://script.google.com/macros/s/AKfycbwGRuza0OfCDR-sQA3l3yu_aCAIdJPtKWobL8PwGVOsRDGYCW3O-EGo5oNSeGJKILtU4g/exec?sheetName=${sheetName}&t=${new Date().getTime()}`;
+  const url = `https://script.google.com/macros/s/AKfycbwGRuza0OfCDR-sQA3l3yu_aCAIdJPtKWobL8PwGVOsRDGYCW3O-EGo5oNSeGJKILtU4g/exec?sheetName=${sheetName}&factory=${sheetName === 'Data2' ? '아산인주공장' : '평택포승공장'}&t=${new Date().getTime()}`;
   
   try {
     const response = await fetch(url);
@@ -66,16 +66,16 @@ export async function fetchSpreadsheetData(sheetName: string, year: number, mont
         records.push({
           day: itemDay,
           am: {
-            airTemp: Number(item.amAirTemp),
-            surfaceTemp: Number(item.amSurfaceTemp),
-            humidity: Number(item.amHumidity),
-            dewIndex: Number(item.amCondIndex)
+            airTemp: item.amAirTemp === "" || item.amAirTemp == null ? null : Number(item.amAirTemp),
+            surfaceTemp: item.amSurfaceTemp === "" || item.amSurfaceTemp == null ? null : Number(item.amSurfaceTemp),
+            humidity: item.amHumidity === "" || item.amHumidity == null ? null : Number(item.amHumidity),
+            dewIndex: item.amCondIndex === "" || item.amCondIndex == null ? null : Number(item.amCondIndex)
           },
           pm: {
-            airTemp: Number(item.pmAirTemp),
-            surfaceTemp: Number(item.pmSurfaceTemp),
-            humidity: Number(item.pmHumidity),
-            dewIndex: Number(item.pmCondIndex)
+            airTemp: item.pmAirTemp === "" || item.pmAirTemp == null ? null : Number(item.pmAirTemp),
+            surfaceTemp: item.pmSurfaceTemp === "" || item.pmSurfaceTemp == null ? null : Number(item.pmSurfaceTemp),
+            humidity: item.pmHumidity === "" || item.pmHumidity == null ? null : Number(item.pmHumidity),
+            dewIndex: item.pmCondIndex === "" || item.pmCondIndex == null ? null : Number(item.pmCondIndex)
           }
         });
       }
@@ -88,85 +88,3 @@ export async function fetchSpreadsheetData(sheetName: string, year: number, mont
   }
 }
 
-// Generate deterministic realistic factory data for 31 days
-export function getMonthlyMockData(factory: '평택포승공장' | '아산인주공장' = '평택포승공장', year: number = 2026, month: number = 7): DailyRecord[] {
-  const data: DailyRecord[] = [];
-
-  // Deterministic "random" helper to keep it consistent
-  // Use different seed offset for different factories and months so data looks different
-  const seedOffset = (factory === '아산인주공장' ? 100 : 0) + (year * 12 + month);
-
-  
-  const seedRandom = (day: number) => {
-    const x = Math.sin(day + seedOffset) * 10000;
-    return x - Math.floor(x);
-  };
-
-  const daysInMonth = new Date(year, month, 0).getDate();
-
-  for (let d = 1; d <= daysInMonth; d++) {
-    const rand1 = seedRandom(d * 1.1);
-    const rand2 = seedRandom(d * 1.2);
-    const rand3 = seedRandom(d * 1.3);
-
-    // Air Temperature trends: Summer July, base is around 22°C AM, 30°C PM
-    const amAirTemp = Math.round((21 + rand1 * 4) * 10) / 10; // 21.0 to 25.0
-    const pmAirTemp = Math.round((28 + rand2 * 5) * 10) / 10; // 28.0 to 33.0
-
-    // Surface Temperature: lags behind, heats up slower, so slightly cooler in PM, slightly warmer in AM sometimes
-    // AM surface temp is typically a bit cooler than air temp because metal cools down overnight
-    const amSurfaceTemp = Math.round((amAirTemp - 1.2 - rand3 * 1.5) * 10) / 10; // 1.2 to 2.7 degrees lower
-    const pmSurfaceTemp = Math.round((pmAirTemp - 2.0 - rand1 * 2.0) * 10) / 10; // 2.0 to 4.0 degrees lower
-
-    // Humidity trends: high in AM (cooling down makes RH higher), lower in PM (heating makes RH lower)
-    // Base AM humidity: 65% - 88%, PM: 40% - 68%
-    const amHumidity = Math.round(65 + rand2 * 23);
-    const pmHumidity = Math.round(40 + rand3 * 28);
-
-    // Condensation index (결로지수) logic:
-    // Condensation happens when surface temp is close to dew point. 
-    // Dew point is higher when air temperature is high and humidity is extremely high.
-    // Let's model it: Index increases when Relative Humidity is high AND Surface Temp is lower than Air Temp.
-    // Also, we explicitly create several "Safe", "Warning", and "Danger" days to demonstrate conditional formatting clearly.
-    
-    let amDewIndex = 0;
-    let pmDewIndex = 0;
-
-    // Specific high risk or medium risk days for demonstration:
-    if (d === 3 || d === 13 || d === 24) {
-      // Extremely high risk days (Rainy days / humid days where steel is cold)
-      amDewIndex = Math.round(82 + rand1 * 12); // 82 to 94 (위험)
-      pmDewIndex = Math.round(75 + rand2 * 14); // 75 to 89 (주의 ~ 위험)
-    } else if (d === 5 || d === 8 || d === 15 || d === 20 || d === 28) {
-      // Moderate warning days
-      amDewIndex = Math.round(62 + rand1 * 12); // 62 to 74 (주의)
-      pmDewIndex = Math.round(55 + rand2 * 15); // 55 to 70 (안전 ~ 주의)
-    } else {
-      // Standard safe summer days
-      amDewIndex = Math.round(30 + rand1 * 25); // 30 to 55 (안전)
-      pmDewIndex = Math.round(25 + rand2 * 25); // 25 to 50 (안전)
-    }
-
-    // Clip indexes to [0, 100]
-    amDewIndex = Math.max(0, Math.min(100, amDewIndex));
-    pmDewIndex = Math.max(0, Math.min(100, pmDewIndex));
-
-    data.push({
-      day: d,
-      am: {
-        airTemp: amAirTemp,
-        surfaceTemp: amSurfaceTemp,
-        humidity: amHumidity,
-        dewIndex: amDewIndex
-      },
-      pm: {
-        airTemp: pmAirTemp,
-        surfaceTemp: pmSurfaceTemp,
-        humidity: pmHumidity,
-        dewIndex: pmDewIndex
-      }
-    });
-  }
-
-  return data;
-}
