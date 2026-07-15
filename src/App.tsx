@@ -1282,6 +1282,7 @@ export default function App() {
                 <YAxis 
                   yAxisId="left"
                   domain={[0, 100]}
+                  ticks={[0, 20, 40, 60, 80, 100]}
                   tick={{ fill: '#475569', fontSize: 13 }}
                   axisLine={{ stroke: '#cbd5e1' }}
                   label={{ value: '온도(℃) / 지수(Point)', angle: -90, position: 'insideLeft', offset: 10, fill: '#475569', style: { textAnchor: 'middle', fontSize: 13, fontWeight: 'bold' } }}
@@ -1317,6 +1318,16 @@ export default function App() {
                   strokeWidth={2} 
                   strokeDasharray="4 4"
                   yAxisId="left"
+                />
+
+                {/* Condensation Risk Reference Line */}
+                <ReferenceLine 
+                  y={80} 
+                  stroke="#ef4444" 
+                  strokeWidth={1.5} 
+                  strokeDasharray="3 3" 
+                  label={{ value: '위험 기준선 (80 Pt)', position: 'insideTopRight', fill: '#ef4444', fontSize: 11, fontWeight: 'bold' }} 
+                  yAxisId="left" 
                 />
 
                 {/* Lines with toggling visibility */}
