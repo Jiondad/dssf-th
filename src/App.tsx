@@ -669,11 +669,11 @@ export default function App() {
             </div>
             <div>
               <h1 className="text-lg md:text-xl font-bold tracking-tight font-sans">
-                (주)대성스틸 {selectedFactory} 온습도 관리 모니터링 시스템
+                (주)대성스틸 온습도 관리 모니터링 시스템
               </h1>
               <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-1.5 font-mono">
                 <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Dae Sung Steel {selectedFactory === '평택포승공장' ? 'Pyeongtaek Poseung' : 'Asan Inju'} Factory • Environment Control Room
+                DAESUNG STEEL Smart Factory • Environment Control Room
               </p>
             </div>
           </div>
