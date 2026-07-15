@@ -1484,7 +1484,6 @@ export default function App() {
 
           {/* User Instruction block inside Table */}
           <div className="mt-4 flex items-center justify-between text-[11px] text-slate-400 font-mono print:hidden">
-            <span>※ 좌우로 스크롤하여 전체 31일 대장을 확인하실 수 있습니다.</span>
             <span className="hidden sm:inline">Copyright © (주)대성스틸 Smart Factory. All rights reserved.</span>
           </div>
         </section>
