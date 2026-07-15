@@ -39,16 +39,16 @@ import { fetchSpreadsheetData, getCondensationStatus, CondensationStatus } from 
 import { DailyRecord, SensorKey } from "./types";
 
 // --- Custom Dew Index Colors & Dots ---
-const getDewColor = (value: number, isAm: boolean) => {
-  if (value <= 60) return isAm ? '#10b981' : '#6ee7b7'; // Safe (Green / Light Green)
-  if (value <= 80) return isAm ? '#f59e0b' : '#fcd34d'; // Caution (Orange / Light Orange)
-  return isAm ? '#ef4444' : '#fda4af'; // Danger (Red / Light Red)
+const getDewColor = (value: number) => {
+  if (value <= 60) return '#10b981'; // Safe (Green)
+  if (value <= 80) return '#f59e0b'; // Caution (Orange)
+  return '#ef4444'; // Danger (Red)
 };
 
 const CustomDewDot = (props: any) => {
-  const { cx, cy, value, isAm } = props;
+  const { cx, cy, value } = props;
   if (!cx || !cy || value === undefined) return null;
-  const color = getDewColor(value, isAm);
+  const color = getDewColor(value);
 
 
   return (
@@ -57,9 +57,9 @@ const CustomDewDot = (props: any) => {
 };
 
 const CustomDewActiveDot = (props: any) => {
-  const { cx, cy, value, isAm } = props;
+  const { cx, cy, value } = props;
   if (!cx || !cy || value === undefined) return null;
-  const color = getDewColor(value, isAm);
+  const color = getDewColor(value);
   return (
     <circle cx={cx} cy={cy} r={8} fill={color} stroke="#fff" strokeWidth={2} style={{ filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.3))' }} />
   );
@@ -298,6 +298,38 @@ export default function App() {
       };
     });
   }, [sheetData, fixedDays]);
+
+  const dewOffsets = useMemo(() => {
+    let amDewMin = 100, amDewMax = 0;
+    let pmDewMin = 100, pmDewMax = 0;
+    chartData.forEach(d => {
+      const am = d['오전 결로지수'];
+      const pm = d['오후 결로지수'];
+      if (am !== null) {
+        if (am < amDewMin) amDewMin = am;
+        if (am > amDewMax) amDewMax = am;
+      }
+      if (pm !== null) {
+        if (pm < pmDewMin) pmDewMin = pm;
+        if (pm > pmDewMax) pmDewMax = pm;
+      }
+    });
+    
+    if (amDewMin >= amDewMax) { amDewMin = 0; amDewMax = 100; }
+    if (pmDewMin >= pmDewMax) { pmDewMin = 0; pmDewMax = 100; }
+
+    const getOffset = (val, min, max) => {
+      return Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100));
+    };
+
+    return {
+      am60: getOffset(60, amDewMin, amDewMax),
+      am80: getOffset(80, amDewMin, amDewMax),
+      pm60: getOffset(60, pmDewMin, pmDewMax),
+      pm80: getOffset(80, pmDewMin, pmDewMax),
+    };
+  }, [chartData]);
+
 
   // Current record details based on selected day
   const currentRecord = useMemo(() => {
@@ -911,7 +943,7 @@ export default function App() {
                        <TrendingUp className="w-3 h-3 text-blue-500" />
                        일교차: {currentRecord.pm.airTemp !== null && currentRecord.am.airTemp !== null ? Math.round((currentRecord.pm.airTemp - currentRecord.am.airTemp) * 10) / 10 + "℃" : "-"}
                      </span>
-                     <span className="font-mono bg-slate-100 text-slate-600 px-1 py-0.5 rounded whitespace-nowrap">
+                     <span className={`font-mono px-1 py-0.5 rounded whitespace-nowrap ${maxDewIndexToday > 80 ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-600'}`}>
                        Target: 18~28℃
                      </span>
                    </div>
@@ -1010,19 +1042,19 @@ export default function App() {
                  {/* Card 4: 결로지수 */}
                  <motion.div 
                    layoutId="card_dew_index"
-                   animate={{ backgroundColor: condensationStatus.bgColor.includes('emerald') ? '#d1fae5' : condensationStatus.bgColor.includes('amber') ? '#fef3c7' : '#ffe4e6' }}
+                   animate={{ backgroundColor: condensationStatus.bgColor.includes('emerald') ? '#d1fae5' : condensationStatus.bgColor.includes('amber') ? '#fef3c7' : '#ef4444' }}
                    transition={{ duration: 0.3 }}
-                   className={`rounded-xl border p-3 shadow-xs hover:shadow-md transition-all relative z-10 overflow-visible flex flex-col justify-between ${condensationStatus.borderColor}`}
+                   className={`rounded-xl border p-3 shadow-xs hover:shadow-md transition-all relative z-10 overflow-visible flex flex-col justify-between ${maxDewIndexToday > 80 ? 'border-red-600 bg-red-500 text-white animate-pulse' : condensationStatus.borderColor}`}
                    id="card_dew_index"
                  >
                    <div>
                      <div className="flex justify-between items-start mb-2">
                        <div>
-                         <span className="text-sm text-slate-800 font-extrabold tracking-tight block">결로 위험 지수</span>
-                         <h3 className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Condensation</h3>
+                         <span className={`text-sm font-extrabold tracking-tight block ${maxDewIndexToday > 80 ? 'text-white' : 'text-slate-800'}`}>결로 위험 지수</span>
+                         <h3 className={`text-[10px] font-medium uppercase tracking-wide ${maxDewIndexToday > 80 ? 'text-white/80' : 'text-slate-500'}`}>Condensation</h3>
                        </div>
-                       <div className="relative group p-1.5 rounded-lg bg-white/80 cursor-help">
-                         <AlertTriangle className="w-4 h-4 text-slate-900 transition-transform group-hover:scale-110" />
+                       <div className="relative group p-1.5 rounded-lg bg-amber-400/90 cursor-help">
+                         <AlertTriangle className="w-4 h-4 text-amber-950 transition-transform group-hover:scale-110" />
                          <div className="absolute right-0 top-full mt-2 w-64 bg-slate-900 text-white p-3 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 z-50 transform origin-top-right scale-95 group-hover:scale-100">
                            <h4 className="font-bold text-xs mb-2 text-blue-300 border-b border-slate-700 pb-1">결로지수 산출</h4>
                            <div className="space-y-2 text-[10px]">
@@ -1044,28 +1076,28 @@ export default function App() {
 
                      <div className="grid grid-cols-2 gap-2 divide-x divide-slate-200 mt-2">
                        <div className="flex flex-col justify-center">
-                         <span className="text-[10px] text-slate-600 font-semibold block uppercase">오전(AM)</span>
+                         <span className={`text-[10px] font-semibold block uppercase ${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}`}>오전(AM)</span>
                          <div className="flex items-baseline gap-0.5 mt-0.5">
-                           <span className="text-lg font-black font-mono text-slate-900">{currentRecord.am.dewIndex !== null ? currentRecord.am.dewIndex : "-"}</span>
-                           <span className="text-[10px] text-slate-600 font-bold">Pt</span>
+                           <span className={`text-lg font-black font-mono ${maxDewIndexToday > 80 ? 'text-white' : 'text-slate-900'}`}>{currentRecord.am.dewIndex !== null ? currentRecord.am.dewIndex : "-"}</span>
+                           <span className={`text-[10px] font-bold ${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}`}>Pt</span>
                          </div>
                        </div>
                        <div className="pl-2 flex flex-col justify-center">
-                         <span className="text-[10px] text-slate-600 font-semibold block uppercase">오후(PM)</span>
+                         <span className={`text-[10px] font-semibold block uppercase ${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}`}>오후(PM)</span>
                          <div className="flex items-baseline gap-0.5 mt-0.5">
-                           <span className="text-lg font-black font-mono text-slate-900">{currentRecord.pm.dewIndex !== null ? currentRecord.pm.dewIndex : "-"}</span>
-                           <span className="text-[10px] text-slate-600 font-bold">Pt</span>
+                           <span className={`text-lg font-black font-mono ${maxDewIndexToday > 80 ? 'text-white' : 'text-slate-900'}`}>{currentRecord.pm.dewIndex !== null ? currentRecord.pm.dewIndex : "-"}</span>
+                           <span className={`text-[10px] font-bold ${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}`}>Pt</span>
                          </div>
                        </div>
                      </div>
                    </div>
 
                    <div className="mt-2 pt-2 border-t border-slate-200/50 flex justify-between items-center text-[10px]">
-                     <span className={`font-bold flex items-center gap-1 ${condensationStatus.textColor} whitespace-nowrap`}>
+                     <span className={`font-bold flex items-center gap-1 ${maxDewIndexToday > 80 ? 'text-white' : condensationStatus.textColor} whitespace-nowrap`}>
                        {condensationStatus.icon}
                        {condensationStatus.text} 상태
                      </span>
-                     <span className="font-mono bg-slate-100 text-slate-600 px-1 py-0.5 rounded whitespace-nowrap">
+                     <span className={`font-mono px-1 py-0.5 rounded whitespace-nowrap ${maxDewIndexToday > 80 ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-600'}`}>
                        Target: &lt;60Pt
                      </span>
                    </div>
@@ -1256,19 +1288,19 @@ export default function App() {
                 <defs>
                   <linearGradient id="amDewGradient" x1="0" y1="1" x2="0" y2="0">
                     <stop offset="0%" stopColor="#10b981" />
-                    <stop offset="60%" stopColor="#10b981" />
-                    <stop offset="60%" stopColor="#f59e0b" />
-                    <stop offset="80%" stopColor="#f59e0b" />
-                    <stop offset="80%" stopColor="#ef4444" />
+                    <stop offset={`${dewOffsets.am60}%`} stopColor="#10b981" />
+                    <stop offset={`${dewOffsets.am60}%`} stopColor="#f59e0b" />
+                    <stop offset={`${dewOffsets.am80}%`} stopColor="#f59e0b" />
+                    <stop offset={`${dewOffsets.am80}%`} stopColor="#ef4444" />
                     <stop offset="100%" stopColor="#ef4444" />
                   </linearGradient>
                   <linearGradient id="pmDewGradient" x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stopColor="#6ee7b7" />
-                    <stop offset="60%" stopColor="#6ee7b7" />
-                    <stop offset="60%" stopColor="#fcd34d" />
-                    <stop offset="80%" stopColor="#fcd34d" />
-                    <stop offset="80%" stopColor="#fda4af" />
-                    <stop offset="100%" stopColor="#fda4af" />
+                    <stop offset="0%" stopColor="#10b981" />
+                    <stop offset={`${dewOffsets.pm60}%`} stopColor="#10b981" />
+                    <stop offset={`${dewOffsets.pm60}%`} stopColor="#f59e0b" />
+                    <stop offset={`${dewOffsets.pm80}%`} stopColor="#f59e0b" />
+                    <stop offset={`${dewOffsets.pm80}%`} stopColor="#ef4444" />
+                    <stop offset="100%" stopColor="#ef4444" />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
