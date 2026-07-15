@@ -1500,38 +1500,42 @@ export default function App() {
 
               {/* Form Content */}
               <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
-                {/* 0. Factory Select */}
-                <div className="space-y-1.5 mb-4">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                    <Factory className="w-4 h-4 text-blue-600" />
-                    공장 선택 (Factory Select)
-                  </label>
-                  <select
-                    value={modalFactory}
-                    onChange={(e) => setModalFactory(e.target.value as '평택포승공장' | '아산인주공장')}
-                    className="w-full px-3 py-2.5 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-slate-800 transition-all font-mono appearance-none"
-                    style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724%27 height=%2724%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23475569%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpolyline points=%276 9 12 15 18 9%27%3E%3C/polyline%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '1.2em 1.2em' }}
-                  >
-                    <option value="평택포승공장">평택포승공장</option>
-                    <option value="아산인주공장">아산인주공장</option>
-                  </select>
-                </div>
-                {/* 1. Date Select */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                    <Calendar className="w-4 h-4 text-blue-600" />
-                    측정 일자 선택 (Date Select)
-                  </label>
-                  <input
-                    type="date" required
-                    
-                    value={formData.date}
-                    onChange={(e) => handleDateChange(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-slate-800 transition-all font-mono"
-                  />
-                  <p className="text-[10px] text-slate-400">
-                    * 기존 대장에 데이터가 존재하는 일자를 선택하시면 해당 데이터가 자동으로 로드되어 수정하실 수 있습니다.
-                  </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
+                  {/* 0. Factory Select */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                      <Factory className="w-4 h-4 text-blue-600" />
+                      공장 선택 (Factory Select)
+                    </label>
+                    <select
+                      value={modalFactory}
+                      onChange={(e) => setModalFactory(e.target.value as '평택포승공장' | '아산인주공장')}
+                      className="w-full px-3 py-2.5 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-slate-800 transition-all font-mono appearance-none"
+                      style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724%27 height=%2724%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23475569%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpolyline points=%276 9 12 15 18 9%27%3E%3C/polyline%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '1.2em 1.2em' }}
+                    >
+                      <option value="평택포승공장">평택포승공장</option>
+                      <option value="아산인주공장">아산인주공장</option>
+                    </select>
+                  </div>
+                  {/* 1. Date Select */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                      <Calendar className="w-4 h-4 text-blue-600" />
+                      측정 일자 선택 (Date Select)
+                    </label>
+                    <input
+                      type="date" required
+                      
+                      value={formData.date}
+                      onChange={(e) => handleDateChange(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-slate-800 transition-all font-mono"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <p className="text-[10px] text-slate-400">
+                      * 기존 대장에 데이터가 존재하는 일자를 선택하시면 해당 데이터가 자동으로 로드되어 수정하실 수 있습니다.
+                    </p>
+                  </div>
                 </div>
 
                 {/* 2. AM Group */}
