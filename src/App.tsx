@@ -64,8 +64,9 @@ const CustomDewActiveDot = (props: any) => {
 };
 
 export default function App() {
-  const [selectedYear, setSelectedYear] = useState<number>(2026);
-  const [selectedMonth, setSelectedMonth] = useState<number>(7);
+  const today = new Date();
+  const [selectedYear, setSelectedYear] = useState<number>(today.getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState<number>(today.getMonth() + 1);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState<boolean>(false);
   const [selectedFactory, setSelectedFactory] = useState<'평택포승공장' | '아산인주공장'>('평택포승공장');
   const [isFactoryPickerOpen, setIsFactoryPickerOpen] = useState<boolean>(false);
@@ -84,6 +85,16 @@ export default function App() {
       const newData = await fetchSpreadsheetData(sheetName, selectedYear, selectedMonth);
       if (isMounted) {
         setMockData(newData);
+        
+        // Ensure selectedDay is within the valid range of the new data
+        setSelectedDay(prev => {
+          const maxDay = newData.length > 0 ? Math.max(...newData.map(d => d.day)) : 1;
+          const minDay = newData.length > 0 ? Math.min(...newData.map(d => d.day)) : 1;
+          if (prev > maxDay) return maxDay;
+          if (prev < minDay) return minDay;
+          return prev;
+        });
+
         setIsLoadingData(false);
       }
     };
@@ -95,7 +106,7 @@ export default function App() {
     };
   }, [selectedYear, selectedMonth, selectedFactory]);
 
-  const [selectedDay, setSelectedDay] = useState<number>(13); // Default to July 13th
+  const [selectedDay, setSelectedDay] = useState<number>(today.getDate());
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [activeAmPm, setActiveAmPm] = useState<'am' | 'pm'>('am'); // For mobile toggle details
   
@@ -103,7 +114,7 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formData, setFormData] = useState({
-    date: `${selectedYear}-${String(selectedMonth).padStart(2, '0')}-13`,
+    date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`,
     amAirTemp: "23.5",
     amSurfaceTemp: "21.2",
     amHumidity: "72",
@@ -179,7 +190,7 @@ export default function App() {
       const adjustedDate = new Date(dateObj.getTime() + userTimezoneOffset);
       const parsedDay = adjustedDate.getDate(); // 1 ~ 31
 
-      if (!isNaN(parsedDay) && parsedDay >= 1 && parsedDay <= 31) {
+      if (!isNaN(parsedDay) && parsedDay >= 1 && parsedDay <= mockData.length) {
         setMockData(prev => {
           return prev.map(record => {
             if (record.day === parsedDay) {
@@ -270,7 +281,7 @@ export default function App() {
     if (isPlaying) {
       intervalId = setInterval(() => {
         setSelectedDay(prev => {
-          if (prev >= 31) return 1;
+          if (prev >= mockData.length) return 1;
           return prev + 1;
         });
       }, 1500);
@@ -472,7 +483,12 @@ export default function App() {
               </button>
               <button
                 onClick={() => {
-                  setSelectedDay(13);
+                  const currentToday = new Date();
+                  if (selectedYear === currentToday.getFullYear() && selectedMonth === currentToday.getMonth() + 1) {
+                    setSelectedDay(currentToday.getDate());
+                  } else {
+                    setSelectedDay(1);
+                  }
                   setIsPlaying(false);
                 }}
                 className="p-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition-all flex items-center justify-center"
@@ -513,7 +529,7 @@ export default function App() {
                 <Calendar className="w-3.5 h-3.5 text-slate-400" />
                 {selectedMonth}월 종합 지표 통계
               </span>
-              <span className="text-[10px] font-mono text-slate-400">Total 31 Days</span>
+              <span className="text-[10px] font-mono text-slate-400">Total {mockData.length} Days</span>
             </div>
             <div className="grid grid-cols-3 gap-2 text-center">
               <div className="bg-emerald-50 rounded-lg p-2 border border-emerald-100">
@@ -549,7 +565,7 @@ export default function App() {
               <input 
                 type="range" 
                 min={1} 
-                max={31} 
+                max={mockData.length > 0 ? mockData.length : 31} 
                 value={selectedDay}
                 onChange={(e) => setSelectedDay(parseInt(e.target.value))}
                 className="w-32 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
@@ -789,7 +805,7 @@ export default function App() {
                 <span className="h-5 w-1 bg-blue-600 rounded-full inline-block"></span>
                 {selectedMonth}월 온습도 및 결로지수 분석 그래프 (Line Chart)
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">X축은 1일부터 31일까지의 일자이며, 각 선을 클릭하여 가시성을 제어할 수 있습니다.</p>
+              <p className="text-xs text-slate-500 mt-0.5">X축은 1일부터 {mockData.length}일까지의 일자이며, 각 선을 클릭하여 가시성을 제어할 수 있습니다.</p>
             </div>
 
             {/* Quick Chart actions */}
@@ -1246,7 +1262,7 @@ export default function App() {
                 <tr className="bg-slate-200 text-center h-2">
                   <td className="sticky left-0 bg-slate-200 p-0" colSpan={1}></td>
                   <td className="sticky left-[35px] xl:left-[45px] bg-slate-200 p-0" colSpan={1}></td>
-                  <td colSpan={31} className="p-0"></td>
+                  <td colSpan={mockData.length > 0 ? mockData.length : 31} className="p-0"></td>
                 </tr>
 
 
@@ -1341,7 +1357,7 @@ export default function App() {
 
           {/* User Instruction block inside Table */}
           <div className="mt-4 flex items-center justify-between text-[11px] text-slate-400 font-mono">
-            <span>※ 좌우로 스크롤하여 전체 31일 대장을 확인하실 수 있습니다.</span>
+            <span>※ 좌우로 스크롤하여 전체 {mockData.length}일 대장을 확인하실 수 있습니다.</span>
             <span className="hidden sm:inline">Copyright © (주)대성스틸 Smart Factory. All rights reserved.</span>
           </div>
         </section>

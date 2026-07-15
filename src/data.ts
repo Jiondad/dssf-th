@@ -70,7 +70,9 @@ export function getMonthlyMockData(factory: '평택포승공장' | '아산인주
     return x - Math.floor(x);
   };
 
-  for (let d = 1; d <= 31; d++) {
+  const daysInMonth = new Date(year, month, 0).getDate();
+
+  for (let d = 1; d <= daysInMonth; d++) {
     const rand1 = seedRandom(d * 1.1);
     const rand2 = seedRandom(d * 1.2);
     const rand3 = seedRandom(d * 1.3);
