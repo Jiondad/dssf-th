@@ -1239,7 +1239,7 @@ export default function App() {
 
           
 {/* Recharts Container */}
-          <div className="h-[280px] md:h-[320px] w-full" id="chart_container">
+          <div className="h-[440px] md:h-[520px] w-full" id="chart_container">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart 
                 data={chartData} 
@@ -1401,9 +1401,7 @@ export default function App() {
             </ResponsiveContainer>
           </div>
 
-          <p className="text-xs text-slate-400 text-center mt-3 font-mono">
-            * 차트상의 수직 파선은 현재 선택되어 상단 카드로 시각화 중인 일자({selectedDay}일)를 표시합니다.
-          </p>
+          
         </section>
 
         {/* 3. 월간 데이터 표 Section */}
