@@ -20,7 +20,9 @@ import {
   X,
   Loader2,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Factory,
+  ChevronDown
 } from "lucide-react";
 import { 
   ResponsiveContainer, 
@@ -33,7 +35,7 @@ import {
   ReferenceLine
 } from "recharts";
 import { motion, AnimatePresence } from "motion/react";
-import { getMonthlyMockData, getCondensationStatus, CondensationStatus } from "./data";
+import { fetchSpreadsheetData, getCondensationStatus, CondensationStatus } from "./data";
 import { DailyRecord, SensorKey } from "./types";
 
 // --- Custom Dew Index Colors & Dots ---
@@ -65,14 +67,33 @@ export default function App() {
   const [selectedYear, setSelectedYear] = useState<number>(2026);
   const [selectedMonth, setSelectedMonth] = useState<number>(7);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState<boolean>(false);
+  const [selectedFactory, setSelectedFactory] = useState<'평택포승공장' | '아산인주공장'>('평택포승공장');
+  const [isFactoryPickerOpen, setIsFactoryPickerOpen] = useState<boolean>(false);
 
-  const [mockData, setMockData] = useState<DailyRecord[]>(() => getMonthlyMockData());
+  const [mockData, setMockData] = useState<DailyRecord[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
 
   useEffect(() => {
-    // Re-generate mock data when year or month changes to simulate data fetching
-    setMockData(getMonthlyMockData());
-    // setSelectedDay(1); // Optionally reset to day 1 when month changes
-  }, [selectedYear, selectedMonth]);
+    let isMounted = true;
+    const loadData = async () => {
+      setIsLoadingData(true);
+      
+      // Determine the simulated sheet name based on the factory
+      const sheetName = selectedFactory === '평택포승공장' ? 'Data' : 'Data2';
+      
+      const newData = await fetchSpreadsheetData(sheetName, selectedYear, selectedMonth);
+      if (isMounted) {
+        setMockData(newData);
+        setIsLoadingData(false);
+      }
+    };
+    
+    loadData();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedYear, selectedMonth, selectedFactory]);
 
   const [selectedDay, setSelectedDay] = useState<number>(13); // Default to July 13th
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -225,11 +246,17 @@ export default function App() {
 
   // Current record details based on selected day
   const currentRecord = useMemo(() => {
-    return mockData.find(r => r.day === selectedDay) || mockData[12];
+    if (mockData.length === 0) return {
+      day: 1,
+      am: { airTemp: 0, surfaceTemp: 0, humidity: 0, dewIndex: 0 },
+      pm: { airTemp: 0, surfaceTemp: 0, humidity: 0, dewIndex: 0 }
+    };
+    return mockData.find(r => r.day === selectedDay) || mockData[0];
   }, [selectedDay, mockData]);
 
   // Max condensation index of the selected day to determine card safety level
   const maxDewIndexToday = useMemo(() => {
+    if (!currentRecord) return 0;
     return Math.max(currentRecord.am.dewIndex, currentRecord.pm.dewIndex);
   }, [currentRecord]);
 
@@ -297,17 +324,71 @@ export default function App() {
             </div>
             <div>
               <h1 className="text-xl md:text-2xl font-bold tracking-tight font-sans">
-                (주)대성스틸 코일센터 온습도 관리 모니터링 시스템
+                (주)대성스틸 {selectedFactory} 온습도 관리 모니터링 시스템
               </h1>
               <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-1.5 font-mono">
                 <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Dae Sung Steel Coil Center • Environment Control Room
+                Dae Sung Steel {selectedFactory === '평택포승공장' ? 'Pyeongtaek Poseung' : 'Asan Inju'} Factory • Environment Control Room
               </p>
             </div>
           </div>
           
           {/* Quick Info & Sim Controls */}
           <div className="flex items-center gap-3 bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/50">
+            
+            {/* Factory Selector */}
+            <div className="relative z-50 mr-2 pr-4 border-r border-slate-700">
+              <span className="text-[10px] text-slate-400 block font-mono mb-0.5">공장구분</span>
+              <button 
+                onClick={() => setIsFactoryPickerOpen(!isFactoryPickerOpen)}
+                className="flex items-center gap-1.5 hover:bg-slate-700 p-1 -ml-1 rounded-md transition-colors"
+                title="공장 변경"
+              >
+                <Factory className="w-4 h-4 text-emerald-400" />
+                <span className="text-sm font-bold text-slate-200">{selectedFactory}</span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              </button>
+
+              <AnimatePresence>
+                {isFactoryPickerOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-40"
+                      onClick={() => setIsFactoryPickerOpen(false)}
+                    />
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute left-0 top-full mt-2 w-48 bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden origin-top-left text-slate-900 z-50"
+                    >
+                      <div className="p-1.5 flex flex-col gap-1">
+                        {['평택포승공장', '아산인주공장'].map(factory => (
+                          <button
+                            key={factory}
+                            onClick={() => {
+                              setSelectedFactory(factory as any);
+                              setIsFactoryPickerOpen(false);
+                            }}
+                            className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                              selectedFactory === factory
+                                ? "bg-emerald-50 text-emerald-700"
+                                : "text-slate-700 hover:bg-slate-100"
+                            }`}
+                          >
+                            <Factory className={`w-4 h-4 ${selectedFactory === factory ? 'text-emerald-500' : 'text-slate-400'}`} />
+                            {factory}
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Date Picker & Panel */}
             <div className="text-right flex flex-col items-end">
               <span className="text-[10px] text-slate-400 block font-mono">SIMULATION PANEL</span>
               
@@ -406,10 +487,18 @@ export default function App() {
       </header>
 
       {/* Main Container */}
-      <main className="max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 mt-6 space-y-6">
-        
+      <main className="max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 mt-6 space-y-6 relative">
+        {isLoadingData ? (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-50/80 backdrop-blur-sm min-h-[600px] rounded-2xl">
+            <div className="flex flex-col items-center gap-4">
+              <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+              <p className="text-slate-600 font-semibold text-sm">데이터를 불러오는 중입니다...</p>
+            </div>
+          </div>
+        ) : null}
+
         {/* Upper Info Alert or Quick Stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <div className={`grid grid-cols-1 lg:grid-cols-12 gap-4 transition-opacity duration-300 ${isLoadingData ? 'opacity-30' : 'opacity-100'}`}>
           <div className="lg:col-span-8 bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-start gap-3.5 shadow-xs">
             <Info className="w-5.5 h-5.5 text-blue-600 shrink-0 mt-0.5" />
             <div className="text-sm text-blue-900 leading-relaxed">
@@ -451,7 +540,7 @@ export default function App() {
                 <span className="h-5 w-1 bg-blue-600 rounded-full inline-block"></span>
                 실시간 환경 모니터링 현황 ({selectedMonth}월 {selectedDay}일)
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">선택된 일자의 오전(AM) 및 오후(PM) 코일센터 환경 측정치 요약입니다.</p>
+              <p className="text-xs text-slate-500 mt-0.5">선택된 일자의 오전(AM) 및 오후(PM) {selectedFactory} 환경 측정치 요약입니다.</p>
             </div>
             
             {/* Quick Slider control for days */}

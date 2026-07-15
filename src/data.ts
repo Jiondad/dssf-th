@@ -45,13 +45,28 @@ export function getCondensationStatus(val: number): CondensationStatus {
   }
 }
 
-// Generate deterministic realistic factory data for 31 days (for July, Summer season)
-export function getMonthlyMockData(): DailyRecord[] {
+export async function fetchSpreadsheetData(sheetName: string, year: number, month: number): Promise<DailyRecord[]> {
+  // Simulate network latency (e.g. Google Sheets API call)
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      // Map sheetName to our mock factory logic
+      const factory = sheetName === 'Data2' ? '아산인주공장' : '평택포승공장';
+      resolve(getMonthlyMockData(factory, year, month));
+    }, 600); // 600ms loading effect
+  });
+}
+
+// Generate deterministic realistic factory data for 31 days
+export function getMonthlyMockData(factory: '평택포승공장' | '아산인주공장' = '평택포승공장', year: number = 2026, month: number = 7): DailyRecord[] {
   const data: DailyRecord[] = [];
 
   // Deterministic "random" helper to keep it consistent
+  // Use different seed offset for different factories and months so data looks different
+  const seedOffset = (factory === '아산인주공장' ? 100 : 0) + (year * 12 + month);
+
+  
   const seedRandom = (day: number) => {
-    const x = Math.sin(day) * 10000;
+    const x = Math.sin(day + seedOffset) * 10000;
     return x - Math.floor(x);
   };
 
