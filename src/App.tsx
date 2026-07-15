@@ -853,11 +853,11 @@ export default function App() {
         <section className="space-y-4 print:hidden" id="summary_cards_section">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2 print:text-2xl print:justify-center print:w-full print:mb-2">
                 <span className="h-5 w-1 bg-blue-600 rounded-full inline-block"></span>
                 실시간 환경 모니터링 현황 ({selectedMonth}월 {selectedDay}일)
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">선택된 일자의 오전(AM) 및 오후(PM) {selectedFactory} 환경 측정치 요약입니다.</p>
+              <p className="text-xs text-slate-500 mt-0.5 print:hidden">선택된 일자의 오전(AM) 및 오후(PM) {selectedFactory} 환경 측정치 요약입니다.</p>
             </div>
             
             {/* Quick Slider control for days */}
@@ -1102,11 +1102,11 @@ export default function App() {
         <section className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-xs print:hidden" id="monthly_chart_section">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-100 pb-5 mb-5">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2 print:text-2xl print:justify-center print:w-full print:mb-2">
                 <span className="h-5 w-1 bg-blue-600 rounded-full inline-block"></span>
                 {selectedMonth}월 온습도 및 결로지수 분석 그래프 (Line Chart)
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">X축은 1일부터 31일까지의 일자이며, 각 선을 클릭하여 가시성을 제어할 수 있습니다.</p>
+              <p className="text-xs text-slate-500 mt-0.5 print:hidden">X축은 1일부터 31일까지의 일자이며, 각 선을 클릭하여 가시성을 제어할 수 있습니다.</p>
             </div>
 
             {/* Quick Chart actions */}
@@ -1408,18 +1408,18 @@ export default function App() {
 
         {/* 3. 월간 데이터 표 Section */}
         <section className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-xs overflow-hidden print:m-0 print:p-0 print:border-none print:shadow-none" id="monthly_table_section">
-          <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-slate-100 pb-5 mb-5">
+          <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-slate-100 pb-5 mb-5 print:border-none print:pb-2 print:mb-2 print:block">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <FileSpreadsheet className="w-5.5 h-5.5 text-blue-600" />
+              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2 print:text-2xl print:justify-center print:w-full print:mb-2">
+                <FileSpreadsheet className="w-5.5 h-5.5 text-blue-600 print:hidden" />
                 {selectedMonth}월 온습도 및 결로지수 대장 (Monthly Excel Ledger)
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5 print:hidden">
                 오전(AM)/오후(PM) 그룹별 측정대장입니다. 결로지수는 위험도 수준에 맞춰 조건부 서식이 적용되어 있으며 날짜 헤더 클릭 시 상세 데이터로 바인딩됩니다.
               </p>
             </div>
             
-            <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto justify-between sm:justify-end">
+            <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto justify-between sm:justify-end print:hidden">
               
               <button
                 onClick={() => window.print()}
@@ -1467,16 +1467,16 @@ export default function App() {
           <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-inner print:hidden" id="ledger_table_wrapper">
             {renderTable(fixedDays, false)}
           </div>
-          <div className="hidden print:block space-y-8 print:w-full print:m-0 print:p-0 print:overflow-visible" id="print_ledger_wrapper">
-            <h3 className="text-xl font-bold mb-4 text-center">{selectedMonth}월 온습도 및 결로지수 대장 (1일 ~ 16일) - {selectedFactory}</h3>
+          <div className="hidden print:block space-y-4 print:w-full print:m-0 print:p-0 print:overflow-visible" id="print_ledger_wrapper">
             {renderTable(fixedDays.slice(0, 16), true)}
-            <h3 className="text-xl font-bold mb-4 mt-12 text-center" style={{ pageBreakBefore: 'always' }}>{selectedMonth}월 온습도 및 결로지수 대장 (17일 ~ 31일) - {selectedFactory}</h3>
-            {renderTable(fixedDays.slice(16, 31), true)}
+            <div style={{ pageBreakBefore: 'always' }} className="pt-2">
+              {renderTable(fixedDays.slice(16, 31), true)}
+            </div>
           </div>
 
 
           {/* User Instruction block inside Table */}
-          <div className="mt-4 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+          <div className="mt-4 flex items-center justify-between text-[11px] text-slate-400 font-mono print:hidden">
             <span>※ 좌우로 스크롤하여 전체 31일 대장을 확인하실 수 있습니다.</span>
             <span className="hidden sm:inline">Copyright © (주)대성스틸 Smart Factory. All rights reserved.</span>
           </div>
