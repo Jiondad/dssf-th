@@ -46,14 +46,46 @@ export function getCondensationStatus(val: number): CondensationStatus {
 }
 
 export async function fetchSpreadsheetData(sheetName: string, year: number, month: number): Promise<DailyRecord[]> {
-  // Simulate network latency (e.g. Google Sheets API call)
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // Map sheetName to our mock factory logic
-      const factory = sheetName === 'Data2' ? '아산인주공장' : '평택포승공장';
-      resolve(getMonthlyMockData(factory, year, month));
-    }, 600); // 600ms loading effect
-  });
+  const url = `https://script.google.com/macros/s/AKfycbwGRuza0OfCDR-sQA3l3yu_aCAIdJPtKWobL8PwGVOsRDGYCW3O-EGo5oNSeGJKILtU4g/exec?sheetName=${sheetName}`;
+  
+  try {
+    const response = await fetch(url);
+    const rawData = await response.json();
+    
+    const records: DailyRecord[] = [];
+    
+    for (const item of rawData) {
+      if (!item.date || !item.amAirTemp) continue; // Skip empty or invalid rows
+
+      const dateObj = new Date(item.date);
+      const itemYear = dateObj.getFullYear();
+      const itemMonth = dateObj.getMonth() + 1;
+      const itemDay = dateObj.getDate();
+
+      if (itemYear === year && itemMonth === month) {
+        records.push({
+          day: itemDay,
+          am: {
+            airTemp: Number(item.amAirTemp),
+            surfaceTemp: Number(item.amSurfaceTemp),
+            humidity: Number(item.amHumidity),
+            dewIndex: Number(item.amCondIndex)
+          },
+          pm: {
+            airTemp: Number(item.pmAirTemp),
+            surfaceTemp: Number(item.pmSurfaceTemp),
+            humidity: Number(item.pmHumidity),
+            dewIndex: Number(item.pmCondIndex)
+          }
+        });
+      }
+    }
+    
+    return records.sort((a, b) => a.day - b.day);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return [];
+  }
 }
 
 // Generate deterministic realistic factory data for 31 days

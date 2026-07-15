@@ -141,7 +141,7 @@ export default function App() {
           pmAirTemp: existing.pm.airTemp.toString(),
           pmSurfaceTemp: existing.pm.surfaceTemp.toString(),
           pmHumidity: existing.pm.humidity.toString(),
-        };
+         };
       }
       return updated;
     });
@@ -152,29 +152,7 @@ export default function App() {
     try {
       setIsSubmitting(true);
       
-      const payload = {
-        date: formData.date,
-        amAirTemp: Number(formData.amAirTemp),
-        amSurfaceTemp: Number(formData.amSurfaceTemp),
-        amHumidity: Number(formData.amHumidity),
-        pmAirTemp: Number(formData.pmAirTemp),
-        pmSurfaceTemp: Number(formData.pmSurfaceTemp),
-        pmHumidity: Number(formData.pmHumidity),
-      };
-
-      // POST to Google Apps Script API
-      const response = await fetch("https://script.google.com/macros/s/AKfycbwGRuza0OfCDR-sQA3l3yu_aCAIdJPtKWobL8PwGVOsRDGYCW3O-EGo5oNSeGJKILtU4g/exec", {
-        method: "POST",
-        mode: "no-cors", // Crucial for Google Apps Script redirects
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      });
-
-      // Calculate local dew indices so the client update is immediate and mathematically accurate
       const calculateLocalDewIndex = (air: number, surf: number, hum: number) => {
-        // Dew Point approximation: Td = T - ((100 - RH)/5)
         const dewPoint = air - ((100 - hum) / 5);
         const diff = surf - dewPoint;
         if (diff <= 0) return 95;
@@ -182,46 +160,56 @@ export default function App() {
         return Math.max(0, Math.min(100, Math.round(95 - (diff * 10))));
       };
 
-      const amDewIndex = calculateLocalDewIndex(payload.amAirTemp, payload.amSurfaceTemp, payload.amHumidity);
-      const pmDewIndex = calculateLocalDewIndex(payload.pmAirTemp, payload.pmSurfaceTemp, payload.pmHumidity);
+      const amAirTemp = Number(formData.amAirTemp);
+      const amSurfaceTemp = Number(formData.amSurfaceTemp);
+      const amHumidity = Number(formData.amHumidity);
+      const pmAirTemp = Number(formData.pmAirTemp);
+      const pmSurfaceTemp = Number(formData.pmSurfaceTemp);
+      const pmHumidity = Number(formData.pmHumidity);
 
+      const payload = {
+        sheetName: selectedFactory === '평택포승공장' ? 'Data' : 'Data2',
+        date: formData.date,
+        amAirTemp,
+        amSurfaceTemp,
+        amHumidity,
+        amCondIndex: calculateLocalDewIndex(amAirTemp, amSurfaceTemp, amHumidity),
+        pmAirTemp,
+        pmSurfaceTemp,
+        pmHumidity,
+        pmCondIndex: calculateLocalDewIndex(pmAirTemp, pmSurfaceTemp, pmHumidity)
+      };
+
+      // POST to Google Apps Script API
+      await fetch("https://script.google.com/macros/s/AKfycbwGRuza0OfCDR-sQA3l3yu_aCAIdJPtKWobL8PwGVOsRDGYCW3O-EGo5oNSeGJKILtU4g/exec", {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      // Reload Data
+      setIsLoadingData(true);
+      const sheetName = selectedFactory === '평택포승공장' ? 'Data' : 'Data2';
+      const newData = await fetchSpreadsheetData(sheetName, selectedYear, selectedMonth);
+      setMockData(newData);
+      
+      // Update selectedDay if needed
       const dateObj = new Date(formData.date);
       const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;
       const adjustedDate = new Date(dateObj.getTime() + userTimezoneOffset);
-      const parsedDay = adjustedDate.getDate(); // 1 ~ 31
-
-      if (!isNaN(parsedDay) && parsedDay >= 1 && parsedDay <= mockData.length) {
-        setMockData(prev => {
-          return prev.map(record => {
-            if (record.day === parsedDay) {
-              return {
-                day: parsedDay,
-                am: {
-                  airTemp: payload.amAirTemp,
-                  surfaceTemp: payload.amSurfaceTemp,
-                  humidity: payload.amHumidity,
-                  dewIndex: amDewIndex
-                },
-                pm: {
-                  airTemp: payload.pmAirTemp,
-                  surfaceTemp: payload.pmSurfaceTemp,
-                  humidity: payload.pmHumidity,
-                  dewIndex: pmDewIndex
-                }
-              };
-            }
-            return record;
-          });
-        });
-        setSelectedDay(parsedDay);
+      if (adjustedDate.getFullYear() === selectedYear && (adjustedDate.getMonth() + 1) === selectedMonth) {
+        setSelectedDay(adjustedDate.getDate());
       }
+      
+      setIsLoadingData(false);
 
       alert("데이터가 성공적으로 등록되었습니다.");
       setIsModalOpen(false);
-
     } catch (error) {
       console.error("Error submitting data:", error);
-      alert("데이터 전송 중 오류가 발생했으나 로컬 데이터는 임시 반영되었습니다.");
+      alert("데이터 전송 중 오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
     }
@@ -239,30 +227,51 @@ export default function App() {
     '오후 결로지수': true,
   });
 
+  // Fixed array of 1 to 31 days
+  const fixedDays = useMemo(() => Array.from({ length: 31 }, (_, i) => i + 1), []);
+
   // Flat data for Recharts
   const chartData = useMemo(() => {
-    return mockData.map(record => ({
-      name: `${record.day}일`,
-      day: record.day,
-      '오전 대기온도': record.am.airTemp,
-      '오후 대기온도': record.pm.airTemp,
-      '오전 표면온도': record.am.surfaceTemp,
-      '오후 표면온도': record.pm.surfaceTemp,
-      '오전 상대습도': record.am.humidity,
-      '오후 상대습도': record.pm.humidity,
-      '오전 결로지수': record.am.dewIndex,
-      '오후 결로지수': record.pm.dewIndex,
-    }));
-  }, [mockData]);
+    return fixedDays.map(day => {
+      const record = mockData.find(r => r.day === day);
+      if (!record) {
+        return {
+          name: `${day}일`,
+          day: day,
+          '오전 대기온도': null,
+          '오후 대기온도': null,
+          '오전 표면온도': null,
+          '오후 표면온도': null,
+          '오전 상대습도': null,
+          '오후 상대습도': null,
+          '오전 결로지수': null,
+          '오후 결로지수': null,
+        };
+      }
+      return {
+        name: `${record.day}일`,
+        day: record.day,
+        '오전 대기온도': record.am.airTemp,
+        '오후 대기온도': record.pm.airTemp,
+        '오전 표면온도': record.am.surfaceTemp,
+        '오후 표면온도': record.pm.surfaceTemp,
+        '오전 상대습도': record.am.humidity,
+        '오후 상대습도': record.pm.humidity,
+        '오전 결로지수': record.am.dewIndex,
+        '오후 결로지수': record.pm.dewIndex,
+      };
+    });
+  }, [mockData, fixedDays]);
 
   // Current record details based on selected day
   const currentRecord = useMemo(() => {
-    if (mockData.length === 0) return {
-      day: 1,
+    const found = mockData.find(r => r.day === selectedDay);
+    if (found) return found;
+    return {
+      day: selectedDay,
       am: { airTemp: 0, surfaceTemp: 0, humidity: 0, dewIndex: 0 },
       pm: { airTemp: 0, surfaceTemp: 0, humidity: 0, dewIndex: 0 }
     };
-    return mockData.find(r => r.day === selectedDay) || mockData[0];
   }, [selectedDay, mockData]);
 
   // Max condensation index of the selected day to determine card safety level
@@ -281,7 +290,7 @@ export default function App() {
     if (isPlaying) {
       intervalId = setInterval(() => {
         setSelectedDay(prev => {
-          if (prev >= mockData.length) return 1;
+          if (prev >= 31) return 1;
           return prev + 1;
         });
       }, 1500);
@@ -511,6 +520,18 @@ export default function App() {
               <p className="text-slate-600 font-semibold text-sm">데이터를 불러오는 중입니다...</p>
             </div>
           </div>
+        ) : mockData.length === 0 ? (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-50 min-h-[600px] rounded-2xl border border-slate-200 shadow-sm">
+            <div className="flex flex-col items-center gap-4 p-8 text-center max-w-md">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-2">
+                <FileSpreadsheet className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800">측정 데이터가 없습니다.</h3>
+              <p className="text-slate-500 font-medium leading-relaxed">
+                우측 상단의 <strong className="text-blue-600 font-bold">'새 데이터 입력'</strong> 버튼을 통해 첫 데이터를 등록해 주세요.
+              </p>
+            </div>
+          </div>
         ) : null}
 
         {/* Upper Info Alert or Quick Stats */}
@@ -529,7 +550,7 @@ export default function App() {
                 <Calendar className="w-3.5 h-3.5 text-slate-400" />
                 {selectedMonth}월 종합 지표 통계
               </span>
-              <span className="text-[10px] font-mono text-slate-400">Total {mockData.length} Days</span>
+              <span className="text-[10px] font-mono text-slate-400">Total 31 Days</span>
             </div>
             <div className="grid grid-cols-3 gap-2 text-center">
               <div className="bg-emerald-50 rounded-lg p-2 border border-emerald-100">
@@ -565,7 +586,7 @@ export default function App() {
               <input 
                 type="range" 
                 min={1} 
-                max={mockData.length > 0 ? mockData.length : 31} 
+                max={31} 
                 value={selectedDay}
                 onChange={(e) => setSelectedDay(parseInt(e.target.value))}
                 className="w-32 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
@@ -805,7 +826,7 @@ export default function App() {
                 <span className="h-5 w-1 bg-blue-600 rounded-full inline-block"></span>
                 {selectedMonth}월 온습도 및 결로지수 분석 그래프 (Line Chart)
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">X축은 1일부터 {mockData.length}일까지의 일자이며, 각 선을 클릭하여 가시성을 제어할 수 있습니다.</p>
+              <p className="text-xs text-slate-500 mt-0.5">X축은 1일부터 31일까지의 일자이며, 각 선을 클릭하여 가시성을 제어할 수 있습니다.</p>
             </div>
 
             {/* Quick Chart actions */}
@@ -1157,16 +1178,16 @@ export default function App() {
                 <tr className="bg-slate-900 text-white font-sans text-center">
                   <th className="sticky left-0 bg-slate-900 border border-slate-700 p-1 xl:p-1.5 z-20 font-bold w-[35px] xl:w-[45px] break-keep">구분</th>
                   <th className="sticky left-[35px] xl:left-[45px] bg-slate-900 border border-slate-700 p-1 xl:p-1.5 z-20 font-bold w-[80px] xl:w-[115px] break-keep">측정 항목</th>
-                  {mockData.map((item) => (
+                  {fixedDays.map((day) => (
                     <th 
-                      key={item.day}
-                      onClick={() => setSelectedDay(item.day)}
+                      key={day}
+                      onClick={() => setSelectedDay(day)}
                       className={`border border-slate-700 p-1 xl:p-1.5 font-bold font-mono cursor-pointer transition-all hover:bg-blue-800 ${
-                        item.day === selectedDay ? "bg-blue-600 text-white" : "bg-slate-800/85"
+                        day === selectedDay ? "bg-blue-600 text-white" : "bg-slate-800/85"
                       }`}
-                      title={`${item.day}일 정밀조회`}
+                      title={`${day}일 정밀조회`}
                     >
-                      {item.day}일
+                      {day}일
                     </th>
                   ))}
                 </tr>
@@ -1182,17 +1203,20 @@ export default function App() {
                   <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     대기온도 (℃)
                   </td>
-                  {mockData.map((item) => (
+                  {fixedDays.map((day) => {
+                    const item = mockData.find(r => r.day === day);
+                    return (
                     <td 
-                      key={item.day} 
-                      onClick={() => setSelectedDay(item.day)}
+                      key={day} 
+                      onClick={() => setSelectedDay(day)}
                       className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
-                        item.day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
+                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
-                      {item.am.airTemp.toFixed(1)}
+                      {item ? item.am.airTemp.toFixed(1) : '-'}
                     </td>
-                  ))}
+                  )
+})}
                 </tr>
 
                 {/* 표면온도 */}
@@ -1200,17 +1224,20 @@ export default function App() {
                   <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     코일표면온도 (℃)
                   </td>
-                  {mockData.map((item) => (
+                  {fixedDays.map((day) => {
+                    const item = mockData.find(r => r.day === day);
+                    return (
                     <td 
-                      key={item.day} 
-                      onClick={() => setSelectedDay(item.day)}
+                      key={day} 
+                      onClick={() => setSelectedDay(day)}
                       className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
-                        item.day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
+                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
-                      {item.am.surfaceTemp.toFixed(1)}
+                      {item ? item.am.surfaceTemp.toFixed(1) : '-'}
                     </td>
-                  ))}
+                  )
+})}
                 </tr>
 
                 {/* 상대습도 */}
@@ -1218,17 +1245,20 @@ export default function App() {
                   <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     상대습도 (%)
                   </td>
-                  {mockData.map((item) => (
+                  {fixedDays.map((day) => {
+                    const item = mockData.find(r => r.day === day);
+                    return (
                     <td 
-                      key={item.day} 
-                      onClick={() => setSelectedDay(item.day)}
+                      key={day} 
+                      onClick={() => setSelectedDay(day)}
                       className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
-                        item.day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
+                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
-                      {item.am.humidity}
+                      {item ? item.am.humidity : '-'}
                     </td>
-                  ))}
+                  )
+})}
                 </tr>
 
                 {/* 결로지수 */}
@@ -1236,20 +1266,27 @@ export default function App() {
                   <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs">
                     결로지수 (Pt)
                   </td>
-                  {mockData.map((item) => {
+                  {fixedDays.map((day) => {
+                    const item = mockData.find(r => r.day === day);
+                    if (!item) {
+                      return (
+                        <td key={day} onClick={() => setSelectedDay(day)} className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-all ${day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""}`}>
+                          -
+                        </td>
+                      );
+                    }
                     const indexVal = item.am.dewIndex;
                     let cellColor = "bg-[#d1fae5] text-[#065f46]"; // Safe
                     if (indexVal > 80) cellColor = "bg-[#ffe4e6] text-[#9f1239] font-black animate-pulse"; // Danger
                     else if (indexVal > 60) cellColor = "bg-[#fef3c7] text-[#92400e] font-bold"; // Caution
-
                     return (
                       <td 
-                        key={item.day} 
-                        onClick={() => setSelectedDay(item.day)}
+                        key={day} 
+                        onClick={() => setSelectedDay(day)}
                         className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer font-semibold transition-all hover:opacity-80 ${cellColor} ${
-                          item.day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""
+                          day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""
                         }`}
-                        title={`${item.day}일 오전 결로지수: ${indexVal} Pt`}
+                        title={`${day}일 오전 결로지수: ${indexVal} Pt`}
                       >
                         {indexVal}
                       </td>
@@ -1262,7 +1299,7 @@ export default function App() {
                 <tr className="bg-slate-200 text-center h-2">
                   <td className="sticky left-0 bg-slate-200 p-0" colSpan={1}></td>
                   <td className="sticky left-[35px] xl:left-[45px] bg-slate-200 p-0" colSpan={1}></td>
-                  <td colSpan={mockData.length > 0 ? mockData.length : 31} className="p-0"></td>
+                  <td colSpan={31} className="p-0"></td>
                 </tr>
 
 
@@ -1276,17 +1313,20 @@ export default function App() {
                   <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     대기온도 (℃)
                   </td>
-                  {mockData.map((item) => (
+                  {fixedDays.map((day) => {
+                    const item = mockData.find(r => r.day === day);
+                    return (
                     <td 
-                      key={item.day} 
-                      onClick={() => setSelectedDay(item.day)}
+                      key={day} 
+                      onClick={() => setSelectedDay(day)}
                       className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
-                        item.day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
+                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
-                      {item.pm.airTemp.toFixed(1)}
+                      {item ? item.pm.airTemp.toFixed(1) : '-'}
                     </td>
-                  ))}
+                  )
+})}
                 </tr>
 
                 {/* 표면온도 */}
@@ -1294,17 +1334,20 @@ export default function App() {
                   <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     코일표면온도 (℃)
                   </td>
-                  {mockData.map((item) => (
+                  {fixedDays.map((day) => {
+                    const item = mockData.find(r => r.day === day);
+                    return (
                     <td 
-                      key={item.day} 
-                      onClick={() => setSelectedDay(item.day)}
+                      key={day} 
+                      onClick={() => setSelectedDay(day)}
                       className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
-                        item.day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
+                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
-                      {item.pm.surfaceTemp.toFixed(1)}
+                      {item ? item.pm.surfaceTemp.toFixed(1) : '-'}
                     </td>
-                  ))}
+                  )
+})}
                 </tr>
 
                 {/* 상대습도 */}
@@ -1312,17 +1355,20 @@ export default function App() {
                   <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
                     상대습도 (%)
                   </td>
-                  {mockData.map((item) => (
+                  {fixedDays.map((day) => {
+                    const item = mockData.find(r => r.day === day);
+                    return (
                     <td 
-                      key={item.day} 
-                      onClick={() => setSelectedDay(item.day)}
+                      key={day} 
+                      onClick={() => setSelectedDay(day)}
                       className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
-                        item.day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
+                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
                       }`}
                     >
-                      {item.pm.humidity}
+                      {item ? item.pm.humidity : '-'}
                     </td>
-                  ))}
+                  )
+})}
                 </tr>
 
                 {/* 결로지수 */}
@@ -1330,20 +1376,27 @@ export default function App() {
                   <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs">
                     결로지수 (Pt)
                   </td>
-                  {mockData.map((item) => {
+                  {fixedDays.map((day) => {
+                    const item = mockData.find(r => r.day === day);
+                    if (!item) {
+                      return (
+                        <td key={day} onClick={() => setSelectedDay(day)} className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-all ${day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""}`}>
+                          -
+                        </td>
+                      );
+                    }
                     const indexVal = item.pm.dewIndex;
                     let cellColor = "bg-[#d1fae5] text-[#065f46]"; // Safe
                     if (indexVal > 80) cellColor = "bg-[#ffe4e6] text-[#9f1239] font-black animate-pulse"; // Danger
                     else if (indexVal > 60) cellColor = "bg-[#fef3c7] text-[#92400e] font-bold"; // Caution
-
                     return (
                       <td 
-                        key={item.day} 
-                        onClick={() => setSelectedDay(item.day)}
+                        key={day} 
+                        onClick={() => setSelectedDay(day)}
                         className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer font-semibold transition-all hover:opacity-80 ${cellColor} ${
-                          item.day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""
+                          day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""
                         }`}
-                        title={`${item.day}일 오후 결로지수: ${indexVal} Pt`}
+                        title={`${day}일 오후 결로지수: ${indexVal} Pt`}
                       >
                         {indexVal}
                       </td>
@@ -1357,7 +1410,7 @@ export default function App() {
 
           {/* User Instruction block inside Table */}
           <div className="mt-4 flex items-center justify-between text-[11px] text-slate-400 font-mono">
-            <span>※ 좌우로 스크롤하여 전체 {mockData.length}일 대장을 확인하실 수 있습니다.</span>
+            <span>※ 좌우로 스크롤하여 전체 31일 대장을 확인하실 수 있습니다.</span>
             <span className="hidden sm:inline">Copyright © (주)대성스틸 Smart Factory. All rights reserved.</span>
           </div>
         </section>
