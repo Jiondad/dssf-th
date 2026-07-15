@@ -381,7 +381,7 @@ export default function App() {
               <thead>
                 <tr className="bg-slate-900 text-white font-sans text-center">
                   <th className="sticky left-0 bg-slate-900 border border-slate-700 p-1 xl:p-1.5 z-20 font-bold w-[35px] xl:w-[45px] break-keep">구분</th>
-                  <th className="sticky left-[35px] xl:left-[45px] bg-slate-900 border border-slate-700 p-1 xl:p-1.5 z-20 font-bold w-[80px] xl:w-[115px] break-keep">측정 항목</th>
+                  <th className="sticky left-[35px] xl:left-[45px] bg-slate-900 border border-slate-700 p-1 xl:p-1.5 z-20 font-bold w-[95px] xl:w-[125px] print:w-[115px] whitespace-nowrap">측정 항목</th>
                   {daysToRender.map((day) => (
                     <th 
                       key={day}
@@ -404,7 +404,7 @@ export default function App() {
                   <td className="sticky left-0 bg-slate-100 font-bold border border-slate-200 p-1 xl:p-1.5 text-slate-700 z-10 text-center shadow-xs" rowSpan={4}>
                     오전<br/><span className="text-[10px] font-mono text-slate-500 font-normal">(AM)</span>
                   </td>
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs whitespace-nowrap">
                     대기온도 (℃)
                   </td>
                   {daysToRender.map((day) => {
@@ -425,7 +425,7 @@ export default function App() {
 
                 {/* 표면온도 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs whitespace-nowrap">
                     코일표면온도 (℃)
                   </td>
                   {daysToRender.map((day) => {
@@ -446,7 +446,7 @@ export default function App() {
 
                 {/* 상대습도 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs whitespace-nowrap">
                     상대습도 (%)
                   </td>
                   {daysToRender.map((day) => {
@@ -467,7 +467,7 @@ export default function App() {
 
                 {/* 결로지수 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs whitespace-nowrap">
                     결로지수 (Pt)
                   </td>
                   {daysToRender.map((day) => {
@@ -521,7 +521,7 @@ export default function App() {
                   <td className="sticky left-0 bg-slate-100 font-bold border border-slate-200 p-1 xl:p-1.5 text-slate-700 z-10 text-center shadow-xs" rowSpan={4}>
                     오후<br/><span className="text-[10px] font-mono text-slate-500 font-normal">(PM)</span>
                   </td>
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs whitespace-nowrap">
                     대기온도 (℃)
                   </td>
                   {daysToRender.map((day) => {
@@ -542,7 +542,7 @@ export default function App() {
 
                 {/* 표면온도 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs whitespace-nowrap">
                     코일표면온도 (℃)
                   </td>
                   {daysToRender.map((day) => {
@@ -563,7 +563,7 @@ export default function App() {
 
                 {/* 상대습도 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs whitespace-nowrap">
                     상대습도 (%)
                   </td>
                   {daysToRender.map((day) => {
@@ -584,7 +584,7 @@ export default function App() {
 
                 {/* 결로지수 */}
                 <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs whitespace-nowrap">
                     결로지수 (Pt)
                   </td>
                   {daysToRender.map((day) => {
@@ -631,7 +631,7 @@ export default function App() {
         @media print {
           @page {
             size: A4 landscape;
-            margin: 8mm;
+            margin: 5mm;
           }
           body {
             background: white !important;
@@ -653,22 +653,22 @@ export default function App() {
       
       {/* Print Only View */}
       <div className="hidden print:block print-container">
-        <h2 className="text-2xl font-bold text-center mb-6 text-slate-900">{selectedMonth}월 온습도 및 결로지수 대장 - {selectedFactory}</h2>
+        <h2 className="text-2xl font-bold text-center mb-2 text-slate-900">{selectedMonth}월 온습도 및 결로지수 대장 - {selectedFactory}</h2>
         {renderTable(fixedDays.slice(0, 16), true)}
-        <div style={{ pageBreakBefore: 'always' }} className="pt-6">
+        <div className="pt-2">
           {renderTable(fixedDays.slice(16, 31), true)}
         </div>
       </div>
 
       {/* Top Professional Header */}
       <header className="bg-slate-900 text-white shadow-md border-b border-slate-800 print:hidden" id="header_section">
-        <div className="max-w-[1920px] mx-auto px-4 py-4 md:py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="max-w-[1920px] mx-auto px-4 py-2.5 md:py-3.5 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
-            <div className="bg-blue-600 text-white p-2.5 rounded-lg shadow-inner flex items-center justify-center">
-              <Layers className="w-6 h-6" />
+            <div className="bg-blue-600 text-white p-2 rounded-lg shadow-inner flex items-center justify-center">
+              <Layers className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-xl md:text-2xl font-bold tracking-tight font-sans">
+              <h1 className="text-lg md:text-xl font-bold tracking-tight font-sans">
                 (주)대성스틸 {selectedFactory} 온습도 관리 모니터링 시스템
               </h1>
               <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-1.5 font-mono">
@@ -837,7 +837,7 @@ export default function App() {
       </header>
 
       {/* Main Container */}
-      <main className="max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 mt-6 space-y-6 relative print:hidden">
+      <main className="max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 mt-4 space-y-4 relative print:hidden">
         {isLoadingData ? (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-50/80 backdrop-blur-sm min-h-[600px] rounded-2xl">
             <div className="flex flex-col items-center gap-4">
@@ -847,293 +847,262 @@ export default function App() {
           </div>
         ) : null}
 
-        {/* Upper Info Alert or Quick Stats */}
-        <div className={`grid grid-cols-1 lg:grid-cols-12 gap-4 transition-opacity duration-300 ${isLoadingData ? 'opacity-30' : 'opacity-100'}`}>
-          <div className="lg:col-span-8 bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-start gap-3.5 shadow-xs">
-            <Info className="w-5.5 h-5.5 text-blue-600 shrink-0 mt-0.5" />
-            <div className="text-sm text-blue-900 leading-relaxed">
-              <span className="font-semibold block text-blue-950 text-base mb-0.5">실시간 대시보드 인터랙션 안내</span>
-              차트의 특정 일자를 <strong className="text-blue-700">클릭</strong>하거나 하단 데이터 표의 날짜를 누르시면 해당 날짜의 오전/오후 정밀 데이터를 카드로 조회할 수 있습니다. 슬라이더 또는 시뮬레이터 재생 버튼을 사용해 온습도 추이를 동적으로 분석할 수 있습니다.
-            </div>
-          </div>
-          
-          <div className="lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex flex-col justify-between">
-            <div className="flex justify-between items-center border-b border-slate-100 pb-2 mb-2">
-              <span className="text-xs text-slate-500 font-semibold flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                {selectedMonth}월 종합 지표 통계
-              </span>
-              <span className="text-[10px] font-mono text-slate-400">Total 31 Days</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2 text-center">
-              <div className="bg-emerald-50 rounded-lg p-2 border border-emerald-100">
-                <span className="text-[10px] text-emerald-800 block font-semibold">안전 일수</span>
-                <span className="text-lg font-bold text-emerald-600 font-mono">{monthlyStats.safeCount}일</span>
-              </div>
-              <div className="bg-amber-50 rounded-lg p-2 border border-amber-100">
-                <span className="text-[10px] text-amber-800 block font-semibold">주의 일수</span>
-                <span className="text-lg font-bold text-amber-500 font-mono">{monthlyStats.cautionCount}일</span>
-              </div>
-              <div className="bg-rose-50 rounded-lg p-2 border border-rose-100">
-                <span className="text-[10px] text-rose-800 block font-semibold">위험 일수</span>
-                <span className="text-lg font-bold text-rose-600 font-mono">{monthlyStats.dangerCount}일</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* 1. 요약 대시보드 카드 뷰 Section */}
-        <section className="space-y-4 print:hidden" id="summary_cards_section">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <span className="h-5 w-1 bg-blue-600 rounded-full inline-block"></span>
-                실시간 환경 모니터링 현황 ({selectedMonth}월 {selectedDay}일)
-              </h2>
-              <p className="text-xs text-slate-500 mt-0.5 print:hidden">선택된 일자의 오전(AM) 및 오후(PM) {selectedFactory} 환경 측정치 요약입니다.</p>
-            </div>
-            
-            {/* Quick Slider control for days */}
-            <div className="w-full sm:w-auto flex items-center gap-2.5 bg-white p-2 rounded-xl border border-slate-200">
-              <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">일자 선택:</span>
-              <input 
-                type="range" 
-                min={1} 
-                max={31} 
-                value={selectedDay}
-                onChange={(e) => setSelectedDay(parseInt(e.target.value))}
-                className="w-32 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-              />
-              <span className="text-xs font-bold text-blue-600 font-mono min-w-8 text-center">{selectedDay}일</span>
-            </div>
-          </div>
+        <section className={`transition-opacity duration-300 ${isLoadingData ? 'opacity-30' : 'opacity-100'} print:hidden`} id="summary_cards_section">
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
+             {/* Cards Section */}
+             <div className="xl:col-span-9 flex flex-col gap-3">
+               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                 <div>
+                   <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                     <span className="h-4 w-1 bg-blue-600 rounded-full inline-block"></span>
+                     실시간 환경 모니터링 현황 ({selectedMonth}월 {selectedDay}일)
+                   </h2>
+                   <p className="text-[11px] text-slate-500 mt-0.5 print:hidden">선택된 일자의 오전(AM) 및 오후(PM) {selectedFactory} 환경 측정치 요약입니다.</p>
+                 </div>
+                 {/* Quick Slider */}
+                 <div className="w-full sm:w-auto flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200">
+                   <span className="text-[11px] font-semibold text-slate-500 whitespace-nowrap">일자 선택:</span>
+                   <input 
+                     type="range" min={1} max={31} value={selectedDay}
+                     onChange={(e) => setSelectedDay(parseInt(e.target.value))}
+                     className="w-24 md:w-32 h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                   />
+                   <span className="text-[11px] font-bold text-blue-600 font-mono min-w-8 text-center">{selectedDay}일</span>
+                 </div>
+               </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                 {/* Card 1: 대기온도 */}
+                 <motion.div 
+                   layoutId="card_air_temp"
+                   className="bg-blue-50/50 rounded-xl border border-blue-100 p-3 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
+                   id="card_air_temp"
+                 >
+                   <div className="flex justify-between items-start mb-2">
+                     <div>
+                       <span className="text-sm text-slate-800 font-extrabold tracking-tight block">대기 온도</span>
+                       <h3 className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Air Temperature</h3>
+                     </div>
+                     <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
+                       <Thermometer className="w-4 h-4" />
+                     </div>
+                   </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            
-            {/* Card 1: 대기온도 */}
-            <motion.div 
-              layoutId="card_air_temp"
-              className="bg-blue-50/50 rounded-2xl border border-blue-100 p-5 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
-              id="card_air_temp"
-            >
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <span className="text-base text-slate-800 font-extrabold tracking-tight block">대기 온도</span>
-                  <h3 className="text-sm font-medium text-slate-500 mt-0.5 uppercase tracking-wide">Air Temperature</h3>
-                </div>
-                <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
-                  <Thermometer className="w-6 h-6" />
-                </div>
-              </div>
+                   <div className="grid grid-cols-2 gap-2 divide-x divide-slate-100 mt-2">
+                     <div className="flex flex-col justify-center">
+                       <span className="text-[10px] text-slate-400 font-semibold block uppercase">오전(AM)</span>
+                       <div className="flex items-baseline gap-0.5 mt-0.5">
+                         <span className="text-lg font-bold font-mono text-slate-800">{currentRecord.am.airTemp !== null ? currentRecord.am.airTemp : "-"}</span>
+                         <span className="text-[10px] text-slate-500 font-bold">℃</span>
+                       </div>
+                     </div>
+                     <div className="pl-2 flex flex-col justify-center">
+                       <span className="text-[10px] text-slate-400 font-semibold block uppercase">오후(PM)</span>
+                       <div className="flex items-baseline gap-0.5 mt-0.5">
+                         <span className="text-lg font-bold font-mono text-slate-800">{currentRecord.pm.airTemp !== null ? currentRecord.pm.airTemp : "-"}</span>
+                         <span className="text-[10px] text-slate-500 font-bold">℃</span>
+                       </div>
+                     </div>
+                   </div>
 
-              <div className="grid grid-cols-2 gap-4 divide-x divide-slate-100 mt-4">
-                <div className="flex flex-col justify-center">
-                  <span className="text-[11px] text-slate-400 font-semibold block uppercase">오전 (AM)</span>
-                  <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.am.airTemp !== null ? currentRecord.am.airTemp : "-"}</span>
-                    <span className="text-xs text-slate-500 font-bold">℃</span>
-                  </div>
-                </div>
-                <div className="pl-4 flex flex-col justify-center">
-                  <span className="text-[11px] text-slate-400 font-semibold block uppercase">오후 (PM)</span>
-                  <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.pm.airTemp !== null ? currentRecord.pm.airTemp : "-"}</span>
-                    <span className="text-xs text-slate-500 font-bold">℃</span>
-                  </div>
-                </div>
-              </div>
+                   {/* Technical Indicator */}
+                   <div className="mt-2 pt-2 border-t border-slate-50 flex justify-between items-center text-[10px] text-slate-500">
+                     <span className="flex items-center gap-1 whitespace-nowrap">
+                       <TrendingUp className="w-3 h-3 text-blue-500" />
+                       일교차: {currentRecord.pm.airTemp !== null && currentRecord.am.airTemp !== null ? Math.round((currentRecord.pm.airTemp - currentRecord.am.airTemp) * 10) / 10 + "℃" : "-"}
+                     </span>
+                     <span className="font-mono bg-slate-100 text-slate-600 px-1 py-0.5 rounded whitespace-nowrap">
+                       Target: 18~28℃
+                     </span>
+                   </div>
+                 </motion.div>
 
-              {/* Technical Indicator */}
-              <div className="mt-4 pt-3.5 border-t border-slate-50 flex justify-between items-center text-xs text-slate-500">
-                <span className="flex items-center gap-1">
-                  <TrendingUp className="w-3.5 h-3.5 text-blue-500" />
-                  일교차: {currentRecord.pm.airTemp !== null && currentRecord.am.airTemp !== null ? Math.round((currentRecord.pm.airTemp - currentRecord.am.airTemp) * 10) / 10 + "℃" : "-"}
-                </span>
-                <span className="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px]">
-                  Target: 18~28℃
-                </span>
-              </div>
-            </motion.div>
+                 {/* Card 2: 코일표면온도 */}
+                 <motion.div 
+                   layoutId="card_surface_temp"
+                   className="bg-teal-50/50 rounded-xl border border-teal-100 p-3 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
+                   id="card_surface_temp"
+                 >
+                   <div className="flex justify-between items-start mb-2">
+                     <div>
+                       <span className="text-sm text-slate-800 font-extrabold tracking-tight block">코일 표면 온도</span>
+                       <h3 className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Surface Temp</h3>
+                     </div>
+                     <div className="p-1.5 bg-teal-50 text-teal-600 rounded-lg">
+                       <Layers className="w-4 h-4" />
+                     </div>
+                   </div>
 
-            {/* Card 2: 코일표면온도 */}
-            <motion.div 
-              layoutId="card_surface_temp"
-              className="bg-teal-50/50 rounded-2xl border border-teal-100 p-5 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
-              id="card_surface_temp"
-            >
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <span className="text-base text-slate-800 font-extrabold tracking-tight block">코일 표면 온도</span>
-                  <h3 className="text-sm font-medium text-slate-500 mt-0.5 uppercase tracking-wide">Surface Temp</h3>
-                </div>
-                <div className="p-2 bg-teal-50 text-teal-600 rounded-xl">
-                  <Layers className="w-6 h-6" />
-                </div>
-              </div>
+                   <div className="grid grid-cols-2 gap-2 divide-x divide-slate-100 mt-2">
+                     <div className="flex flex-col justify-center">
+                       <span className="text-[10px] text-slate-400 font-semibold block uppercase">오전(AM)</span>
+                       <div className="flex items-baseline gap-0.5 mt-0.5">
+                         <span className="text-lg font-bold font-mono text-slate-800">{currentRecord.am.surfaceTemp !== null ? currentRecord.am.surfaceTemp : "-"}</span>
+                         <span className="text-[10px] text-slate-500 font-bold">℃</span>
+                       </div>
+                     </div>
+                     <div className="pl-2 flex flex-col justify-center">
+                       <span className="text-[10px] text-slate-400 font-semibold block uppercase">오후(PM)</span>
+                       <div className="flex items-baseline gap-0.5 mt-0.5">
+                         <span className="text-lg font-bold font-mono text-slate-800">{currentRecord.pm.surfaceTemp !== null ? currentRecord.pm.surfaceTemp : "-"}</span>
+                         <span className="text-[10px] text-slate-500 font-bold">℃</span>
+                       </div>
+                     </div>
+                   </div>
 
-              <div className="grid grid-cols-2 gap-4 divide-x divide-slate-100 mt-4">
-                <div className="flex flex-col justify-center">
-                  <span className="text-[11px] text-slate-400 font-semibold block uppercase">오전 (AM)</span>
-                  <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.am.surfaceTemp !== null ? currentRecord.am.surfaceTemp : "-"}</span>
-                    <span className="text-xs text-slate-500 font-bold">℃</span>
-                  </div>
-                </div>
-                <div className="pl-4 flex flex-col justify-center">
-                  <span className="text-[11px] text-slate-400 font-semibold block uppercase">오후 (PM)</span>
-                  <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.pm.surfaceTemp !== null ? currentRecord.pm.surfaceTemp : "-"}</span>
-                    <span className="text-xs text-slate-500 font-bold">℃</span>
-                  </div>
-                </div>
-              </div>
+                   {/* Technical Indicator */}
+                   <div className="mt-2 pt-2 border-t border-slate-50 flex justify-between items-center text-[10px] text-slate-500">
+                     <span className="flex items-center gap-1 whitespace-nowrap">
+                       <TrendingDown className="w-3 h-3 text-teal-500" />
+                       편차: {currentRecord.am.surfaceTemp !== null && currentRecord.pm.surfaceTemp !== null ? Math.round((currentRecord.pm.surfaceTemp - currentRecord.am.surfaceTemp) * 10) / 10 + "℃" : "-"}
+                     </span>
+                     <span className="font-mono bg-slate-100 text-slate-600 px-1 py-0.5 rounded whitespace-nowrap">
+                       Target: &gt; 대기온도
+                     </span>
+                   </div>
+                 </motion.div>
 
-              {/* Technical Indicator */}
-              <div className="mt-4 pt-3.5 border-t border-slate-50 flex justify-between items-center text-xs text-slate-500">
-                <span className="flex items-center gap-1.5 text-slate-600 font-medium whitespace-nowrap">
-                  <ArrowRight className="w-3.5 h-3.5 text-teal-500 shrink-0" />
-                  <span>대기대비차: 오전 {currentRecord.am.airTemp !== null && currentRecord.am.surfaceTemp !== null ? Math.round((currentRecord.am.airTemp - currentRecord.am.surfaceTemp) * 10) / 10 + "℃" : "-"} <span className="text-slate-300 mx-1">|</span> 오후 {currentRecord.pm.airTemp !== null && currentRecord.pm.surfaceTemp !== null ? Math.round((currentRecord.pm.airTemp - currentRecord.pm.surfaceTemp) * 10) / 10 + "℃" : "-"}</span>
-                </span>
-                <span className="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px] shrink-0">
-                  
-                </span>
-              </div>
-            </motion.div>
+                 {/* Card 3: 상대습도 */}
+                 <motion.div 
+                   layoutId="card_humidity"
+                   className="bg-violet-50/50 rounded-xl border border-violet-100 p-3 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
+                   id="card_humidity"
+                 >
+                   <div className="flex justify-between items-start mb-2">
+                     <div>
+                       <span className="text-sm text-slate-800 font-extrabold tracking-tight block">상대 습도</span>
+                       <h3 className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Relative Humidity</h3>
+                     </div>
+                     <div className="p-1.5 bg-violet-50 text-violet-600 rounded-lg">
+                       <Droplets className="w-4 h-4" />
+                     </div>
+                   </div>
 
-            {/* Card 3: 상대습도 */}
-            <motion.div 
-              layoutId="card_humidity"
-              className="bg-violet-50/50 rounded-2xl border border-violet-100 p-5 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
-              id="card_humidity"
-            >
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <span className="text-base text-slate-800 font-extrabold tracking-tight block">상대 습도</span>
-                  <h3 className="text-sm font-medium text-slate-500 mt-0.5 uppercase tracking-wide">Relative Humidity</h3>
-                </div>
-                <div className="p-2 bg-violet-50 text-violet-600 rounded-xl">
-                  <Droplets className="w-6 h-6" />
-                </div>
-              </div>
+                   <div className="grid grid-cols-2 gap-2 divide-x divide-slate-100 mt-2">
+                     <div className="flex flex-col justify-center">
+                       <span className="text-[10px] text-slate-400 font-semibold block uppercase">오전(AM)</span>
+                       <div className="flex items-baseline gap-0.5 mt-0.5">
+                         <span className="text-lg font-bold font-mono text-slate-800">{currentRecord.am.humidity !== null ? currentRecord.am.humidity : "-"}</span>
+                         <span className="text-[10px] text-slate-500 font-bold">%</span>
+                       </div>
+                     </div>
+                     <div className="pl-2 flex flex-col justify-center">
+                       <span className="text-[10px] text-slate-400 font-semibold block uppercase">오후(PM)</span>
+                       <div className="flex items-baseline gap-0.5 mt-0.5">
+                         <span className="text-lg font-bold font-mono text-slate-800">{currentRecord.pm.humidity !== null ? currentRecord.pm.humidity : "-"}</span>
+                         <span className="text-[10px] text-slate-500 font-bold">%</span>
+                       </div>
+                     </div>
+                   </div>
 
-              <div className="grid grid-cols-2 gap-4 divide-x divide-slate-100 mt-4">
-                <div className="flex flex-col justify-center">
-                  <span className="text-[11px] text-slate-400 font-semibold block uppercase">오전 (AM)</span>
-                  <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.am.humidity !== null ? currentRecord.am.humidity : "-"}</span>
-                    <span className="text-xs text-slate-500 font-bold">%</span>
-                  </div>
-                </div>
-                <div className="pl-4 flex flex-col justify-center">
-                  <span className="text-[11px] text-slate-400 font-semibold block uppercase">오후 (PM)</span>
-                  <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.pm.humidity !== null ? currentRecord.pm.humidity : "-"}</span>
-                    <span className="text-xs text-slate-500 font-bold">%</span>
-                  </div>
-                </div>
-              </div>
+                   {/* Technical Indicator */}
+                   <div className="mt-2 pt-2 border-t border-slate-50 flex justify-between items-center text-[10px] text-slate-500">
+                     <span className="flex items-center gap-1 whitespace-nowrap">
+                       <TrendingDown className="w-3 h-3 text-violet-500" />
+                       일교차: {currentRecord.am.humidity !== null && currentRecord.pm.humidity !== null ? (currentRecord.am.humidity - currentRecord.pm.humidity) + "%" : "-"}
+                     </span>
+                     <span className="font-mono bg-indigo-50 text-indigo-600 px-1 py-0.5 rounded font-bold whitespace-nowrap">
+                       Target: &lt;65%
+                     </span>
+                   </div>
+                 </motion.div>
 
-              {/* Technical Indicator */}
-              <div className="mt-4 pt-3.5 border-t border-slate-50 flex justify-between items-center text-xs text-slate-500">
-                <span className="flex items-center gap-1">
-                  <TrendingDown className="w-3.5 h-3.5 text-violet-500" />
-                  일교차: {currentRecord.am.humidity !== null && currentRecord.pm.humidity !== null ? (currentRecord.am.humidity - currentRecord.pm.humidity) + "%" : "-"}
-                </span>
-                <span className="font-mono bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded text-[10px] font-bold">
-                  Target: &lt;65%
-                </span>
-              </div>
-            </motion.div>
+                 {/* Card 4: 결로지수 */}
+                 <motion.div 
+                   layoutId="card_dew_index"
+                   animate={{ backgroundColor: condensationStatus.bgColor.includes('emerald') ? '#d1fae5' : condensationStatus.bgColor.includes('amber') ? '#fef3c7' : '#ffe4e6' }}
+                   transition={{ duration: 0.3 }}
+                   className={`rounded-xl border p-3 shadow-xs hover:shadow-md transition-all relative z-10 overflow-visible flex flex-col justify-between ${condensationStatus.borderColor}`}
+                   id="card_dew_index"
+                 >
+                   <div>
+                     <div className="flex justify-between items-start mb-2">
+                       <div>
+                         <span className="text-sm text-slate-800 font-extrabold tracking-tight block">결로 위험 지수</span>
+                         <h3 className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Condensation</h3>
+                       </div>
+                       <div className="relative group p-1.5 rounded-lg bg-white/80 cursor-help">
+                         <AlertTriangle className="w-4 h-4 text-slate-900 transition-transform group-hover:scale-110" />
+                         <div className="absolute right-0 top-full mt-2 w-64 bg-slate-900 text-white p-3 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 z-50 transform origin-top-right scale-95 group-hover:scale-100">
+                           <h4 className="font-bold text-xs mb-2 text-blue-300 border-b border-slate-700 pb-1">결로지수 산출</h4>
+                           <div className="space-y-2 text-[10px]">
+                             <div>
+                               <p className="font-semibold text-slate-300">1. T_dew ≈ T_air - ((100 - H)/5)</p>
+                             </div>
+                             <div>
+                               <p className="font-semibold text-slate-300">2. Margin = T_surface - T_dew</p>
+                             </div>
+                             <ul className="space-y-1 bg-slate-800 p-1.5 rounded border border-slate-700">
+                               <li className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500"></span> <span className="text-emerald-100">안전(0~60)</span></li>
+                               <li className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500"></span> <span className="text-amber-100">주의(61~80)</span></li>
+                               <li className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-rose-500"></span> <span className="text-rose-100">위험(81~100)</span></li>
+                             </ul>
+                           </div>
+                         </div>
+                       </div>
+                     </div>
 
-            {/* Card 4: 결로지수 (Condensation Index) - DYNAMIC COLORS BASED ON CONDENSATION STATUS */}
-            <motion.div 
-              layoutId="card_dew_index"
-              animate={{ backgroundColor: condensationStatus.bgColor.includes('emerald') ? '#d1fae5' : condensationStatus.bgColor.includes('amber') ? '#fef3c7' : '#ffe4e6' }}
-              transition={{ duration: 0.3 }}
-              className={`rounded-2xl border p-5 shadow-xs hover:shadow-md transition-all relative z-10 overflow-visible flex flex-col justify-between ${condensationStatus.borderColor}`}
-              id="card_dew_index"
-            >
-              <div>
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <span className="text-base text-slate-800 font-extrabold tracking-tight block">결로 위험 지수</span>
-                    <h3 className="text-sm font-medium text-slate-500 mt-0.5 uppercase tracking-wide">Condensation Index</h3>
-                  </div>
-                  <div className="relative group p-2 rounded-xl bg-white/80 cursor-help">
-                    <AlertTriangle className="w-6 h-6 text-slate-900 transition-transform group-hover:scale-110" />
-                    
-                    {/* Tooltip Content */}
-                    <div className="absolute right-0 top-full mt-2 w-72 md:w-80 bg-slate-900 text-white p-4 rounded-xl shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 z-50 transform origin-top-right scale-95 group-hover:scale-100">
-                      <h4 className="font-bold text-sm mb-3 text-blue-300 border-b border-slate-700 pb-2">결로지수 산출 및 환산 원리</h4>
-                      <div className="space-y-3 text-xs">
-                        <div>
-                          <p className="font-semibold text-slate-300">1단계 (이슬점 약식 계산)</p>
-                          <p className="font-mono text-[11px] bg-slate-800 text-slate-200 p-1.5 rounded mt-1 border border-slate-700">T_dew ≈ T_air - ((100 - H) / 5)</p>
-                        </div>
-                        <div>
-                          <p className="font-semibold text-slate-300">2단계 (마진 산출)</p>
-                          <p className="font-mono text-[11px] bg-slate-800 text-slate-200 p-1.5 rounded mt-1 border border-slate-700">Margin = T_surface - T_dew</p>
-                        </div>
-                        <div>
-                          <p className="font-semibold text-slate-300 mb-1">3단계 (지수 환산 기준)</p>
-                          <ul className="space-y-1.5 text-[11px] bg-slate-800 p-2 rounded border border-slate-700">
-                            <li className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]"></span> <span className="text-emerald-100 font-medium">0~60 (안전)</span> <span className="text-slate-400 ml-auto">Margin &gt; 5℃</span></li>
-                            <li className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_4px_rgba(245,158,11,0.5)]"></span> <span className="text-amber-100 font-medium">61~80 (주의)</span> <span className="text-slate-400 ml-auto">0 &lt; Margin ≤ 5℃</span></li>
-                            <li className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_4px_rgba(225,29,72,0.5)]"></span> <span className="text-rose-100 font-medium">81~100 (위험)</span> <span className="text-slate-400 ml-auto">Margin ≤ 0℃</span></li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                     <div className="grid grid-cols-2 gap-2 divide-x divide-slate-200 mt-2">
+                       <div className="flex flex-col justify-center">
+                         <span className="text-[10px] text-slate-600 font-semibold block uppercase">오전(AM)</span>
+                         <div className="flex items-baseline gap-0.5 mt-0.5">
+                           <span className="text-lg font-black font-mono text-slate-900">{currentRecord.am.dewIndex !== null ? currentRecord.am.dewIndex : "-"}</span>
+                           <span className="text-[10px] text-slate-600 font-bold">Pt</span>
+                         </div>
+                       </div>
+                       <div className="pl-2 flex flex-col justify-center">
+                         <span className="text-[10px] text-slate-600 font-semibold block uppercase">오후(PM)</span>
+                         <div className="flex items-baseline gap-0.5 mt-0.5">
+                           <span className="text-lg font-black font-mono text-slate-900">{currentRecord.pm.dewIndex !== null ? currentRecord.pm.dewIndex : "-"}</span>
+                           <span className="text-[10px] text-slate-600 font-bold">Pt</span>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
 
-                <div className="grid grid-cols-2 gap-4 divide-x divide-slate-200 mt-2">
-                  <div className="flex flex-col justify-center">
-                    <span className="text-[11px] text-slate-600 font-semibold block uppercase">오전 (AM)</span>
-                    <div className="flex items-baseline gap-1 mt-0.5">
-                      <span className="text-2xl font-black font-mono text-slate-900">{currentRecord.am.dewIndex !== null ? currentRecord.am.dewIndex : "-"}</span>
-                      <span className="text-xs text-slate-600 font-bold">Pt</span>
-                    </div>
-                  </div>
-                  <div className="pl-4 flex flex-col justify-center">
-                    <span className="text-[11px] text-slate-600 font-semibold block uppercase">오후 (PM)</span>
-                    <div className="flex items-baseline gap-1 mt-0.5">
-                      <span className="text-2xl font-black font-mono text-slate-900">{currentRecord.pm.dewIndex !== null ? currentRecord.pm.dewIndex : "-"}</span>
-                      <span className="text-xs text-slate-600 font-bold">Pt</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Status Indicator & Alert */}
-              <div className="mt-4 pt-3 border-t border-black/10 flex flex-col gap-1.5 text-xs">
-                <div className="flex justify-between items-center">
-                  <span className="font-bold flex items-center gap-1.5 text-slate-900 text-sm">
-                    {maxDewIndexToday > 80 ? (
-                      <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-                    ) : maxDewIndexToday > 60 ? (
-                      <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-                    ) : (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    )}
-                    상태: {condensationStatus.label}
-                  </span>
-                  <span className="text-[10px] font-mono font-bold bg-white/60 text-slate-800 px-1.5 py-0.5 rounded border border-black/5">
-                    Max: {maxDewIndexToday} Pt
-                  </span>
-                </div>
-                <p className="text-[11px] leading-tight text-slate-700 font-medium">
-                  {condensationStatus.description}
-                </p>
-              </div>
-            </motion.div>
-
+                   <div className="mt-2 pt-2 border-t border-slate-200/50 flex justify-between items-center text-[10px]">
+                     <span className={`font-bold flex items-center gap-1 ${condensationStatus.textColor} whitespace-nowrap`}>
+                       {condensationStatus.icon}
+                       {condensationStatus.text} 상태
+                     </span>
+                   </div>
+                 </motion.div>
+               </div>
+             </div>
+             
+             {/* Monthly Stats Section */}
+             <div className="xl:col-span-3 flex flex-col gap-3">
+               <div className="flex items-end justify-between sm:justify-start xl:justify-between h-7">
+                 <div className="h-full flex items-center">
+                   <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                     <Calendar className="w-4 h-4 text-slate-400" />
+                     {selectedMonth}월 종합 지표
+                   </h2>
+                 </div>
+               </div>
+               <div className="bg-white border border-slate-200 rounded-xl p-3 shadow-xs h-[126px] flex flex-col justify-center">
+                 <div className="grid grid-cols-3 gap-2 text-center h-full">
+                   <div className="bg-emerald-50 rounded-lg p-2 border border-emerald-100 flex flex-col items-center justify-center h-full">
+                     <span className="text-[10px] text-emerald-800 block font-semibold mb-1">안전 일수</span>
+                     <span className="text-sm font-bold text-emerald-600 font-mono">{monthlyStats.safeCount}일</span>
+                   </div>
+                   <div className="bg-amber-50 rounded-lg p-2 border border-amber-100 flex flex-col items-center justify-center h-full">
+                     <span className="text-[10px] text-amber-800 block font-semibold mb-1">주의 일수</span>
+                     <span className="text-sm font-bold text-amber-500 font-mono">{monthlyStats.cautionCount}일</span>
+                   </div>
+                   <div className="bg-rose-50 rounded-lg p-2 border border-rose-100 flex flex-col items-center justify-center h-full">
+                     <span className="text-[10px] text-rose-800 block font-semibold mb-1">위험 일수</span>
+                     <span className="text-sm font-bold text-rose-600 font-mono">{monthlyStats.dangerCount}일</span>
+                   </div>
+                 </div>
+               </div>
+             </div>
           </div>
         </section>
-
-        {/* 2. 월간 그래프 Section */}
-        <section className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-xs print:hidden" id="monthly_chart_section">
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-100 pb-5 mb-5">
+        
+{/* 2. 월간 그래프 Section */}
+        <section className="bg-white rounded-2xl border border-slate-200 p-3 md:p-4 shadow-xs print:hidden" id="monthly_chart_section">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-100 pb-3 mb-3">
             <div>
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span className="h-5 w-1 bg-blue-600 rounded-full inline-block"></span>
@@ -1272,7 +1241,7 @@ export default function App() {
           </div>
 
           {/* Recharts Container */}
-          <div className="h-[360px] md:h-[420px] w-full" id="chart_container">
+          <div className="h-[280px] md:h-[320px] w-full" id="chart_container">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart 
                 data={chartData} 
@@ -1440,8 +1409,8 @@ export default function App() {
         </section>
 
         {/* 3. 월간 데이터 표 Section */}
-        <section className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-xs overflow-hidden" id="monthly_table_section">
-          <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-slate-100 pb-5 mb-5">
+        <section className="bg-white rounded-2xl border border-slate-200 p-3 md:p-4 shadow-xs overflow-hidden" id="monthly_table_section">
+          <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-slate-100 pb-3 mb-3">
             <div>
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <FileSpreadsheet className="w-5.5 h-5.5 text-blue-600 print:hidden" />
