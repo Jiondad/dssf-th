@@ -23,7 +23,7 @@ import {
   ChevronRight,
   Factory,
   ChevronDown
-} from "lucide-react";
+, Printer } from "lucide-react";
 import { 
   ResponsiveContainer, 
   LineChart, 
@@ -49,6 +49,8 @@ const CustomDewDot = (props: any) => {
   const { cx, cy, value, isAm } = props;
   if (!cx || !cy || value === undefined) return null;
   const color = getDewColor(value, isAm);
+
+
   return (
     <circle cx={cx} cy={cy} r={4} fill={color} stroke="#fff" strokeWidth={1} />
   );
@@ -374,10 +376,259 @@ export default function App() {
     return { safeCount, cautionCount, dangerCount };
   }, [sheetData]);
 
+  const renderTable = (daysToRender: number[], isPrint: boolean) => (
+                <table className={`w-full text-center border-collapse table-fixed ${isPrint ? "text-[11px] print-table-a4" : "text-[10px] xl:text-xs min-w-[800px]"}`}>
+              <thead>
+                <tr className="bg-slate-900 text-white font-sans text-center">
+                  <th className="sticky left-0 bg-slate-900 border border-slate-700 p-1 xl:p-1.5 z-20 font-bold w-[35px] xl:w-[45px] break-keep">구분</th>
+                  <th className="sticky left-[35px] xl:left-[45px] bg-slate-900 border border-slate-700 p-1 xl:p-1.5 z-20 font-bold w-[80px] xl:w-[115px] break-keep">측정 항목</th>
+                  {daysToRender.map((day) => (
+                    <th 
+                      key={day}
+                      onClick={() => setSelectedDay(day)}
+                      className={`border border-slate-700 p-1 xl:p-1.5 font-bold font-mono cursor-pointer transition-all hover:bg-blue-800 ${
+                        day === selectedDay ? "bg-blue-600 text-white" : "bg-slate-800/85"
+                      }`}
+                      title={`${day}일 정밀조회`}
+                    >
+                      {day}일
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {/* 1. 오전 Group */}
+                
+                {/* 대기온도 */}
+                <tr className="hover:bg-slate-50 transition-colors text-center">
+                  <td className="sticky left-0 bg-slate-100 font-bold border border-slate-200 p-1 xl:p-1.5 text-slate-700 z-10 text-center shadow-xs" rowSpan={4}>
+                    오전<br/><span className="text-[10px] font-mono text-slate-500 font-normal">(AM)</span>
+                  </td>
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                    대기온도 (℃)
+                  </td>
+                  {daysToRender.map((day) => {
+                    const item = sheetData.find(r => r.day === day);
+                    return (
+                    <td 
+                      key={day} 
+                      onClick={() => setSelectedDay(day)}
+                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
+                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
+                      }`}
+                    >
+                      {item ? item.am.airTemp !== null ? item.am.airTemp.toFixed(1) : '-' : '-'}
+                    </td>
+                  )
+})}
+                </tr>
+
+                {/* 표면온도 */}
+                <tr className="hover:bg-slate-50 transition-colors text-center">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                    코일표면온도 (℃)
+                  </td>
+                  {daysToRender.map((day) => {
+                    const item = sheetData.find(r => r.day === day);
+                    return (
+                    <td 
+                      key={day} 
+                      onClick={() => setSelectedDay(day)}
+                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
+                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
+                      }`}
+                    >
+                      {item ? item.am.surfaceTemp !== null ? item.am.surfaceTemp.toFixed(1) : '-' : '-'}
+                    </td>
+                  )
+})}
+                </tr>
+
+                {/* 상대습도 */}
+                <tr className="hover:bg-slate-50 transition-colors text-center">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                    상대습도 (%)
+                  </td>
+                  {daysToRender.map((day) => {
+                    const item = sheetData.find(r => r.day === day);
+                    return (
+                    <td 
+                      key={day} 
+                      onClick={() => setSelectedDay(day)}
+                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
+                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
+                      }`}
+                    >
+                      {item ? (item.am.humidity !== null ? item.am.humidity : '-') : '-'}
+                    </td>
+                  )
+})}
+                </tr>
+
+                {/* 결로지수 */}
+                <tr className="hover:bg-slate-50 transition-colors text-center">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs">
+                    결로지수 (Pt)
+                  </td>
+                  {daysToRender.map((day) => {
+                    const item = sheetData.find(r => r.day === day);
+                    if (!item) {
+                      return (
+                        <td key={day} onClick={() => setSelectedDay(day)} className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-all ${day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""}`}>
+                          -
+                        </td>
+                      );
+                    }
+                    const indexVal = item.am.dewIndex;
+                    if (indexVal === null || indexVal === undefined || indexVal === "") {
+                      return (
+                        <td key={day} onClick={() => setSelectedDay(day)} className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-all ${day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""}`}>
+                          -
+                        </td>
+                      );
+                    }
+                    let cellColor = "bg-[#d1fae5] text-[#065f46]"; // Safe
+                    if (indexVal > 80) cellColor = "bg-[#ffe4e6] text-[#9f1239] font-black animate-pulse"; // Danger
+                    else if (indexVal > 60) cellColor = "bg-[#fef3c7] text-[#92400e] font-bold"; // Caution
+                    return (
+                      <td 
+                        key={day} 
+                        onClick={() => setSelectedDay(day)}
+                        className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer font-semibold transition-all hover:opacity-80 ${cellColor} ${
+                          day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""
+                        }`}
+                        title={`${day}일 오전 결로지수: ${indexVal} Pt`}
+                      >
+                        {indexVal}
+                      </td>
+                    );
+                  })}
+                </tr>
+
+
+                {/* Separator row */}
+                <tr className="bg-slate-200 text-center h-2">
+                  <td className="sticky left-0 bg-slate-200 p-0" colSpan={1}></td>
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-200 p-0" colSpan={1}></td>
+                  <td colSpan={31} className="p-0"></td>
+                </tr>
+
+
+                {/* 2. 오후 Group */}
+                
+                {/* 대기온도 */}
+                <tr className="hover:bg-slate-50 transition-colors text-center">
+                  <td className="sticky left-0 bg-slate-100 font-bold border border-slate-200 p-1 xl:p-1.5 text-slate-700 z-10 text-center shadow-xs" rowSpan={4}>
+                    오후<br/><span className="text-[10px] font-mono text-slate-500 font-normal">(PM)</span>
+                  </td>
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                    대기온도 (℃)
+                  </td>
+                  {daysToRender.map((day) => {
+                    const item = sheetData.find(r => r.day === day);
+                    return (
+                    <td 
+                      key={day} 
+                      onClick={() => setSelectedDay(day)}
+                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
+                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
+                      }`}
+                    >
+                      {item ? item.pm.airTemp !== null ? item.pm.airTemp.toFixed(1) : '-' : '-'}
+                    </td>
+                  )
+})}
+                </tr>
+
+                {/* 표면온도 */}
+                <tr className="hover:bg-slate-50 transition-colors text-center">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                    코일표면온도 (℃)
+                  </td>
+                  {daysToRender.map((day) => {
+                    const item = sheetData.find(r => r.day === day);
+                    return (
+                    <td 
+                      key={day} 
+                      onClick={() => setSelectedDay(day)}
+                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
+                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
+                      }`}
+                    >
+                      {item ? item.pm.surfaceTemp !== null ? item.pm.surfaceTemp.toFixed(1) : '-' : '-'}
+                    </td>
+                  )
+})}
+                </tr>
+
+                {/* 상대습도 */}
+                <tr className="hover:bg-slate-50 transition-colors text-center">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
+                    상대습도 (%)
+                  </td>
+                  {daysToRender.map((day) => {
+                    const item = sheetData.find(r => r.day === day);
+                    return (
+                    <td 
+                      key={day} 
+                      onClick={() => setSelectedDay(day)}
+                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
+                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
+                      }`}
+                    >
+                      {item ? (item.pm.humidity !== null ? item.pm.humidity : '-') : '-'}
+                    </td>
+                  )
+})}
+                </tr>
+
+                {/* 결로지수 */}
+                <tr className="hover:bg-slate-50 transition-colors text-center">
+                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs">
+                    결로지수 (Pt)
+                  </td>
+                  {daysToRender.map((day) => {
+                    const item = sheetData.find(r => r.day === day);
+                    if (!item) {
+                      return (
+                        <td key={day} onClick={() => setSelectedDay(day)} className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-all ${day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""}`}>
+                          -
+                        </td>
+                      );
+                    }
+                    const indexVal = item.pm.dewIndex;
+                    if (indexVal === null || indexVal === undefined || indexVal === "") {
+                      return (
+                        <td key={day} onClick={() => setSelectedDay(day)} className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-all ${day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""}`}>
+                          -
+                        </td>
+                      );
+                    }
+                    let cellColor = "bg-[#d1fae5] text-[#065f46]"; // Safe
+                    if (indexVal > 80) cellColor = "bg-[#ffe4e6] text-[#9f1239] font-black animate-pulse"; // Danger
+                    else if (indexVal > 60) cellColor = "bg-[#fef3c7] text-[#92400e] font-bold"; // Caution
+                    return (
+                      <td 
+                        key={day} 
+                        onClick={() => setSelectedDay(day)}
+                        className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer font-semibold transition-all hover:opacity-80 ${cellColor} ${
+                          day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""
+                        }`}
+                        title={`${day}일 오후 결로지수: ${indexVal} Pt`}
+                      >
+                        {indexVal}
+                      </td>
+                    );
+                  })}
+                </tr>
+
+              </tbody>
+            </table>
+  );
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-12" id="app_root">
       {/* Top Professional Header */}
-      <header className="bg-slate-900 text-white shadow-md border-b border-slate-800" id="header_section">
+      <header className="bg-slate-900 text-white shadow-md border-b border-slate-800 print:hidden" id="header_section">
         <div className="max-w-[1920px] mx-auto px-4 py-4 md:py-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
             <div className="bg-blue-600 text-white p-2.5 rounded-lg shadow-inner flex items-center justify-center">
@@ -553,7 +804,7 @@ export default function App() {
       </header>
 
       {/* Main Container */}
-      <main className="max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 mt-6 space-y-6 relative">
+      <main className="max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 mt-6 space-y-6 relative print:p-0 print:m-0 print:space-y-0">
         {isLoadingData ? (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-50/80 backdrop-blur-sm min-h-[600px] rounded-2xl">
             <div className="flex flex-col items-center gap-4">
@@ -599,7 +850,7 @@ export default function App() {
         </div>
 
         {/* 1. 요약 대시보드 카드 뷰 Section */}
-        <section className="space-y-4" id="summary_cards_section">
+        <section className="space-y-4 print:hidden" id="summary_cards_section">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -634,8 +885,8 @@ export default function App() {
             >
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">대기 온도</span>
-                  <h3 className="text-lg font-bold text-slate-800 mt-0.5">Air Temperature</h3>
+                  <span className="text-base text-slate-800 font-extrabold tracking-tight block">대기 온도</span>
+                  <h3 className="text-sm font-medium text-slate-500 mt-0.5 uppercase tracking-wide">Air Temperature</h3>
                 </div>
                 <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
                   <Thermometer className="w-6 h-6" />
@@ -679,8 +930,8 @@ export default function App() {
             >
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">코일 표면 온도</span>
-                  <h3 className="text-lg font-bold text-slate-800 mt-0.5">Surface Temp</h3>
+                  <span className="text-base text-slate-800 font-extrabold tracking-tight block">코일 표면 온도</span>
+                  <h3 className="text-sm font-medium text-slate-500 mt-0.5 uppercase tracking-wide">Surface Temp</h3>
                 </div>
                 <div className="p-2 bg-teal-50 text-teal-600 rounded-xl">
                   <Layers className="w-6 h-6" />
@@ -724,8 +975,8 @@ export default function App() {
             >
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">상대 습도</span>
-                  <h3 className="text-lg font-bold text-slate-800 mt-0.5">Relative Humidity</h3>
+                  <span className="text-base text-slate-800 font-extrabold tracking-tight block">상대 습도</span>
+                  <h3 className="text-sm font-medium text-slate-500 mt-0.5 uppercase tracking-wide">Relative Humidity</h3>
                 </div>
                 <div className="p-2 bg-violet-50 text-violet-600 rounded-xl">
                   <Droplets className="w-6 h-6" />
@@ -772,8 +1023,8 @@ export default function App() {
               <div>
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <span className="text-xs font-semibold uppercase tracking-wider opacity-85 text-slate-700">결로 위험 지수</span>
-                    <h3 className="text-lg font-bold mt-0.5 text-slate-900">Condensation Index</h3>
+                    <span className="text-base text-slate-800 font-extrabold tracking-tight block">결로 위험 지수</span>
+                    <h3 className="text-sm font-medium text-slate-500 mt-0.5 uppercase tracking-wide">Condensation Index</h3>
                   </div>
                   <div className="relative group p-2 rounded-xl bg-white/80 cursor-help">
                     <AlertTriangle className="w-6 h-6 text-slate-900 transition-transform group-hover:scale-110" />
@@ -848,7 +1099,7 @@ export default function App() {
         </section>
 
         {/* 2. 월간 그래프 Section */}
-        <section className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-xs" id="monthly_chart_section">
+        <section className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-xs print:hidden" id="monthly_chart_section">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-100 pb-5 mb-5">
             <div>
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -1156,7 +1407,7 @@ export default function App() {
         </section>
 
         {/* 3. 월간 데이터 표 Section */}
-        <section className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-xs overflow-hidden" id="monthly_table_section">
+        <section className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-xs overflow-hidden print:m-0 print:p-0 print:border-none print:shadow-none" id="monthly_table_section">
           <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-slate-100 pb-5 mb-5">
             <div>
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -1169,6 +1420,15 @@ export default function App() {
             </div>
             
             <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto justify-between sm:justify-end">
+              
+              <button
+                onClick={() => window.print()}
+                className="flex items-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-900 active:scale-95 text-white font-semibold text-sm rounded-xl shadow-md transition-all shrink-0 cursor-pointer print:hidden"
+                id="btn_print_ledger"
+              >
+                <Printer className="w-4 h-4" />
+                대장 인쇄
+              </button>
               <button
                 onClick={() => {
                   const dayStr = selectedDay < 10 ? `0${selectedDay}` : `${selectedDay}`;
@@ -1202,255 +1462,18 @@ export default function App() {
           </div>
 
           {/* Scrollable Ledger Wrapper */}
-          <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-inner" id="ledger_table_wrapper">
-            <table className="w-full text-[10px] xl:text-xs text-center border-collapse table-fixed min-w-[800px]">
-              <thead>
-                <tr className="bg-slate-900 text-white font-sans text-center">
-                  <th className="sticky left-0 bg-slate-900 border border-slate-700 p-1 xl:p-1.5 z-20 font-bold w-[35px] xl:w-[45px] break-keep">구분</th>
-                  <th className="sticky left-[35px] xl:left-[45px] bg-slate-900 border border-slate-700 p-1 xl:p-1.5 z-20 font-bold w-[80px] xl:w-[115px] break-keep">측정 항목</th>
-                  {fixedDays.map((day) => (
-                    <th 
-                      key={day}
-                      onClick={() => setSelectedDay(day)}
-                      className={`border border-slate-700 p-1 xl:p-1.5 font-bold font-mono cursor-pointer transition-all hover:bg-blue-800 ${
-                        day === selectedDay ? "bg-blue-600 text-white" : "bg-slate-800/85"
-                      }`}
-                      title={`${day}일 정밀조회`}
-                    >
-                      {day}일
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {/* 1. 오전 Group */}
-                
-                {/* 대기온도 */}
-                <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-0 bg-slate-100 font-bold border border-slate-200 p-1 xl:p-1.5 text-slate-700 z-10 text-center shadow-xs" rowSpan={4}>
-                    오전<br/><span className="text-[10px] font-mono text-slate-500 font-normal">(AM)</span>
-                  </td>
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
-                    대기온도 (℃)
-                  </td>
-                  {fixedDays.map((day) => {
-                    const item = sheetData.find(r => r.day === day);
-                    return (
-                    <td 
-                      key={day} 
-                      onClick={() => setSelectedDay(day)}
-                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
-                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
-                      }`}
-                    >
-                      {item ? item.am.airTemp !== null ? item.am.airTemp.toFixed(1) : '-' : '-'}
-                    </td>
-                  )
-})}
-                </tr>
 
-                {/* 표면온도 */}
-                <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
-                    코일표면온도 (℃)
-                  </td>
-                  {fixedDays.map((day) => {
-                    const item = sheetData.find(r => r.day === day);
-                    return (
-                    <td 
-                      key={day} 
-                      onClick={() => setSelectedDay(day)}
-                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
-                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
-                      }`}
-                    >
-                      {item ? item.am.surfaceTemp !== null ? item.am.surfaceTemp.toFixed(1) : '-' : '-'}
-                    </td>
-                  )
-})}
-                </tr>
-
-                {/* 상대습도 */}
-                <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
-                    상대습도 (%)
-                  </td>
-                  {fixedDays.map((day) => {
-                    const item = sheetData.find(r => r.day === day);
-                    return (
-                    <td 
-                      key={day} 
-                      onClick={() => setSelectedDay(day)}
-                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
-                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
-                      }`}
-                    >
-                      {item ? (item.am.humidity !== null ? item.am.humidity : '-') : '-'}
-                    </td>
-                  )
-})}
-                </tr>
-
-                {/* 결로지수 */}
-                <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs">
-                    결로지수 (Pt)
-                  </td>
-                  {fixedDays.map((day) => {
-                    const item = sheetData.find(r => r.day === day);
-                    if (!item) {
-                      return (
-                        <td key={day} onClick={() => setSelectedDay(day)} className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-all ${day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""}`}>
-                          -
-                        </td>
-                      );
-                    }
-                    const indexVal = item.am.dewIndex;
-                    if (indexVal === null || indexVal === undefined || indexVal === "") {
-                      return (
-                        <td key={day} onClick={() => setSelectedDay(day)} className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-all ${day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""}`}>
-                          -
-                        </td>
-                      );
-                    }
-                    let cellColor = "bg-[#d1fae5] text-[#065f46]"; // Safe
-                    if (indexVal > 80) cellColor = "bg-[#ffe4e6] text-[#9f1239] font-black animate-pulse"; // Danger
-                    else if (indexVal > 60) cellColor = "bg-[#fef3c7] text-[#92400e] font-bold"; // Caution
-                    return (
-                      <td 
-                        key={day} 
-                        onClick={() => setSelectedDay(day)}
-                        className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer font-semibold transition-all hover:opacity-80 ${cellColor} ${
-                          day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""
-                        }`}
-                        title={`${day}일 오전 결로지수: ${indexVal} Pt`}
-                      >
-                        {indexVal}
-                      </td>
-                    );
-                  })}
-                </tr>
-
-
-                {/* Separator row */}
-                <tr className="bg-slate-200 text-center h-2">
-                  <td className="sticky left-0 bg-slate-200 p-0" colSpan={1}></td>
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-200 p-0" colSpan={1}></td>
-                  <td colSpan={31} className="p-0"></td>
-                </tr>
-
-
-                {/* 2. 오후 Group */}
-                
-                {/* 대기온도 */}
-                <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-0 bg-slate-100 font-bold border border-slate-200 p-1 xl:p-1.5 text-slate-700 z-10 text-center shadow-xs" rowSpan={4}>
-                    오후<br/><span className="text-[10px] font-mono text-slate-500 font-normal">(PM)</span>
-                  </td>
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
-                    대기온도 (℃)
-                  </td>
-                  {fixedDays.map((day) => {
-                    const item = sheetData.find(r => r.day === day);
-                    return (
-                    <td 
-                      key={day} 
-                      onClick={() => setSelectedDay(day)}
-                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
-                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
-                      }`}
-                    >
-                      {item ? item.pm.airTemp !== null ? item.pm.airTemp.toFixed(1) : '-' : '-'}
-                    </td>
-                  )
-})}
-                </tr>
-
-                {/* 표면온도 */}
-                <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
-                    코일표면온도 (℃)
-                  </td>
-                  {fixedDays.map((day) => {
-                    const item = sheetData.find(r => r.day === day);
-                    return (
-                    <td 
-                      key={day} 
-                      onClick={() => setSelectedDay(day)}
-                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
-                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
-                      }`}
-                    >
-                      {item ? item.pm.surfaceTemp !== null ? item.pm.surfaceTemp.toFixed(1) : '-' : '-'}
-                    </td>
-                  )
-})}
-                </tr>
-
-                {/* 상대습도 */}
-                <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs">
-                    상대습도 (%)
-                  </td>
-                  {fixedDays.map((day) => {
-                    const item = sheetData.find(r => r.day === day);
-                    return (
-                    <td 
-                      key={day} 
-                      onClick={() => setSelectedDay(day)}
-                      className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-colors ${
-                        day === selectedDay ? "bg-blue-50/70 font-semibold border-2 border-blue-400" : ""
-                      }`}
-                    >
-                      {item ? (item.pm.humidity !== null ? item.pm.humidity : '-') : '-'}
-                    </td>
-                  )
-})}
-                </tr>
-
-                {/* 결로지수 */}
-                <tr className="hover:bg-slate-50 transition-colors text-center">
-                  <td className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs">
-                    결로지수 (Pt)
-                  </td>
-                  {fixedDays.map((day) => {
-                    const item = sheetData.find(r => r.day === day);
-                    if (!item) {
-                      return (
-                        <td key={day} onClick={() => setSelectedDay(day)} className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-all ${day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""}`}>
-                          -
-                        </td>
-                      );
-                    }
-                    const indexVal = item.pm.dewIndex;
-                    if (indexVal === null || indexVal === undefined || indexVal === "") {
-                      return (
-                        <td key={day} onClick={() => setSelectedDay(day)} className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer transition-all ${day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""}`}>
-                          -
-                        </td>
-                      );
-                    }
-                    let cellColor = "bg-[#d1fae5] text-[#065f46]"; // Safe
-                    if (indexVal > 80) cellColor = "bg-[#ffe4e6] text-[#9f1239] font-black animate-pulse"; // Danger
-                    else if (indexVal > 60) cellColor = "bg-[#fef3c7] text-[#92400e] font-bold"; // Caution
-                    return (
-                      <td 
-                        key={day} 
-                        onClick={() => setSelectedDay(day)}
-                        className={`border border-slate-200 p-1 xl:p-1.5 font-mono cursor-pointer font-semibold transition-all hover:opacity-80 ${cellColor} ${
-                          day === selectedDay ? "ring-2 ring-blue-500 ring-offset-1 z-10" : ""
-                        }`}
-                        title={`${day}일 오후 결로지수: ${indexVal} Pt`}
-                      >
-                        {indexVal}
-                      </td>
-                    );
-                  })}
-                </tr>
-
-              </tbody>
-            </table>
+          {/* Scrollable Ledger Wrapper */}
+          <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-inner print:hidden" id="ledger_table_wrapper">
+            {renderTable(fixedDays, false)}
           </div>
+          <div className="hidden print:block space-y-8 print:w-full print:m-0 print:p-0 print:overflow-visible" id="print_ledger_wrapper">
+            <h3 className="text-xl font-bold mb-4 text-center">{selectedMonth}월 온습도 및 결로지수 대장 (1일 ~ 16일) - {selectedFactory}</h3>
+            {renderTable(fixedDays.slice(0, 16), true)}
+            <h3 className="text-xl font-bold mb-4 mt-12 text-center" style={{ pageBreakBefore: 'always' }}>{selectedMonth}월 온습도 및 결로지수 대장 (17일 ~ 31일) - {selectedFactory}</h3>
+            {renderTable(fixedDays.slice(16, 31), true)}
+          </div>
+
 
           {/* User Instruction block inside Table */}
           <div className="mt-4 flex items-center justify-between text-[11px] text-slate-400 font-mono">
