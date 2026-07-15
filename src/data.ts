@@ -46,7 +46,7 @@ export function getCondensationStatus(val: number): CondensationStatus {
 }
 
 export async function fetchSpreadsheetData(sheetName: string, year: number, month: number): Promise<DailyRecord[]> {
-  const url = `https://script.google.com/macros/s/AKfycbwGRuza0OfCDR-sQA3l3yu_aCAIdJPtKWobL8PwGVOsRDGYCW3O-EGo5oNSeGJKILtU4g/exec?sheetName=${sheetName}`;
+  const url = `https://script.google.com/macros/s/AKfycbwGRuza0OfCDR-sQA3l3yu_aCAIdJPtKWobL8PwGVOsRDGYCW3O-EGo5oNSeGJKILtU4g/exec?sheetName=${sheetName}&t=${new Date().getTime()}`;
   
   try {
     const response = await fetch(url);
