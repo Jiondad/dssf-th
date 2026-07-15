@@ -510,7 +510,7 @@ export default function App() {
                 <tr className="bg-slate-200 text-center h-2">
                   <td className="sticky left-0 bg-slate-200 p-0" colSpan={1}></td>
                   <td className="sticky left-[35px] xl:left-[45px] bg-slate-200 p-0" colSpan={1}></td>
-                  <td colSpan={31} className="p-0"></td>
+                  <td colSpan={daysToRender.length} className="p-0"></td>
                 </tr>
 
 
@@ -626,7 +626,40 @@ export default function App() {
             </table>
   );
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-12" id="app_root">
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-12 print:bg-white print:pb-0 print:min-h-0" id="app_root">
+      <style>{`
+        @media print {
+          @page {
+            size: A4 landscape;
+            margin: 8mm;
+          }
+          body {
+            background: white !important;
+            -webkit-print-color-adjust: exact;
+          }
+          .print\\:hidden {
+            display: none !important;
+          }
+          .print-container {
+            display: block !important;
+            width: 100% !important;
+          }
+          table {
+            width: 100% !important;
+            table-layout: fixed !important;
+          }
+        }
+      `}</style>
+      
+      {/* Print Only View */}
+      <div className="hidden print:block print-container">
+        <h2 className="text-2xl font-bold text-center mb-6 text-slate-900">{selectedMonth}월 온습도 및 결로지수 대장 - {selectedFactory}</h2>
+        {renderTable(fixedDays.slice(0, 16), true)}
+        <div style={{ pageBreakBefore: 'always' }} className="pt-6">
+          {renderTable(fixedDays.slice(16, 31), true)}
+        </div>
+      </div>
+
       {/* Top Professional Header */}
       <header className="bg-slate-900 text-white shadow-md border-b border-slate-800 print:hidden" id="header_section">
         <div className="max-w-[1920px] mx-auto px-4 py-4 md:py-6 flex flex-col md:flex-row justify-between items-center gap-4">
@@ -804,7 +837,7 @@ export default function App() {
       </header>
 
       {/* Main Container */}
-      <main className="max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 mt-6 space-y-6 relative print:p-0 print:m-0 print:space-y-0">
+      <main className="max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 mt-6 space-y-6 relative print:hidden">
         {isLoadingData ? (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-50/80 backdrop-blur-sm min-h-[600px] rounded-2xl">
             <div className="flex flex-col items-center gap-4">
@@ -853,7 +886,7 @@ export default function App() {
         <section className="space-y-4 print:hidden" id="summary_cards_section">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2 print:text-2xl print:justify-center print:w-full print:mb-2">
+              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span className="h-5 w-1 bg-blue-600 rounded-full inline-block"></span>
                 실시간 환경 모니터링 현황 ({selectedMonth}월 {selectedDay}일)
               </h2>
@@ -1102,7 +1135,7 @@ export default function App() {
         <section className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-xs print:hidden" id="monthly_chart_section">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-100 pb-5 mb-5">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2 print:text-2xl print:justify-center print:w-full print:mb-2">
+              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span className="h-5 w-1 bg-blue-600 rounded-full inline-block"></span>
                 {selectedMonth}월 온습도 및 결로지수 분석 그래프 (Line Chart)
               </h2>
@@ -1407,10 +1440,10 @@ export default function App() {
         </section>
 
         {/* 3. 월간 데이터 표 Section */}
-        <section className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-xs overflow-hidden print:m-0 print:p-0 print:border-none print:shadow-none" id="monthly_table_section">
-          <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-slate-100 pb-5 mb-5 print:border-none print:pb-2 print:mb-2 print:block">
+        <section className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-xs overflow-hidden" id="monthly_table_section">
+          <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-slate-100 pb-5 mb-5">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2 print:text-2xl print:justify-center print:w-full print:mb-2">
+              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <FileSpreadsheet className="w-5.5 h-5.5 text-blue-600 print:hidden" />
                 {selectedMonth}월 온습도 및 결로지수 대장 (Monthly Excel Ledger)
               </h2>
@@ -1467,12 +1500,7 @@ export default function App() {
           <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-inner print:hidden" id="ledger_table_wrapper">
             {renderTable(fixedDays, false)}
           </div>
-          <div className="hidden print:block space-y-4 print:w-full print:m-0 print:p-0 print:overflow-visible" id="print_ledger_wrapper">
-            {renderTable(fixedDays.slice(0, 16), true)}
-            <div style={{ pageBreakBefore: 'always' }} className="pt-2">
-              {renderTable(fixedDays.slice(16, 31), true)}
-            </div>
-          </div>
+          
 
 
           {/* User Instruction block inside Table */}
@@ -1487,7 +1515,7 @@ export default function App() {
       {/* New Data Registration Modal with Animation */}
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto" id="entry_modal_overlay">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto print:hidden" id="entry_modal_overlay">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
