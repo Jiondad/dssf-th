@@ -668,7 +668,7 @@ export default function App() {
               <Layers className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-lg md:text-xl font-bold tracking-tight font-sans">
+              <h1 className="text-xl md:text-2xl font-bold tracking-tight font-sans">
                 (주)대성스틸 온습도 관리 모니터링 시스템
               </h1>
               <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-1.5 font-mono">
@@ -1065,6 +1065,9 @@ export default function App() {
                        {condensationStatus.icon}
                        {condensationStatus.text} 상태
                      </span>
+                     <span className="font-mono bg-slate-100 text-slate-600 px-1 py-0.5 rounded whitespace-nowrap">
+                       Target: &lt;60Pt
+                     </span>
                    </div>
                  </motion.div>
                </div>
@@ -1239,7 +1242,7 @@ export default function App() {
 
           
 {/* Recharts Container */}
-          <div className="h-[440px] md:h-[520px] w-full" id="chart_container">
+          <div className="h-[410px] md:h-[490px] w-full" id="chart_container">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart 
                 data={chartData} 
