@@ -1050,25 +1050,32 @@ export default function App() {
                    <div>
                      <div className="flex justify-between items-start mb-2">
                        <div>
-                         <span className={`text-sm font-extrabold tracking-tight block ${maxDewIndexToday > 80 ? 'text-white' : 'text-slate-800'}`}>결로 위험 지수</span>
-                         <h3 className={`text-[10px] font-medium uppercase tracking-wide ${maxDewIndexToday > 80 ? 'text-white/80' : 'text-slate-500'}`}>Condensation</h3>
+                         <span className="text-xs font-semibold uppercase tracking-wider opacity-85 text-slate-700">결로 위험 지수</span>
+                         <h3 className="text-lg font-bold mt-0.5 text-slate-900">Condensation Index</h3>
                        </div>
-                       <div className="relative group p-1.5 rounded-lg bg-amber-400/90 cursor-help">
-                         <AlertTriangle className="w-4 h-4 text-amber-950 transition-transform group-hover:scale-110" />
-                         <div className="absolute right-0 top-full mt-2 w-64 bg-slate-900 text-white p-3 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 z-50 transform origin-top-right scale-95 group-hover:scale-100">
-                           <h4 className="font-bold text-xs mb-2 text-blue-300 border-b border-slate-700 pb-1">결로지수 산출</h4>
-                           <div className="space-y-2 text-[10px]">
+                       <div className="relative group p-2 rounded-xl bg-white/80 cursor-help">
+                         <AlertTriangle className="w-6 h-6 text-slate-900 transition-transform group-hover:scale-110" />
+                    
+                         {/* Tooltip Content */}
+                         <div className="absolute right-0 top-full mt-2 w-72 md:w-80 bg-slate-900 text-white p-4 rounded-xl shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 z-50 transform origin-top-right scale-95 group-hover:scale-100">
+                           <h4 className="font-bold text-sm mb-3 text-blue-300 border-b border-slate-700 pb-2">결로지수 산출 및 환산 원리</h4>
+                           <div className="space-y-3 text-xs">
                              <div>
-                               <p className="font-semibold text-slate-300">1. T_dew ≈ T_air - ((100 - H)/5)</p>
+                               <p className="font-semibold text-slate-300">1단계 (이슬점 약식 계산)</p>
+                               <p className="font-mono text-[11px] bg-slate-800 text-slate-200 p-1.5 rounded mt-1 border border-slate-700">T_dew ≈ T_air - ((100 - H) / 5)</p>
                              </div>
                              <div>
-                               <p className="font-semibold text-slate-300">2. Margin = T_surface - T_dew</p>
+                               <p className="font-semibold text-slate-300">2단계 (마진 산출)</p>
+                               <p className="font-mono text-[11px] bg-slate-800 text-slate-200 p-1.5 rounded mt-1 border border-slate-700">Margin = T_surface - T_dew</p>
                              </div>
-                             <ul className="space-y-1 bg-slate-800 p-1.5 rounded border border-slate-700">
-                               <li className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500"></span> <span className="text-emerald-100">안전(0~60)</span></li>
-                               <li className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500"></span> <span className="text-amber-100">주의(61~80)</span></li>
-                               <li className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-rose-500"></span> <span className="text-rose-100">위험(81~100)</span></li>
-                             </ul>
+                             <div>
+                               <p className="font-semibold text-slate-300 mb-1">3단계 (지수 환산 기준)</p>
+                               <ul className="space-y-1.5 text-[11px] bg-slate-800 p-2 rounded border border-slate-700">
+                                 <li className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]"></span> <span className="text-emerald-100 font-medium">0~60 (안전)</span> <span className="text-slate-400 ml-auto">Margin &gt; 5℃</span></li>
+                                 <li className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_4px_rgba(245,158,11,0.5)]"></span> <span className="text-amber-100 font-medium">61~80 (주의)</span> <span className="text-slate-400 ml-auto">0 &lt; Margin ≤ 5℃</span></li>
+                                 <li className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_4px_rgba(225,29,72,0.5)]"></span> <span className="text-rose-100 font-medium">81~100 (위험)</span> <span className="text-slate-400 ml-auto">Margin ≤ 0℃</span></li>
+                               </ul>
+                             </div>
                            </div>
                          </div>
                        </div>
