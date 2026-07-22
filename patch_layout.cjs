@@ -1,60 +1,63 @@
 const fs = require('fs');
 let content = fs.readFileSync('src/App.tsx', 'utf8');
 
-// 1. Root container
-content = content.replace(
-  '<div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-12 print:bg-white print:pb-0 print:min-h-0" id="app_root">',
-  '<div className="h-screen overflow-hidden flex flex-col bg-slate-50 text-slate-800 font-sans antialiased print:bg-white print:h-auto print:overflow-visible print:block" id="app_root">'
-);
+// 1. Root wrapper
+const oldRootTop = `<div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-12 print:bg-white print:pb-0 print:min-h-0" id="app_root">`;
+const newRootTop = `<div className="flex items-center justify-center h-screen w-screen bg-slate-900 text-slate-800 font-sans antialiased overflow-hidden print:block print:bg-white print:h-auto print:overflow-visible" id="app_root">
+      
+      {/* 16:9 Aspect Ratio Wrapper */}
+      <div 
+        className="relative bg-slate-50 flex flex-col shadow-2xl overflow-hidden print:hidden" 
+        style={{ 
+          width: '100vw', 
+          maxWidth: 'calc(100vh * 16 / 9)', 
+          height: '100vh', 
+          maxHeight: 'calc(100vw * 9 / 16)',
+          aspectRatio: '16/9' 
+        }}
+      >`;
+content = content.replace(oldRootTop, newRootTop);
 
-// 2. Main container
-content = content.replace(
-  '<main className="max-w-full mx-auto px-4 md:px-6 lg:px-8 mt-4 space-y-4 relative print:hidden">',
-  '<main className="flex-1 min-h-0 flex flex-col max-w-full w-full mx-auto px-4 md:px-6 lg:px-8 mt-4 pb-4 space-y-4 relative print:hidden">'
-);
+// 2. Header
+const oldHeader = `<header className="bg-slate-900 text-white shadow-md border-b border-slate-800 print:hidden" id="header_section">`;
+const newHeader = `<header className="bg-slate-900 text-white shadow-md border-b border-slate-800 shrink-0 print:hidden" id="header_section">`;
+content = content.replace(oldHeader, newHeader);
 
-// 3. Summary Cards Section
-content = content.replace(
-  '<section className={`transition-opacity duration-300 ${isLoadingData ? \'opacity-30\' : \'opacity-100\'} print:hidden`} id="summary_cards_section">',
-  '<section className={`shrink-0 transition-opacity duration-300 ${isLoadingData ? \'opacity-30\' : \'opacity-100\'} print:hidden`} id="summary_cards_section">'
-);
+// 3. Main container
+const oldMain = `<main className="max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 mt-4 space-y-4 relative print:hidden">`;
+const newMain = `<main className="flex-1 flex flex-col min-h-0 w-full px-3 py-3 md:px-4 md:py-4 space-y-3 relative print:hidden">`;
+content = content.replace(oldMain, newMain);
 
-// 4. Monthly Chart Section
-content = content.replace(
-  '<section className="bg-white rounded-2xl border border-slate-200 p-3 md:p-4 shadow-xs print:hidden" id="monthly_chart_section">',
-  '<section className="flex-[1.2] min-h-0 flex flex-col bg-white rounded-2xl border border-slate-200 p-3 md:p-4 shadow-xs print:hidden" id="monthly_chart_section">'
-);
+// 4. summary_cards_section
+const oldSummary = `<section className={\`transition-opacity duration-300 \${isLoadingData ? 'opacity-30' : 'opacity-100'} print:hidden\`} id="summary_cards_section">`;
+const newSummary = `<section className={\`transition-opacity duration-300 shrink-0 \${isLoadingData ? 'opacity-30' : 'opacity-100'} print:hidden\`} id="summary_cards_section">`;
+content = content.replace(oldSummary, newSummary);
 
-// 5. Chart Container Height
-content = content.replace(
-  '<div className="h-[410px] md:h-[490px] w-full" id="chart_container">',
-  '<div className="flex-1 min-h-0 w-full" id="chart_container">'
-);
+// 5. monthly_chart_section
+const oldChartSection = `<section className="bg-white rounded-2xl border border-slate-200 p-3 md:p-4 shadow-xs print:hidden" id="monthly_chart_section">`;
+const newChartSection = `<section className="bg-white rounded-2xl border border-slate-200 p-3 shadow-xs print:hidden flex-1 flex flex-col min-h-0" id="monthly_chart_section">`;
+content = content.replace(oldChartSection, newChartSection);
 
-// 6. Monthly Table Section
-content = content.replace(
-  '<section className="bg-white rounded-2xl border border-slate-200 p-3 md:p-4 shadow-xs overflow-hidden" id="monthly_table_section">',
-  '<section className="flex-1 min-h-0 flex flex-col bg-white rounded-2xl border border-slate-200 p-3 md:p-4 shadow-xs overflow-hidden" id="monthly_table_section">'
-);
+// 6. chart_container
+const oldChartContainer = `<div className="h-[410px] md:h-[490px] w-full" id="chart_container">`;
+const newChartContainer = `<div className="flex-1 w-full min-h-0" id="chart_container">`;
+content = content.replace(oldChartContainer, newChartContainer);
 
-// 7. Table Header/Title div should be shrink-0
-content = content.replace(
-  '<div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-slate-100 pb-3 mb-3">',
-  '<div className="shrink-0 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-slate-100 pb-3 mb-3">'
-);
+// 7. monthly_table_section
+const oldTableSection = `<section className="bg-white rounded-2xl border border-slate-200 p-3 md:p-4 shadow-xs overflow-hidden" id="monthly_table_section">`;
+const newTableSection = `<section className="bg-white rounded-2xl border border-slate-200 p-3 shadow-xs overflow-hidden flex-1 flex flex-col min-h-0" id="monthly_table_section">`;
+content = content.replace(oldTableSection, newTableSection);
 
-// 8. Ledger Table Wrapper
-content = content.replace(
-  '<div className="overflow-x-auto rounded-xl border border-slate-200 shadow-inner print:hidden" id="ledger_table_wrapper">',
-  '<div className="flex-1 overflow-auto rounded-xl border border-slate-200 shadow-inner print:hidden" id="ledger_table_wrapper">'
-);
+// 8. ledger_table_wrapper
+const oldLedgerWrapper = `<div className="overflow-x-auto rounded-xl border border-slate-200 shadow-inner print:hidden" id="ledger_table_wrapper">`;
+const newLedgerWrapper = `<div className="overflow-auto flex-1 rounded-xl border border-slate-200 shadow-inner print:hidden" id="ledger_table_wrapper">`;
+content = content.replace(oldLedgerWrapper, newLedgerWrapper);
 
-// 9. Copyright footer in table section should be shrink-0
-content = content.replace(
-  '<div className="mt-4 flex items-center justify-between text-[11px] text-slate-400 font-mono print:hidden">',
-  '<div className="shrink-0 mt-3 flex items-center justify-between text-[11px] text-slate-400 font-mono print:hidden">'
-);
-
+// 9. Close the 16:9 wrapper
+const oldMainEnd = `      </main>`;
+const newMainEnd = `      </main>
+      </div> {/* End 16:9 Wrapper */}`;
+content = content.replace(oldMainEnd, newMainEnd);
 
 fs.writeFileSync('src/App.tsx', content);
-console.log("Layout patched successfully!");
+console.log("Layout patched!");

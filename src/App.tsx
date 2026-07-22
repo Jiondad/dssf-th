@@ -682,7 +682,7 @@ export default function App() {
             </table>
   );
   return (
-    <div className="h-screen overflow-hidden flex flex-col bg-slate-50 text-slate-800 font-sans antialiased print:bg-white print:h-auto print:overflow-visible print:block" id="app_root">
+    <div className="flex items-center justify-center h-screen w-screen bg-slate-900 text-slate-800 font-sans antialiased overflow-hidden print:block print:bg-white print:h-auto print:overflow-visible" id="app_root">
             <style>{`
         @media print {
           @page {
@@ -765,9 +765,20 @@ export default function App() {
         </div>
       </div>
 
+      {/* 16:9 Aspect Ratio Wrapper */}
+      <div 
+        className="relative bg-slate-50 flex flex-col shadow-2xl overflow-hidden print:hidden" 
+        style={{ 
+          width: '100vw', 
+          maxWidth: 'calc(100vh * 16 / 9)', 
+          height: '100vh', 
+          maxHeight: 'calc(100vw * 9 / 16)',
+          aspectRatio: '16/9' 
+        }}
+      >
       {/* Top Professional Header */}
-      <header className="bg-slate-900 text-white shadow-md border-b border-slate-800 print:hidden" id="header_section">
-        <div className="max-w-full mx-auto px-4 py-1.5 md:py-2 flex flex-col md:flex-row justify-between items-center gap-2">
+      <header className="bg-slate-900 text-white shadow-md border-b border-slate-800 shrink-0 print:hidden" id="header_section">
+        <div className="max-w-[1920px] mx-auto px-4 py-2.5 md:py-3.5 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
             <div className="bg-blue-600 text-white p-2 rounded-lg shadow-inner flex items-center justify-center">
               <Layers className="w-5 h-5" />
@@ -942,7 +953,7 @@ export default function App() {
       </header>
 
       {/* Main Container */}
-      <main className="flex-1 min-h-0 flex flex-col max-w-full w-full mx-auto px-4 md:px-6 lg:px-8 mt-2 pb-2 space-y-2 relative print:hidden">
+      <main className="flex-1 flex flex-col min-h-0 w-full px-3 py-3 md:px-4 md:py-4 space-y-3 relative print:hidden">
         {isLoadingData ? (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-50/80 backdrop-blur-sm min-h-[600px] rounded-2xl">
             <div className="flex flex-col items-center gap-4">
@@ -953,10 +964,10 @@ export default function App() {
         ) : null}
 
         {/* 1. 요약 대시보드 카드 뷰 Section */}
-        <section className={`shrink-0 transition-opacity duration-300 ${isLoadingData ? 'opacity-30' : 'opacity-100'} print:hidden`} id="summary_cards_section">
-          <div className="grid grid-cols-1 xl:grid-cols-12 2xl:grid-cols-10 gap-4">
+        <section className={`transition-opacity duration-300 shrink-0 ${isLoadingData ? 'opacity-30' : 'opacity-100'} print:hidden`} id="summary_cards_section">
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
              {/* Cards Section */}
-             <div className="xl:col-span-9 2xl:col-span-8 flex flex-col gap-3">
+             <div className="xl:col-span-9 flex flex-col gap-3">
                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                  <div>
                    <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -1197,7 +1208,7 @@ export default function App() {
              </div>
              
              {/* Monthly Stats Section */}
-             <div className="xl:col-span-3 2xl:col-span-2 flex flex-col gap-3">
+             <div className="xl:col-span-3 flex flex-col gap-3">
                <div className="flex items-end justify-between sm:justify-start xl:justify-between h-7">
                  <div className="h-full flex items-center">
                    <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -1227,8 +1238,8 @@ export default function App() {
         </section>
         
 {/* 2. 월간 그래프 Section */}
-        <section className="shrink-0 flex flex-col bg-white rounded-2xl border border-slate-200 p-2 md:p-3 shadow-xs print:hidden" id="monthly_chart_section">
-          <div className="shrink-0 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-2 border-b border-slate-100 pb-2 mb-2">
+        <section className="bg-white rounded-2xl border border-slate-200 p-3 shadow-xs print:hidden flex-1 flex flex-col min-h-0" id="monthly_chart_section">
+          <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-2 border-b border-slate-100 pb-2 mb-2">
             <div className="shrink-0">
               <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <span className="h-4 w-1 bg-blue-600 rounded-full inline-block"></span>
@@ -1365,7 +1376,7 @@ export default function App() {
 
           
 {/* Recharts Container */}
-          <div className="h-[280px] md:h-[340px] w-full" id="chart_container">
+          <div className="flex-1 w-full min-h-0" id="chart_container">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart 
                 data={chartData} 
@@ -1542,8 +1553,8 @@ export default function App() {
         </section>
 
         {/* 3. 월간 데이터 표 Section */}
-        <section className="flex-1 min-h-0 flex flex-col bg-white rounded-2xl border border-slate-200 p-2 md:p-3 shadow-xs overflow-hidden" id="monthly_table_section">
-          <div className="shrink-0 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-2 border-b border-slate-100 pb-2 mb-2">
+        <section className="bg-white rounded-2xl border border-slate-200 p-3 shadow-xs overflow-hidden flex-1 flex flex-col min-h-0" id="monthly_table_section">
+          <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-slate-100 pb-3 mb-3">
             <div>
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <FileSpreadsheet className="w-5.5 h-5.5 text-blue-600 print:hidden" />
@@ -1599,19 +1610,20 @@ export default function App() {
           {/* Scrollable Ledger Wrapper */}
 
           {/* Scrollable Ledger Wrapper */}
-          <div className="flex-1 overflow-auto rounded-xl border border-slate-200 shadow-inner print:hidden" id="ledger_table_wrapper">
+          <div className="overflow-auto flex-1 rounded-xl border border-slate-200 shadow-inner print:hidden" id="ledger_table_wrapper">
             {renderTable(fixedDays, false)}
           </div>
           
 
 
           {/* User Instruction block inside Table */}
-          <div className="shrink-0 mt-3 flex items-center justify-between text-[11px] text-slate-400 font-mono print:hidden">
+          <div className="mt-4 flex items-center justify-between text-[11px] text-slate-400 font-mono print:hidden">
             <span className="hidden sm:inline">Copyright © (주)대성스틸 Smart Factory. All rights reserved.</span>
           </div>
         </section>
 
       </main>
+      </div> {/* End 16:9 Wrapper */}
 
       {/* New Data Registration Modal with Animation */}
       <AnimatePresence>
