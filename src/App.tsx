@@ -709,12 +709,12 @@ export default function App() {
             {/* Step 1 */}
             <div className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg flex flex-col justify-center">
               <p className="font-bold text-slate-700 mb-1">1단계 (이슬점 약식 계산)</p>
-              <p className="font-mono text-[10.5px] text-slate-600 bg-white p-1 rounded border border-slate-100">T_dew ≈ T_air - ((100 - H) / 5)</p>
+              <p className="font-mono text-[10.5px] text-slate-600 bg-white p-1 rounded border border-slate-100">이슬점 ≈ 대기온도 - ((100 - 상대습도) / 5)</p>
             </div>
             {/* Step 2 */}
             <div className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg flex flex-col justify-center">
               <p className="font-bold text-slate-700 mb-1">2단계 (마진 산출)</p>
-              <p className="font-mono text-[10.5px] text-slate-600 bg-white p-1 rounded border border-slate-100">Margin = T_surface - T_dew</p>
+              <p className="font-mono text-[10.5px] text-slate-600 bg-white p-1 rounded border border-slate-100">Margin = 코일표면온도 - 이슬점</p>
             </div>
             {/* Step 3 */}
             <div className="bg-slate-50 border border-slate-200 p-2.5 rounded-lg">
