@@ -179,9 +179,13 @@ export default function App() {
         if (air === null || surf === null || hum === null || air === "" || surf === "" || hum === "" || isNaN(Number(air)) || isNaN(Number(surf)) || isNaN(Number(hum)) || air === undefined || surf === undefined || hum === undefined) return null;
         const dewPoint = air - ((100 - hum) / 5);
         const diff = surf - dewPoint;
-        if (diff <= 0) return 95;
-        if (diff >= 6) return Math.max(15, Math.round(35 - (diff - 6) * 4));
-        return Math.max(0, Math.min(100, Math.round(95 - (diff * 10))));
+        if (diff <= 0) {
+          return Math.max(81, Math.min(100, Math.round(90 - (diff * 10))));
+        } else if (diff <= 3) {
+          return Math.max(61, Math.min(80, Math.round(80 - (diff / 3) * 19)));
+        } else {
+          return Math.max(15, Math.min(60, Math.round(60 - (diff - 3) * 5)));
+        }
       };
 
       const amAirTemp = formData.amAirTemp === "" ? null : Number(formData.amAirTemp);
@@ -743,12 +747,12 @@ export default function App() {
                 <li className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-500"></span> 
                   <span className="font-semibold text-emerald-700">0~60 (안전)</span> 
-                  <span className="ml-auto">Margin &gt; 5℃</span>
+                  <span className="ml-auto">Margin &gt; 3℃</span>
                 </li>
                 <li className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-amber-500"></span> 
                   <span className="font-semibold text-amber-700">61~80 (주의)</span> 
-                  <span className="ml-auto">0 &lt; Margin ≤ 5℃</span>
+                  <span className="ml-auto">0 &lt; Margin ≤ 3℃</span>
                 </li>
                 <li className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-rose-500"></span> 
@@ -763,7 +767,7 @@ export default function App() {
 
       {/* Top Professional Header */}
       <header className="bg-slate-900 text-white shadow-md border-b border-slate-800 print:hidden" id="header_section">
-        <div className="max-w-[1920px] mx-auto px-4 py-2.5 md:py-3.5 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="max-w-full mx-auto px-4 py-2.5 md:py-3.5 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
             <div className="bg-blue-600 text-white p-2 rounded-lg shadow-inner flex items-center justify-center">
               <Layers className="w-5 h-5" />
@@ -938,7 +942,7 @@ export default function App() {
       </header>
 
       {/* Main Container */}
-      <main className="max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 mt-4 space-y-4 relative print:hidden">
+      <main className="max-w-full mx-auto px-4 md:px-6 lg:px-8 mt-4 space-y-4 relative print:hidden">
         {isLoadingData ? (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-50/80 backdrop-blur-sm min-h-[600px] rounded-2xl">
             <div className="flex flex-col items-center gap-4">
@@ -950,9 +954,9 @@ export default function App() {
 
         {/* 1. 요약 대시보드 카드 뷰 Section */}
         <section className={`transition-opacity duration-300 ${isLoadingData ? 'opacity-30' : 'opacity-100'} print:hidden`} id="summary_cards_section">
-          <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
+          <div className="grid grid-cols-1 xl:grid-cols-12 2xl:grid-cols-10 gap-4">
              {/* Cards Section */}
-             <div className="xl:col-span-9 flex flex-col gap-3">
+             <div className="xl:col-span-9 2xl:col-span-8 flex flex-col gap-3">
                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                  <div>
                    <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -1141,8 +1145,8 @@ export default function App() {
                              <div>
                                <p className="font-semibold text-slate-300 mb-1">3단계 (지수 환산 기준)</p>
                                <ul className="space-y-1.5 text-[11px] bg-slate-800 p-2 rounded border border-slate-700">
-                                 <li className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]"></span> <span className="text-emerald-100 font-medium">0~60 (안전)</span> <span className="text-slate-400 ml-auto">Margin &gt; 5℃</span></li>
-                                 <li className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_4px_rgba(245,158,11,0.5)]"></span> <span className="text-amber-100 font-medium">61~80 (주의)</span> <span className="text-slate-400 ml-auto">0 &lt; Margin ≤ 5℃</span></li>
+                                 <li className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]"></span> <span className="text-emerald-100 font-medium">0~60 (안전)</span> <span className="text-slate-400 ml-auto">Margin &gt; 3℃</span></li>
+                                 <li className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_4px_rgba(245,158,11,0.5)]"></span> <span className="text-amber-100 font-medium">61~80 (주의)</span> <span className="text-slate-400 ml-auto">0 &lt; Margin ≤ 3℃</span></li>
                                  <li className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_4px_rgba(225,29,72,0.5)]"></span> <span className="text-rose-100 font-medium">81~100 (위험)</span> <span className="text-slate-400 ml-auto">Margin ≤ 0℃</span></li>
                                </ul>
                              </div>
@@ -1193,7 +1197,7 @@ export default function App() {
              </div>
              
              {/* Monthly Stats Section */}
-             <div className="xl:col-span-3 flex flex-col gap-3">
+             <div className="xl:col-span-3 2xl:col-span-2 flex flex-col gap-3">
                <div className="flex items-end justify-between sm:justify-start xl:justify-between h-7">
                  <div className="h-full flex items-center">
                    <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
