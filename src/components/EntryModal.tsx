@@ -1,0 +1,225 @@
+import React, { Dispatch, SetStateAction } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { X, Factory, Calendar, Loader2, FileSpreadsheet } from 'lucide-react';
+
+interface EntryModalProps {
+  isModalOpen: boolean;
+  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+  modalFactory: '평택포승공장' | '아산인주공장';
+  setModalFactory: Dispatch<SetStateAction<'평택포승공장' | '아산인주공장'>>;
+  isSubmitting: boolean;
+  formData: any;
+  setFormData: Dispatch<SetStateAction<any>>;
+  handleDateChange: (dateVal: string) => void;
+  handleFormSubmit: (e: React.FormEvent) => Promise<void>;
+}
+
+const EntryModal: React.FC<EntryModalProps> = ({
+  isModalOpen,
+  setIsModalOpen,
+  modalFactory,
+  setModalFactory,
+  isSubmitting,
+  formData,
+  setFormData,
+  handleDateChange,
+  handleFormSubmit
+}) => {
+  return (
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto print:hidden" id="entry_modal_overlay">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsModalOpen(false)}
+              className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs cursor-pointer"
+            />
+
+            {/* Modal Box */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", duration: 0.35 }}
+              className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden z-10 relative"
+              id="entry_modal_body"
+            >
+              {/* Header */}
+              <div className="bg-slate-950 text-white px-6 py-4 flex justify-between items-center border-b border-slate-800">
+                <div className="flex items-center gap-2">
+                  <FileSpreadsheet className="w-5 h-5 text-blue-400" />
+                  <h3 className="font-bold text-base md:text-lg">측정 데이터 신규 등록</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Form Content */}
+              <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
+                  {/* 0. Factory Select */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                      <Factory className="w-4 h-4 text-blue-600" />
+                      공장 선택 (Factory Select)
+                    </label>
+                    <select
+                      value={modalFactory}
+                      onChange={(e) => setModalFactory(e.target.value as '평택포승공장' | '아산인주공장')}
+                      className="w-full px-3 py-2.5 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-slate-800 transition-all font-mono appearance-none"
+                      style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724%27 height=%2724%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23475569%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpolyline points=%276 9 12 15 18 9%27%3E%3C/polyline%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '1.2em 1.2em' }}
+                    >
+                      <option value="평택포승공장">평택포승공장</option>
+                      <option value="아산인주공장">아산인주공장</option>
+                    </select>
+                  </div>
+                  {/* 1. Date Select */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                      <Calendar className="w-4 h-4 text-blue-600" />
+                      측정 일자 선택 (Date Select)
+                    </label>
+                    <input
+                      type="date" required
+                      
+                      value={formData.date}
+                      onChange={(e) => handleDateChange(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-slate-800 transition-all font-mono"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <p className="text-[10px] text-slate-400">
+                      * 기존 대장에 데이터가 존재하는 일자를 선택하시면 해당 데이터가 자동으로 로드되어 수정하실 수 있습니다.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 2. AM Group */}
+                <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100/50 space-y-3">
+                  <span className="text-xs font-bold text-blue-800 uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-blue-500 inline-block animate-pulse"></span>
+                    오전 (AM) 측정 항목
+                  </span>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-semibold text-slate-500">대기온도 (℃)</label>
+                      <input
+                        type="number"
+                        step="0.1"
+                        
+                        value={formData.amAirTemp}
+                        onChange={(e) => setFormData(prev => ({ ...prev, amAirTemp: e.target.value }))}
+                        className="w-full px-2 py-1.5 border border-slate-200 rounded-lg bg-white text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none text-center"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-semibold text-slate-500">표면온도 (℃)</label>
+                      <input
+                        type="number"
+                        step="0.1"
+                        
+                        value={formData.amSurfaceTemp}
+                        onChange={(e) => setFormData(prev => ({ ...prev, amSurfaceTemp: e.target.value }))}
+                        className="w-full px-2 py-1.5 border border-slate-200 rounded-lg bg-white text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none text-center"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-semibold text-slate-500">상대습도 (%)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        
+                        value={formData.amHumidity}
+                        onChange={(e) => setFormData(prev => ({ ...prev, amHumidity: e.target.value }))}
+                        className="w-full px-2 py-1.5 border border-slate-200 rounded-lg bg-white text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none text-center"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. PM Group */}
+                <div className="bg-amber-50/40 rounded-xl p-4 border border-amber-100/50 space-y-3">
+                  <span className="text-xs font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-amber-500 inline-block animate-pulse"></span>
+                    오후 (PM) 측정 항목
+                  </span>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-semibold text-slate-500">대기온도 (℃)</label>
+                      <input
+                        type="number"
+                        step="0.1"
+                        
+                        value={formData.pmAirTemp}
+                        onChange={(e) => setFormData(prev => ({ ...prev, pmAirTemp: e.target.value }))}
+                        className="w-full px-2 py-1.5 border border-slate-200 rounded-lg bg-white text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none text-center"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-semibold text-slate-500">표면온도 (℃)</label>
+                      <input
+                        type="number"
+                        step="0.1"
+                        
+                        value={formData.pmSurfaceTemp}
+                        onChange={(e) => setFormData(prev => ({ ...prev, pmSurfaceTemp: e.target.value }))}
+                        className="w-full px-2 py-1.5 border border-slate-200 rounded-lg bg-white text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none text-center"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-semibold text-slate-500">상대습도 (%)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        
+                        value={formData.pmHumidity}
+                        onChange={(e) => setFormData(prev => ({ ...prev, pmHumidity: e.target.value }))}
+                        className="w-full px-2 py-1.5 border border-slate-200 rounded-lg bg-white text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none text-center"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer Buttons */}
+                <div className="flex gap-2 justify-end pt-2 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-xl transition-all cursor-pointer"
+                  >
+                    취소 (Cancel)
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        등록 중...
+                      </>
+                    ) : (
+                      "데이터 등록 및 반영"
+                    )}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+  );
+};
+
+export default EntryModal;
