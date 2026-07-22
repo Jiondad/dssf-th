@@ -682,7 +682,7 @@ export default function App() {
             </table>
   );
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-12 print:bg-white print:pb-0 print:min-h-0" id="app_root">
+    <div className="h-screen overflow-hidden flex flex-col bg-slate-50 text-slate-800 font-sans antialiased print:bg-white print:h-auto print:overflow-visible print:block" id="app_root">
             <style>{`
         @media print {
           @page {
@@ -942,7 +942,7 @@ export default function App() {
       </header>
 
       {/* Main Container */}
-      <main className="max-w-full mx-auto px-4 md:px-6 lg:px-8 mt-4 space-y-4 relative print:hidden">
+      <main className="flex-1 min-h-0 flex flex-col max-w-full w-full mx-auto px-4 md:px-6 lg:px-8 mt-4 pb-4 space-y-4 relative print:hidden">
         {isLoadingData ? (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-50/80 backdrop-blur-sm min-h-[600px] rounded-2xl">
             <div className="flex flex-col items-center gap-4">
@@ -953,7 +953,7 @@ export default function App() {
         ) : null}
 
         {/* 1. 요약 대시보드 카드 뷰 Section */}
-        <section className={`transition-opacity duration-300 ${isLoadingData ? 'opacity-30' : 'opacity-100'} print:hidden`} id="summary_cards_section">
+        <section className={`shrink-0 transition-opacity duration-300 ${isLoadingData ? 'opacity-30' : 'opacity-100'} print:hidden`} id="summary_cards_section">
           <div className="grid grid-cols-1 xl:grid-cols-12 2xl:grid-cols-10 gap-4">
              {/* Cards Section */}
              <div className="xl:col-span-9 2xl:col-span-8 flex flex-col gap-3">
@@ -1227,8 +1227,8 @@ export default function App() {
         </section>
         
 {/* 2. 월간 그래프 Section */}
-        <section className="bg-white rounded-2xl border border-slate-200 p-3 md:p-4 shadow-xs print:hidden" id="monthly_chart_section">
-          <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-2 border-b border-slate-100 pb-2 mb-2">
+        <section className="flex-[1.2] min-h-0 flex flex-col bg-white rounded-2xl border border-slate-200 p-3 md:p-4 shadow-xs print:hidden" id="monthly_chart_section">
+          <div className="shrink-0 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-2 border-b border-slate-100 pb-2 mb-2">
             <div className="shrink-0">
               <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <span className="h-4 w-1 bg-blue-600 rounded-full inline-block"></span>
@@ -1365,7 +1365,7 @@ export default function App() {
 
           
 {/* Recharts Container */}
-          <div className="h-[410px] md:h-[490px] w-full" id="chart_container">
+          <div className="flex-1 min-h-0 w-full" id="chart_container">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart 
                 data={chartData} 
@@ -1542,8 +1542,8 @@ export default function App() {
         </section>
 
         {/* 3. 월간 데이터 표 Section */}
-        <section className="bg-white rounded-2xl border border-slate-200 p-3 md:p-4 shadow-xs overflow-hidden" id="monthly_table_section">
-          <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-slate-100 pb-3 mb-3">
+        <section className="flex-1 min-h-0 flex flex-col bg-white rounded-2xl border border-slate-200 p-3 md:p-4 shadow-xs overflow-hidden" id="monthly_table_section">
+          <div className="shrink-0 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-slate-100 pb-3 mb-3">
             <div>
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <FileSpreadsheet className="w-5.5 h-5.5 text-blue-600 print:hidden" />
@@ -1599,14 +1599,14 @@ export default function App() {
           {/* Scrollable Ledger Wrapper */}
 
           {/* Scrollable Ledger Wrapper */}
-          <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-inner print:hidden" id="ledger_table_wrapper">
+          <div className="flex-1 overflow-auto rounded-xl border border-slate-200 shadow-inner print:hidden" id="ledger_table_wrapper">
             {renderTable(fixedDays, false)}
           </div>
           
 
 
           {/* User Instruction block inside Table */}
-          <div className="mt-4 flex items-center justify-between text-[11px] text-slate-400 font-mono print:hidden">
+          <div className="shrink-0 mt-3 flex items-center justify-between text-[11px] text-slate-400 font-mono print:hidden">
             <span className="hidden sm:inline">Copyright © (주)대성스틸 Smart Factory. All rights reserved.</span>
           </div>
         </section>
