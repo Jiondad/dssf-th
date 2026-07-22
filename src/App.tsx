@@ -78,33 +78,53 @@ export default function App() {
 
   useEffect(() => {
     let isMounted = true;
-    const loadData = async () => {
-      setIsLoadingData(true);
-      
-      // Determine the simulated sheet name based on the factory
-      const sheetName = selectedFactory === '평택포승공장' ? 'Data' : 'Data2';
-      
-      const newData = await fetchSpreadsheetData(sheetName, selectedYear, selectedMonth);
-      if (isMounted) {
-        setSheetData(newData);
-        
-        // Ensure selectedDay is within the valid range of the new data
-        setSelectedDay(prev => {
-          const maxDay = newData.length > 0 ? Math.max(...newData.map(d => d.day)) : 1;
-          const minDay = newData.length > 0 ? Math.min(...newData.map(d => d.day)) : 1;
-          if (prev > maxDay) return maxDay;
-          if (prev < minDay) return minDay;
-          return prev;
-        });
+    let timer: ReturnType<typeof setInterval>;
 
-        setIsLoadingData(false);
+    const loadData = async (isBackground = false) => {
+      if (!isBackground) {
+        setIsLoadingData(true);
+      }
+      
+      try {
+        // Determine the simulated sheet name based on the factory
+        const sheetName = selectedFactory === '평택포승공장' ? 'Data' : 'Data2';
+        
+        const newData = await fetchSpreadsheetData(sheetName, selectedYear, selectedMonth);
+        
+        if (isMounted) {
+          setSheetData(newData);
+          
+          // Ensure selectedDay is within the valid range of the new data
+          if (!isBackground) {
+            setSelectedDay(prev => {
+              const maxDay = newData.length > 0 ? Math.max(...newData.map(d => d.day)) : 1;
+              const minDay = newData.length > 0 ? Math.min(...newData.map(d => d.day)) : 1;
+              if (prev > maxDay) return maxDay;
+              if (prev < minDay) return minDay;
+              return prev;
+            });
+            setIsLoadingData(false);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load data:", err);
+        if (isMounted && !isBackground) {
+          setIsLoadingData(false);
+        }
       }
     };
     
+    // Initial load
     loadData();
+    
+    // Auto-polling every 10 minutes (600,000 ms)
+    timer = setInterval(() => {
+      loadData(true); // silent background load
+    }, 600000);
     
     return () => {
       isMounted = false;
+      clearInterval(timer);
     };
   }, [selectedYear, selectedMonth, selectedFactory]);
 
@@ -1088,14 +1108,15 @@ export default function App() {
                    </div>
                  </motion.div>
 
-                 {/* Card 4: 결로지수 */}
-                 <motion.div 
-                   layoutId="card_dew_index"
-                   animate={{ backgroundColor: condensationStatus.bgColor.includes('emerald') ? '#d1fae5' : condensationStatus.bgColor.includes('amber') ? '#fef3c7' : '#ef4444' }}
-                   transition={{ duration: 0.3 }}
-                   className={`rounded-xl border p-3 shadow-xs hover:shadow-md transition-all relative z-10 overflow-visible flex flex-col justify-between ${maxDewIndexToday > 80 ? 'border-red-600 bg-red-500 text-white animate-pulse' : condensationStatus.borderColor}`}
-                   id="card_dew_index"
-                 >
+                {/* Card 4: 결로지수 */}
+                <motion.div 
+                  layoutId="card_dew_index"
+                  animate={{ backgroundColor: condensationStatus.bgColor.includes('emerald') ? '#d1fae5' : condensationStatus.bgColor.includes('amber') ? '#fef3c7' : '#ef4444' }}
+                  transition={{ duration: 0.3 }}
+                  className={`rounded-xl border p-3 shadow-xs hover:shadow-md transition-all relative z-10 overflow-visible flex flex-col justify-between ${maxDewIndexToday > 80 ? 'border-red-600 bg-red-500 text-white' : condensationStatus.borderColor}`}
+                  style={maxDewIndexToday > 80 ? { animation: 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite' } : undefined}
+                  id="card_dew_index"
+                >
                    <div>
                      <div className="flex justify-between items-start mb-2">
                        <div>
