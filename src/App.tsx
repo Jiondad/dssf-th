@@ -65,8 +65,30 @@ const CustomDewActiveDot = (props: any) => {
   );
 };
 
+// Fixed design-canvas size. All layout (headers, cards, padding, table rows, fonts)
+// is built once at this resolution, then the whole canvas is scaled uniformly to
+// fit any real screen size. This guarantees identical proportions and zero
+// scroll/clipping at any resolution, as long as the aspect ratio is 16:9-ish.
+const STAGE_WIDTH = 1920;
+const STAGE_HEIGHT = 1080;
+
 export default function App() {
   const today = new Date();
+  const [stageScale, setStageScale] = useState<number>(1);
+
+  useEffect(() => {
+    const computeScale = () => {
+      const scale = Math.min(
+        window.innerWidth / STAGE_WIDTH,
+        window.innerHeight / STAGE_HEIGHT
+      );
+      setStageScale(scale);
+    };
+    computeScale();
+    window.addEventListener('resize', computeScale);
+    return () => window.removeEventListener('resize', computeScale);
+  }, []);
+
   const [selectedYear, setSelectedYear] = useState<number>(today.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number>(today.getMonth() + 1);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState<boolean>(false);
@@ -765,17 +787,24 @@ export default function App() {
         </div>
       </div>
 
-      {/* 16:9 Aspect Ratio Wrapper */}
-      <div 
-        className="relative bg-slate-50 flex flex-col shadow-2xl overflow-hidden print:hidden" 
-        style={{ 
-          width: '100vw', 
-          maxWidth: 'calc(100vh * 16 / 9)', 
-          height: '100vh', 
-          maxHeight: 'calc(100vw * 9 / 16)',
-          aspectRatio: '16/9' 
-        }}
+      {/* 16:9 Scaled Stage Wrapper: outer box reserves the exact scaled footprint
+          so it stays centered without layout shift; inner box is a fixed-size
+          1920x1080 canvas that is scaled as a whole via CSS transform. Because
+          every child (header, cards, table, fonts) lives inside the same fixed
+          coordinate space, proportions are identical on any monitor/resolution
+          and nothing reflows, clips, or needs to scroll internally. */}
+      <div
+        className="relative print:hidden"
+        style={{ width: STAGE_WIDTH * stageScale, height: STAGE_HEIGHT * stageScale }}
       >
+        <div
+          className="absolute top-0 left-0 bg-slate-50 flex flex-col shadow-2xl overflow-hidden origin-top-left"
+          style={{
+            width: STAGE_WIDTH,
+            height: STAGE_HEIGHT,
+            transform: `scale(${stageScale})`,
+          }}
+        >
       {/* Top Professional Header */}
       <header className="bg-slate-900 text-white shadow-md border-b border-slate-800 shrink-0 print:hidden" id="header_section">
         <div className="max-w-[1920px] mx-auto px-4 py-2.5 md:py-3.5 flex flex-col md:flex-row justify-between items-center gap-4">
@@ -1623,7 +1652,8 @@ export default function App() {
         </section>
 
       </main>
-      </div> {/* End 16:9 Wrapper */}
+        </div> {/* End scaled 1920x1080 canvas */}
+      </div> {/* End stage footprint wrapper */}
 
       {/* New Data Registration Modal with Animation */}
       <AnimatePresence>
