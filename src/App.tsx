@@ -715,7 +715,7 @@ export default function App() {
       <div className="hidden print:flex print:flex-col print-container h-screen py-2">
         <h2 className="text-[22px] font-bold text-center text-slate-900 tracking-tight mt-[50px]">{selectedMonth}월 온습도 및 결로지수 대장 - {selectedFactory}</h2>
         
-        <div className="mt-[100px]">
+        <div className="mt-[70px]">
           {renderTable(fixedDays.slice(0, 16), true)}
         </div>
         <div className="pt-3">
