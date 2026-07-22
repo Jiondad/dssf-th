@@ -713,7 +713,7 @@ export default function App() {
       
             {/* Print Only View */}
       <div className="hidden print:flex print:flex-col print-container h-screen py-2">
-        <h2 className="text-[22px] font-bold text-center text-slate-900 tracking-tight mt-[50px]">{selectedMonth}월 온습도 및 결로지수 대장 - {selectedFactory}</h2>
+        <h2 className="text-[22px] font-bold text-center text-slate-900 tracking-tight mt-[50px]">{selectedMonth}월 온습도 및 결로지수 관리 대장 - {selectedFactory}</h2>
         
         <div className="mt-[70px]">
           {renderTable(fixedDays.slice(0, 16), true)}
@@ -1543,7 +1543,7 @@ export default function App() {
             <div>
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <FileSpreadsheet className="w-5.5 h-5.5 text-blue-600 print:hidden" />
-                {selectedMonth}월 온습도 및 결로지수 관리 대장 (Monthly Excel Ledger)
+                {selectedMonth}월 온습도 및 결로지수 현황 (Monthly Excel Ledger)
               </h2>
               <p className="text-xs text-slate-500 mt-0.5 print:hidden">
                 오전(AM)/오후(PM) 그룹별 측정대장입니다. 결로지수는 위험도 수준에 맞춰 조건부 서식이 적용되어 있으며 날짜 헤더 클릭 시 상세 데이터로 바인딩됩니다.
