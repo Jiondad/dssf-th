@@ -1,76 +1,34 @@
 const fs = require('fs');
-const content = fs.readFileSync('src/App.tsx', 'utf8');
-const lines = content.split('\n');
 
-// Find chunk 1 (starts with `const renderTable = `)
-const chunk1Start = lines.findIndex(l => l.includes('const renderTable = (daysToRender: number[], isPrint: boolean) => ('));
-let chunk1End = chunk1Start;
-while (chunk1End < lines.length) {
-  if (lines[chunk1End].trim() === ');' && lines[chunk1End+1].includes('return (') && lines[chunk1End+2].includes('<div className="min-h-screen')) {
-    break;
-  }
-  chunk1End++;
-}
+let content = fs.readFileSync('src/App.tsx', 'utf8');
 
-console.log("Chunk 1:", chunk1Start, chunk1End);
+// 1. In @page styles, change margin to 5mm
+content = content.replace(/margin: 8mm;/g, 'margin: 5mm;');
 
-// Find chunk 2 (starts after CustomDewDot's color declaration, ends at the `);` before CustomDewDot's return circle)
-let chunk2Start = -1;
-let chunk2End = -1;
+// 2. Add whitespace-nowrap and adjust width for "측정 항목" th
+content = content.replace(
+  /w-\[80px\] xl:w-\[115px\] break-keep">측정 항목<\/th>/g,
+  'w-[95px] xl:w-[125px] print:w-[115px] whitespace-nowrap">측정 항목</th>'
+);
 
-for (let i = 0; i < chunk1Start; i++) {
-  if (lines[i].includes('const color = getDewColor(value, isAm);')) {
-    chunk2Start = i + 2;
-    break;
-  }
-}
+// 3. Add whitespace-nowrap to the "측정 항목" td elements (the sticky ones)
+content = content.replace(
+  /className="sticky left-\[35px\] xl:left-\[45px\] bg-slate-50 border border-slate-200 p-1 xl:p-1\.5 font-semibold text-slate-700 text-left z-10 shadow-xs"/g,
+  'className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs whitespace-nowrap"'
+);
 
-for (let i = chunk2Start; i < chunk1Start; i++) {
-  if (lines[i].trim() === ');' && lines[i+1] && lines[i+1].includes('return (') && lines[i+2].includes('<circle cx={cx}')) {
-    chunk2End = i;
-    break;
-  }
-}
+// Same for the '결로지수 (Pt)' which might have 'font-bold text-slate-800' instead of 'font-semibold text-slate-700'
+content = content.replace(
+  /className="sticky left-\[35px\] xl:left-\[45px\] bg-slate-50 border border-slate-200 p-1 xl:p-1\.5 font-bold text-slate-800 text-left z-10 shadow-xs"/g,
+  'className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs whitespace-nowrap"'
+);
 
-console.log("Chunk 2:", chunk2Start, chunk2End);
+// Remove the vertical padding / margin inside print-container between the two tables
+// Old: <div style={{ pageBreakBefore: 'always' }} className="pt-6">
+// New: <div className="pt-2"> (or remove completely)
+content = content.replace(
+  /<div style={{ pageBreakBefore: 'always' }} className="pt-6">/g,
+  '<div className="pt-4">'
+);
 
-if (chunk1Start === -1 || chunk1End === -1 || chunk2Start === -1 || chunk2End === -1) {
-  console.log("Failed to find chunks");
-  process.exit(1);
-}
-
-const chunk1 = lines.slice(chunk1Start, chunk1End + 1);
-const chunk2 = lines.slice(chunk2Start, chunk2End + 1);
-
-// Combine
-const fullRenderTable = [...chunk1, ...chunk2];
-
-// Remove chunk1
-lines.splice(chunk1Start, chunk1End - chunk1Start + 1);
-
-// Since chunk1 was AFTER chunk2, removing chunk1 first doesn't affect chunk2's index
-// Remove chunk2
-lines.splice(chunk2Start, chunk2End - chunk2Start + 1);
-
-// Find App return
-const appReturnIdx = lines.findIndex(l => l.trim() === 'return (' && lines[l+1] && lines[l+1].includes('<div className="min-h-screen'));
-
-// Actually, findIndex only gives the index.
-let returnIdx = -1;
-for (let i = 0; i < lines.length; i++) {
-  if (lines[i].trim() === 'return (') {
-     if (lines[i+1] && lines[i+1].includes('<div className="min-h-screen')) {
-       returnIdx = i;
-       break;
-     }
-  }
-}
-
-console.log("Return Idx:", returnIdx);
-
-if (returnIdx !== -1) {
-  lines.splice(returnIdx, 0, ...fullRenderTable);
-}
-
-fs.writeFileSync('src/App.tsx', lines.join('\n'));
-console.log("Fixed!");
+fs.writeFileSync('src/App.tsx', content);

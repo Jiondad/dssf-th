@@ -1,49 +1,40 @@
 const fs = require('fs');
+const content = fs.readFileSync('src/App.tsx', 'utf8');
+const lines = content.split('\n');
 
-let content = fs.readFileSync('src/App.tsx', 'utf8');
+// Find renderTable start
+const renderStartIdx = lines.findIndex(l => l.includes('const renderTable = (daysToRender: number[], isPrint: boolean) => ('));
 
-// 1. Title section fixes
-content = content.replace(
-  /<div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-slate-100 pb-5 mb-5">/,
-  '<div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-slate-100 pb-5 mb-5 print:border-none print:pb-2 print:mb-2 print:block">'
-);
+// Find renderTable end - since it's a function that returns JSX wrapped in parentheses, we find the matching `);`
+let renderEndIdx = -1;
+for (let i = renderStartIdx + 1; i < lines.length; i++) {
+  if (lines[i].trim() === ');') {
+    renderEndIdx = i;
+    break;
+  }
+}
 
-content = content.replace(
-  /<FileSpreadsheet className="w-5\.5 h-5\.5 text-blue-600" \/>/,
-  '<FileSpreadsheet className="w-5.5 h-5.5 text-blue-600 print:hidden" />'
-);
+if (renderStartIdx === -1 || renderEndIdx === -1) {
+  console.log("Could not find renderTable bounds");
+  process.exit(1);
+}
 
-content = content.replace(
-  /<p className="text-xs text-slate-500 mt-0\.5">/,
-  '<p className="text-xs text-slate-500 mt-0.5 print:hidden">'
-);
+// Extract renderTable
+const renderTableLines = lines.slice(renderStartIdx, renderEndIdx + 1);
 
-content = content.replace(
-  /<div className="flex flex-wrap items-center gap-3 w-full xl:w-auto justify-between sm:justify-end">/,
-  '<div className="flex flex-wrap items-center gap-3 w-full xl:w-auto justify-between sm:justify-end print:hidden">'
-);
+// Remove renderTable from its current position
+lines.splice(renderStartIdx, renderEndIdx - renderStartIdx + 1);
 
-// 2. Hide instruction block inside table footer
-content = content.replace(
-  /<div className="mt-4 flex items-center justify-between text-\[11px\] text-slate-400 font-mono">/,
-  '<div className="mt-4 flex items-center justify-between text-[11px] text-slate-400 font-mono print:hidden">'
-);
+// Find the main return statement of App
+const returnIdx = lines.findIndex((l, idx) => l.trim() === 'return (' && idx > renderStartIdx && lines[idx - 1].includes('}, [sheetData]);'));
 
-// 3. Remove subtitles from print_ledger_wrapper
-const printLedgerOld = `<div className="hidden print:block space-y-8 print:w-full print:m-0 print:p-0 print:overflow-visible" id="print_ledger_wrapper">
-            <h3 className="text-xl font-bold mb-4 text-center">{selectedMonth}월 온습도 및 결로지수 대장 (1일 ~ 16일) - {selectedFactory}</h3>
-            {renderTable(fixedDays.slice(0, 16), true)}
-            <h3 className="text-xl font-bold mb-4 mt-12 text-center" style={{ pageBreakBefore: 'always' }}>{selectedMonth}월 온습도 및 결로지수 대장 (17일 ~ 31일) - {selectedFactory}</h3>
-            {renderTable(fixedDays.slice(16, 31), true)}
-          </div>`;
+if (returnIdx === -1) {
+  console.log("Could not find App return statement");
+  process.exit(1);
+}
 
-const printLedgerNew = `<div className="hidden print:block space-y-4 print:w-full print:m-0 print:p-0 print:overflow-visible" id="print_ledger_wrapper">
-            {renderTable(fixedDays.slice(0, 16), true)}
-            <div style={{ pageBreakBefore: 'always' }} className="pt-2">
-              {renderTable(fixedDays.slice(16, 31), true)}
-            </div>
-          </div>`;
+// Insert renderTable right before the return statement
+lines.splice(returnIdx, 0, ...renderTableLines);
 
-content = content.replace(printLedgerOld, printLedgerNew);
-
-fs.writeFileSync('src/App.tsx', content);
+fs.writeFileSync('src/App.tsx', lines.join('\n'));
+console.log("Fixed renderTable position");

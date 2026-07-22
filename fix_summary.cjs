@@ -1,46 +1,65 @@
 const fs = require('fs');
-const content = fs.readFileSync('src/App.tsx', 'utf8');
-const lines = content.split('\n');
+let content = fs.readFileSync('src/App.tsx', 'utf8');
 
-// Find renderTable start
-const renderStartIdx = lines.findIndex(l => l.includes('const renderTable = (daysToRender: number[], isPrint: boolean) => ('));
+// Air Temp Summary
+content = content.replace(
+  /<span className="text-2xl font-bold font-mono text-slate-800">\{currentRecord\.am\.airTemp\}<\/span>/g,
+  '<span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.am.airTemp !== null ? currentRecord.am.airTemp : "-"}</span>'
+);
+content = content.replace(
+  /<span className="text-2xl font-bold font-mono text-slate-800">\{currentRecord\.pm\.airTemp\}<\/span>/g,
+  '<span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.pm.airTemp !== null ? currentRecord.pm.airTemp : "-"}</span>'
+);
+content = content.replace(
+  /일교차: \{Math\.round\(\(currentRecord\.pm\.airTemp - currentRecord\.am\.airTemp\) \* 10\) \/ 10\}℃/g,
+  '일교차: {currentRecord.pm.airTemp !== null && currentRecord.am.airTemp !== null ? Math.round((currentRecord.pm.airTemp - currentRecord.am.airTemp) * 10) / 10 + "℃" : "-"}'
+);
 
-let renderEndIdx = -1;
-for (let i = renderStartIdx + 1; i < lines.length; i++) {
-  if (lines[i].trim() === ');') {
-    renderEndIdx = i;
-    break;
-  }
-}
+// Surface Temp Summary
+content = content.replace(
+  /<span className="text-2xl font-bold font-mono text-slate-800">\{currentRecord\.am\.surfaceTemp\}<\/span>/g,
+  '<span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.am.surfaceTemp !== null ? currentRecord.am.surfaceTemp : "-"}</span>'
+);
+content = content.replace(
+  /<span className="text-2xl font-bold font-mono text-slate-800">\{currentRecord\.pm\.surfaceTemp\}<\/span>/g,
+  '<span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.pm.surfaceTemp !== null ? currentRecord.pm.surfaceTemp : "-"}</span>'
+);
+content = content.replace(
+  /<span>대기대비차: 오전 \{Math\.round\(\(currentRecord\.am\.airTemp - currentRecord\.am\.surfaceTemp\) \* 10\) \/ 10\}℃ <span className="text-slate-300 mx-1">\|<\/span> 오후 \{Math\.round\(\(currentRecord\.pm\.airTemp - currentRecord\.pm\.surfaceTemp\) \* 10\) \/ 10\}℃<\/span>/g,
+  '<span>대기대비차: 오전 {currentRecord.am.airTemp !== null && currentRecord.am.surfaceTemp !== null ? Math.round((currentRecord.am.airTemp - currentRecord.am.surfaceTemp) * 10) / 10 + "℃" : "-"} <span className="text-slate-300 mx-1">|</span> 오후 {currentRecord.pm.airTemp !== null && currentRecord.pm.surfaceTemp !== null ? Math.round((currentRecord.pm.airTemp - currentRecord.pm.surfaceTemp) * 10) / 10 + "℃" : "-"}</span>'
+);
 
-if (renderStartIdx === -1 || renderEndIdx === -1) {
-  console.log("Could not find renderTable bounds");
-  process.exit(1);
-}
+// Humidity Summary
+content = content.replace(
+  /<span className="text-2xl font-bold font-mono text-slate-800">\{currentRecord\.am\.humidity\}<\/span>/g,
+  '<span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.am.humidity !== null ? currentRecord.am.humidity : "-"}</span>'
+);
+content = content.replace(
+  /<span className="text-2xl font-bold font-mono text-slate-800">\{currentRecord\.pm\.humidity\}<\/span>/g,
+  '<span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.pm.humidity !== null ? currentRecord.pm.humidity : "-"}</span>'
+);
+content = content.replace(
+  /일교차: \{currentRecord\.am\.humidity - currentRecord\.pm\.humidity\}%/g,
+  '일교차: {currentRecord.am.humidity !== null && currentRecord.pm.humidity !== null ? (currentRecord.am.humidity - currentRecord.pm.humidity) + "%" : "-"}'
+);
 
-const renderTableLines = lines.slice(renderStartIdx, renderEndIdx + 1);
-lines.splice(renderStartIdx, renderEndIdx - renderStartIdx + 1);
+// Dew Index Summary
+content = content.replace(
+  /<span className="text-2xl font-black font-mono text-slate-900">\{currentRecord\.am\.dewIndex\}<\/span>/g,
+  '<span className="text-2xl font-black font-mono text-slate-900">{currentRecord.am.dewIndex !== null ? currentRecord.am.dewIndex : "-"}</span>'
+);
+content = content.replace(
+  /<span className="text-2xl font-black font-mono text-slate-900">\{currentRecord\.pm\.dewIndex\}<\/span>/g,
+  '<span className="text-2xl font-black font-mono text-slate-900">{currentRecord.pm.dewIndex !== null ? currentRecord.pm.dewIndex : "-"}</span>'
+);
 
-// Find the App definition
-const appStartIdx = lines.findIndex(l => l.includes('export default function App() {'));
+// calculateLocalDewIndex Math.max for maxCondensationIndex
+content = content.replace(
+  /return Math\.max\(currentRecord\.am\.dewIndex, currentRecord\.pm\.dewIndex\);/,
+  `if (currentRecord.am.dewIndex === null && currentRecord.pm.dewIndex === null) return 0;
+    if (currentRecord.am.dewIndex === null) return currentRecord.pm.dewIndex;
+    if (currentRecord.pm.dewIndex === null) return currentRecord.am.dewIndex;
+    return Math.max(currentRecord.am.dewIndex, currentRecord.pm.dewIndex);`
+);
 
-// Find the `  return (` that starts the JSX tree for App
-let returnIdx = -1;
-for (let i = appStartIdx; i < lines.length; i++) {
-  if (lines[i].includes('return (') && lines[i].includes('    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-12" id="app_root">') === false) {
-    if (lines[i+1] && lines[i+1].includes('    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-12" id="app_root">')) {
-       returnIdx = i;
-       break;
-    }
-  }
-}
-
-if (returnIdx === -1) {
-  console.log("Could not find App return statement");
-  process.exit(1);
-}
-
-lines.splice(returnIdx, 0, ...renderTableLines);
-
-fs.writeFileSync('src/App.tsx', lines.join('\n'));
-console.log("Fixed renderTable position");
+fs.writeFileSync('src/App.tsx', content);

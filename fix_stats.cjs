@@ -1,22 +1,16 @@
 const fs = require('fs');
 let content = fs.readFileSync('src/App.tsx', 'utf8');
 
-const printViewOld = `<div className="hidden print:block print-container">
-        <h2 className="text-2xl font-bold text-center mb-6 text-slate-900">{selectedMonth}월 온습도 및 결로지수 대장 - {selectedFactory}</h2>
-        {renderTable(fixedDays.slice(0, 16), true)}
-        <div style={{ pageBreakBefore: 'always' }} className="pt-6">
-          <h2 className="text-2xl font-bold text-center mb-6 text-slate-900">{selectedMonth}월 온습도 및 결로지수 대장 - {selectedFactory}</h2>
-          {renderTable(fixedDays.slice(16, 31), true)}
-        </div>
-      </div>`;
+content = content.replace(
+  /const maxIndex = Math\.max\(r\.am\.dewIndex, r\.pm\.dewIndex\);\s*if \(maxIndex <= 60\) safeCount\+\+;\s*else if \(maxIndex <= 80\) cautionCount\+\+;\s*else dangerCount\+\+;/g,
+  `if (r.am.dewIndex === null && r.pm.dewIndex === null) return;
+      const amDew = r.am.dewIndex !== null ? r.am.dewIndex : -1;
+      const pmDew = r.pm.dewIndex !== null ? r.pm.dewIndex : -1;
+      const maxIndex = Math.max(amDew, pmDew);
+      if (maxIndex < 0) return;
+      if (maxIndex <= 60) safeCount++;
+      else if (maxIndex <= 80) cautionCount++;
+      else dangerCount++;`
+);
 
-const printViewNew = `<div className="hidden print:block print-container">
-        <h2 className="text-2xl font-bold text-center mb-6 text-slate-900">{selectedMonth}월 온습도 및 결로지수 대장 - {selectedFactory}</h2>
-        {renderTable(fixedDays.slice(0, 16), true)}
-        <div style={{ pageBreakBefore: 'always' }} className="pt-6">
-          {renderTable(fixedDays.slice(16, 31), true)}
-        </div>
-      </div>`;
-
-content = content.replace(printViewOld, printViewNew);
 fs.writeFileSync('src/App.tsx', content);

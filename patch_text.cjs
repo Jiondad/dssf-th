@@ -1,90 +1,27 @@
 const fs = require('fs');
 let content = fs.readFileSync('src/App.tsx', 'utf8');
 
-const oldUseEffect = `  useEffect(() => {
-    let isMounted = true;
-    const loadData = async () => {
-      setIsLoadingData(true);
-      
-      // Determine the simulated sheet name based on the factory
-      const sheetName = selectedFactory === '평택포승공장' ? 'Data' : 'Data2';
-      
-      const newData = await fetchSpreadsheetData(sheetName, selectedYear, selectedMonth);
-      if (isMounted) {
-        setSheetData(newData);
-        
-        // Ensure selectedDay is within the valid range of the new data
-        setSelectedDay(prev => {
-          const maxDay = newData.length > 0 ? Math.max(...newData.map(d => d.day)) : 1;
-          const minDay = newData.length > 0 ? Math.min(...newData.map(d => d.day)) : 1;
-          if (prev > maxDay) return maxDay;
-          if (prev < minDay) return minDay;
-          return prev;
-        });
+const oldStr = `                  <div className="mt-2 pt-2 border-t border-slate-200/50 flex justify-between items-center text-[10px]">
+                    <span className={\`font-bold flex items-center gap-1 \${maxDewIndexToday > 80 ? 'text-white' : condensationStatus.textColor} whitespace-nowrap\`}>
+                      {condensationStatus.icon}
+                      {condensationStatus.text} 상태
+                    </span>
+                    <span className={\`font-mono px-1 py-0.5 rounded whitespace-nowrap \${maxDewIndexToday > 80 ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-600'}\`}>
+                      Target: &lt;60Pt
+                    </span>
+                  </div>`;
 
-        setIsLoadingData(false);
-      }
-    };
-    
-    loadData();
-    
-    return () => {
-      isMounted = false;
-    };
-  }, [selectedYear, selectedMonth, selectedFactory]);`;
+const newStr = `                  <div className="mt-2 pt-2 border-t border-slate-200/50 flex justify-between items-center text-[10px]">
+                    <span className={\`font-bold flex items-center gap-1 \${maxDewIndexToday > 80 ? 'text-white' : condensationStatus.textColor} whitespace-nowrap\`}>
+                      {condensationStatus.icon}
+                      {maxDewIndexToday <= 60 ? "환기 및 코일 상태 양호 (정상 관리)" : maxDewIndexToday <= 80 ? "통풍 실시 및 온습도 주의 관찰" : "즉시 환기 및 히터 가동 (결로 주의)"}
+                    </span>
+                    <span className={\`font-mono px-1 py-0.5 rounded whitespace-nowrap \${maxDewIndexToday > 80 ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-600'}\`}>
+                      Target: &lt;60Pt
+                    </span>
+                  </div>`;
 
-const newUseEffect = `  useEffect(() => {
-    let isMounted = true;
-    let timer: ReturnType<typeof setInterval>;
+content = content.replace(oldStr, newStr);
 
-    const loadData = async (isBackground = false) => {
-      if (!isBackground) {
-        setIsLoadingData(true);
-      }
-      
-      try {
-        // Determine the simulated sheet name based on the factory
-        const sheetName = selectedFactory === '평택포승공장' ? 'Data' : 'Data2';
-        
-        const newData = await fetchSpreadsheetData(sheetName, selectedYear, selectedMonth);
-        
-        if (isMounted) {
-          setSheetData(newData);
-          
-          // Ensure selectedDay is within the valid range of the new data
-          if (!isBackground) {
-            setSelectedDay(prev => {
-              const maxDay = newData.length > 0 ? Math.max(...newData.map(d => d.day)) : 1;
-              const minDay = newData.length > 0 ? Math.min(...newData.map(d => d.day)) : 1;
-              if (prev > maxDay) return maxDay;
-              if (prev < minDay) return minDay;
-              return prev;
-            });
-            setIsLoadingData(false);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to load data:", err);
-        if (isMounted && !isBackground) {
-          setIsLoadingData(false);
-        }
-      }
-    };
-    
-    // Initial load
-    loadData();
-    
-    // Auto-polling every 10 minutes (600,000 ms)
-    timer = setInterval(() => {
-      loadData(true); // silent background load
-    }, 600000);
-    
-    return () => {
-      isMounted = false;
-      clearInterval(timer);
-    };
-  }, [selectedYear, selectedMonth, selectedFactory]);`;
-
-content = content.replace(oldUseEffect, newUseEffect);
 fs.writeFileSync('src/App.tsx', content);
-console.log("Patched polling");
+console.log("Patched text successfully!");

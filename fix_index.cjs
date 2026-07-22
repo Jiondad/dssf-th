@@ -2,8 +2,13 @@ const fs = require('fs');
 let content = fs.readFileSync('src/App.tsx', 'utf8');
 
 content = content.replace(
-  'const calculateLocalDewIndex = (air: number | null, surf: number | null, hum: number | null) => {\n        if (air === null || surf === null || hum === null) return null;',
-  'const calculateLocalDewIndex = (air: any, surf: any, hum: any) => {\n        if (air === null || surf === null || hum === null || air === "" || surf === "" || hum === "" || isNaN(Number(air)) || isNaN(Number(surf)) || isNaN(Number(hum)) || air === undefined || surf === undefined || hum === undefined) return null;'
+  /const indexVal = item\.am\.dewIndex;\s*if \(indexVal === null\) \{/,
+  'const indexVal = item.am.dewIndex;\n                    if (indexVal === null || indexVal === undefined || indexVal === "") {'
+);
+
+content = content.replace(
+  /const indexVal = item\.pm\.dewIndex;\s*if \(indexVal === null\) \{/,
+  'const indexVal = item.pm.dewIndex;\n                    if (indexVal === null || indexVal === undefined || indexVal === "") {'
 );
 
 fs.writeFileSync('src/App.tsx', content);

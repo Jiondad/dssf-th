@@ -1,9 +1,12 @@
-# GEMINI_API_KEY: Required for Gemini AI API calls.
-# AI Studio automatically injects this at runtime from user secrets.
-# Users configure this via the Secrets panel in the AI Studio UI.
-GEMINI_API_KEY="MY_GEMINI_API_KEY"
+const fs = require('fs');
+let content = fs.readFileSync('src/App.tsx', 'utf8');
+const oldChunk = fs.readFileSync('chunk_to_replace.txt', 'utf8');
+const newChunk = fs.readFileSync('new_chunk.txt', 'utf8');
 
-# APP_URL: The URL where this applet is hosted.
-# AI Studio automatically injects this at runtime with the Cloud Run service URL.
-# Used for self-referential links, OAuth callbacks, and API endpoints.
-APP_URL="MY_APP_URL"
+if (content.includes(oldChunk)) {
+  content = content.replace(oldChunk, newChunk);
+  fs.writeFileSync('src/App.tsx', content);
+  console.log("Replaced successfully");
+} else {
+  console.log("Could not find old chunk to replace");
+}

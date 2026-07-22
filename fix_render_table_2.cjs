@@ -1,34 +1,46 @@
 const fs = require('fs');
+const content = fs.readFileSync('src/App.tsx', 'utf8');
+const lines = content.split('\n');
 
-let content = fs.readFileSync('src/App.tsx', 'utf8');
+// Find renderTable start
+const renderStartIdx = lines.findIndex(l => l.includes('const renderTable = (daysToRender: number[], isPrint: boolean) => ('));
 
-// 1. In @page styles, change margin to 5mm
-content = content.replace(/margin: 8mm;/g, 'margin: 5mm;');
+let renderEndIdx = -1;
+for (let i = renderStartIdx + 1; i < lines.length; i++) {
+  if (lines[i].trim() === ');') {
+    renderEndIdx = i;
+    break;
+  }
+}
 
-// 2. Add whitespace-nowrap and adjust width for "측정 항목" th
-content = content.replace(
-  /w-\[80px\] xl:w-\[115px\] break-keep">측정 항목<\/th>/g,
-  'w-[95px] xl:w-[125px] print:w-[115px] whitespace-nowrap">측정 항목</th>'
-);
+if (renderStartIdx === -1 || renderEndIdx === -1) {
+  console.log("Could not find renderTable bounds");
+  process.exit(1);
+}
 
-// 3. Add whitespace-nowrap to the "측정 항목" td elements (the sticky ones)
-content = content.replace(
-  /className="sticky left-\[35px\] xl:left-\[45px\] bg-slate-50 border border-slate-200 p-1 xl:p-1\.5 font-semibold text-slate-700 text-left z-10 shadow-xs"/g,
-  'className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-semibold text-slate-700 text-left z-10 shadow-xs whitespace-nowrap"'
-);
+const renderTableLines = lines.slice(renderStartIdx, renderEndIdx + 1);
+lines.splice(renderStartIdx, renderEndIdx - renderStartIdx + 1);
 
-// Same for the '결로지수 (Pt)' which might have 'font-bold text-slate-800' instead of 'font-semibold text-slate-700'
-content = content.replace(
-  /className="sticky left-\[35px\] xl:left-\[45px\] bg-slate-50 border border-slate-200 p-1 xl:p-1\.5 font-bold text-slate-800 text-left z-10 shadow-xs"/g,
-  'className="sticky left-[35px] xl:left-[45px] bg-slate-50 border border-slate-200 p-1 xl:p-1.5 font-bold text-slate-800 text-left z-10 shadow-xs whitespace-nowrap"'
-);
+// Find the App definition
+const appStartIdx = lines.findIndex(l => l.includes('export default function App() {'));
 
-// Remove the vertical padding / margin inside print-container between the two tables
-// Old: <div style={{ pageBreakBefore: 'always' }} className="pt-6">
-// New: <div className="pt-2"> (or remove completely)
-content = content.replace(
-  /<div style={{ pageBreakBefore: 'always' }} className="pt-6">/g,
-  '<div className="pt-4">'
-);
+// Find the `  return (` that starts the JSX tree for App
+let returnIdx = -1;
+for (let i = appStartIdx; i < lines.length; i++) {
+  if (lines[i].includes('return (') && lines[i].includes('    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-12" id="app_root">') === false) {
+    if (lines[i+1] && lines[i+1].includes('    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-12" id="app_root">')) {
+       returnIdx = i;
+       break;
+    }
+  }
+}
 
-fs.writeFileSync('src/App.tsx', content);
+if (returnIdx === -1) {
+  console.log("Could not find App return statement");
+  process.exit(1);
+}
+
+lines.splice(returnIdx, 0, ...renderTableLines);
+
+fs.writeFileSync('src/App.tsx', lines.join('\n'));
+console.log("Fixed renderTable position");
