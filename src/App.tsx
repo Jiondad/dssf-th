@@ -65,30 +65,8 @@ const CustomDewActiveDot = (props: any) => {
   );
 };
 
-// Fixed design-canvas size. All layout (headers, cards, padding, table rows, fonts)
-// is built once at this resolution, then the whole canvas is scaled uniformly to
-// fit any real screen size. This guarantees identical proportions and zero
-// scroll/clipping at any resolution, as long as the aspect ratio is 16:9-ish.
-const STAGE_WIDTH = 1920;
-const STAGE_HEIGHT = 1080;
-
 export default function App() {
   const today = new Date();
-  const [stageScale, setStageScale] = useState<number>(1);
-
-  useEffect(() => {
-    const computeScale = () => {
-      const scale = Math.min(
-        window.innerWidth / STAGE_WIDTH,
-        window.innerHeight / STAGE_HEIGHT
-      );
-      setStageScale(scale);
-    };
-    computeScale();
-    window.addEventListener('resize', computeScale);
-    return () => window.removeEventListener('resize', computeScale);
-  }, []);
-
   const [selectedYear, setSelectedYear] = useState<number>(today.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number>(today.getMonth() + 1);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState<boolean>(false);
@@ -704,7 +682,7 @@ export default function App() {
             </table>
   );
   return (
-    <div className="flex items-center justify-center h-screen w-screen bg-slate-900 text-slate-800 font-sans antialiased overflow-hidden print:block print:bg-white print:h-auto print:overflow-visible" id="app_root">
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-12 print:bg-white print:pb-0 print:min-h-0" id="app_root">
             <style>{`
         @media print {
           @page {
@@ -787,26 +765,8 @@ export default function App() {
         </div>
       </div>
 
-      {/* 16:9 Scaled Stage Wrapper: outer box reserves the exact scaled footprint
-          so it stays centered without layout shift; inner box is a fixed-size
-          1920x1080 canvas that is scaled as a whole via CSS transform. Because
-          every child (header, cards, table, fonts) lives inside the same fixed
-          coordinate space, proportions are identical on any monitor/resolution
-          and nothing reflows, clips, or needs to scroll internally. */}
-      <div
-        className="relative print:hidden"
-        style={{ width: STAGE_WIDTH * stageScale, height: STAGE_HEIGHT * stageScale }}
-      >
-        <div
-          className="absolute top-0 left-0 bg-slate-50 flex flex-col shadow-2xl overflow-hidden origin-top-left"
-          style={{
-            width: STAGE_WIDTH,
-            height: STAGE_HEIGHT,
-            transform: `scale(${stageScale})`,
-          }}
-        >
       {/* Top Professional Header */}
-      <header className="bg-slate-900 text-white shadow-md border-b border-slate-800 shrink-0 print:hidden" id="header_section">
+      <header className="bg-slate-900 text-white shadow-md border-b border-slate-800 print:hidden" id="header_section">
         <div className="max-w-[1920px] mx-auto px-4 py-2.5 md:py-3.5 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
             <div className="bg-blue-600 text-white p-2 rounded-lg shadow-inner flex items-center justify-center">
@@ -982,7 +942,7 @@ export default function App() {
       </header>
 
       {/* Main Container */}
-      <main className="flex-1 flex flex-col min-h-0 w-full px-3 py-3 md:px-4 md:py-4 space-y-3 relative print:hidden">
+      <main className="max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 mt-4 space-y-4 relative print:hidden">
         {isLoadingData ? (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-50/80 backdrop-blur-sm min-h-[600px] rounded-2xl">
             <div className="flex flex-col items-center gap-4">
@@ -993,7 +953,7 @@ export default function App() {
         ) : null}
 
         {/* 1. 요약 대시보드 카드 뷰 Section */}
-        <section className={`transition-opacity duration-300 shrink-0 ${isLoadingData ? 'opacity-30' : 'opacity-100'} print:hidden`} id="summary_cards_section">
+        <section className={`transition-opacity duration-300 ${isLoadingData ? 'opacity-30' : 'opacity-100'} print:hidden`} id="summary_cards_section">
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
              {/* Cards Section */}
              <div className="xl:col-span-9 flex flex-col gap-3">
@@ -1267,7 +1227,7 @@ export default function App() {
         </section>
         
 {/* 2. 월간 그래프 Section */}
-        <section className="bg-white rounded-2xl border border-slate-200 p-3 shadow-xs print:hidden flex-1 flex flex-col min-h-0" id="monthly_chart_section">
+        <section className="bg-white rounded-2xl border border-slate-200 p-3 md:p-4 shadow-xs print:hidden" id="monthly_chart_section">
           <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-2 border-b border-slate-100 pb-2 mb-2">
             <div className="shrink-0">
               <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -1405,7 +1365,7 @@ export default function App() {
 
           
 {/* Recharts Container */}
-          <div className="flex-1 w-full min-h-0" id="chart_container">
+          <div className="h-[410px] md:h-[490px] w-full" id="chart_container">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart 
                 data={chartData} 
@@ -1582,7 +1542,7 @@ export default function App() {
         </section>
 
         {/* 3. 월간 데이터 표 Section */}
-        <section className="bg-white rounded-2xl border border-slate-200 p-3 shadow-xs overflow-hidden flex-1 flex flex-col min-h-0" id="monthly_table_section">
+        <section className="bg-white rounded-2xl border border-slate-200 p-3 md:p-4 shadow-xs overflow-hidden" id="monthly_table_section">
           <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-slate-100 pb-3 mb-3">
             <div>
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -1639,7 +1599,7 @@ export default function App() {
           {/* Scrollable Ledger Wrapper */}
 
           {/* Scrollable Ledger Wrapper */}
-          <div className="overflow-auto flex-1 rounded-xl border border-slate-200 shadow-inner print:hidden" id="ledger_table_wrapper">
+          <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-inner print:hidden" id="ledger_table_wrapper">
             {renderTable(fixedDays, false)}
           </div>
           
@@ -1652,8 +1612,6 @@ export default function App() {
         </section>
 
       </main>
-        </div> {/* End scaled 1920x1080 canvas */}
-      </div> {/* End stage footprint wrapper */}
 
       {/* New Data Registration Modal with Animation */}
       <AnimatePresence>
