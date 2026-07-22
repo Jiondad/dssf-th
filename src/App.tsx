@@ -981,7 +981,7 @@ export default function App() {
                  >
                    <div className="flex justify-between items-start mb-2">
                      <div>
-                       <span className="text-sm text-slate-800 font-extrabold tracking-tight block">대기 온도</span>
+                       <span className="text-base font-extrabold tracking-tight text-slate-900 block">대기 온도</span>
                        <h3 className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Air Temperature</h3>
                      </div>
                      <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
@@ -1026,7 +1026,7 @@ export default function App() {
                  >
                    <div className="flex justify-between items-start mb-2">
                      <div>
-                       <span className="text-sm text-slate-800 font-extrabold tracking-tight block">코일 표면 온도</span>
+                       <span className="text-base font-extrabold tracking-tight text-slate-900 block">코일 표면 온도</span>
                        <h3 className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Surface Temp</h3>
                      </div>
                      <div className="p-1.5 bg-teal-50 text-teal-600 rounded-lg">
@@ -1071,7 +1071,7 @@ export default function App() {
                  >
                    <div className="flex justify-between items-start mb-2">
                      <div>
-                       <span className="text-sm text-slate-800 font-extrabold tracking-tight block">상대 습도</span>
+                       <span className="text-base font-extrabold tracking-tight text-slate-900 block">상대 습도</span>
                        <h3 className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Relative Humidity</h3>
                      </div>
                      <div className="p-1.5 bg-violet-50 text-violet-600 rounded-lg">
@@ -1120,8 +1120,8 @@ export default function App() {
                    <div>
                      <div className="flex justify-between items-start mb-2">
                        <div>
-                         <span className="text-xs font-semibold uppercase tracking-wider opacity-85 text-slate-700">결로 위험 지수</span>
-                         <h3 className="text-lg font-bold mt-0.5 text-slate-900">Condensation Index</h3>
+                         <span className={`text-base font-extrabold tracking-tight block ${maxDewIndexToday > 80 ? 'text-white' : 'text-slate-900'}`}>결로 위험 지수</span>
+                         <h3 className={`text-[10px] font-medium uppercase tracking-wide ${maxDewIndexToday > 80 ? 'text-white/80' : 'text-slate-500'}`}>Condensation Index</h3>
                        </div>
                        <div className="relative group p-2 rounded-xl bg-white/80 cursor-help">
                          <AlertTriangle className="w-6 h-6 text-slate-900 transition-transform group-hover:scale-110" />
@@ -1170,15 +1170,25 @@ export default function App() {
                    </div>
 
                    <div className="mt-2 pt-2 border-t border-slate-200/50 flex justify-between items-center text-[10px]">
-                     <span className={`font-bold flex items-center gap-1 ${maxDewIndexToday > 80 ? 'text-white' : condensationStatus.textColor} whitespace-nowrap`}>
+                     <span className={`font-bold flex items-center gap-1 whitespace-nowrap ${
+                       maxDewIndexToday > 80 
+                         ? 'text-white animate-pulse' 
+                         : maxDewIndexToday > 60 
+                           ? 'text-amber-600 font-extrabold' 
+                           : 'text-emerald-600 font-semibold'
+                     }`}>
                        {condensationStatus.icon}
-                       {condensationStatus.text} 상태
+                       {maxDewIndexToday > 80 
+                         ? '즉시 환기 및 히터 가동 (결로 주의)' 
+                         : maxDewIndexToday > 60 
+                           ? '통풍 실시 및 온습도 주의 관찰' 
+                           : '환기 및 코일 상태 양호 (정상 관리)'}
                      </span>
-                     <span className={`font-mono px-1 py-0.5 rounded whitespace-nowrap ${maxDewIndexToday > 80 ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-600'}`}>
+                     <span className={`font-mono px-1 py-0.5 rounded whitespace-nowrap ${maxDewIndexToday > 80 ? 'bg-red-600 text-white animate-pulse' : 'bg-slate-100 text-slate-600'}`}>
                        Target: &lt;60Pt
                      </span>
                    </div>
-                 </motion.div>
+                </motion.div>
                </div>
              </div>
              
