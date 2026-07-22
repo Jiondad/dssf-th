@@ -1,19 +1,16 @@
 const fs = require('fs');
-
 let content = fs.readFileSync('src/App.tsx', 'utf8');
 
-content = content.replace(/\{mockData\.map\(\(item\) => \(\s*<th([^>]*)>([^<]*)<\/th>\s*\)\)\}/g, 
-`{fixedDays.map((day) => (
-                    <th 
-                      key={day}
-                      onClick={() => setSelectedDay(day)}
-                      className={\`border border-slate-700 p-1 xl:p-1.5 font-bold font-mono cursor-pointer transition-all hover:bg-blue-800 \${
-                        day === selectedDay ? "bg-blue-600 text-white" : "bg-slate-800/85"
-                      }\`}
-                      title={\`\${day}일 정밀조회\`}
-                    >
-                      {day}일
-                    </th>
-                  ))}`);
+content = content.replace(
+  /const maxIndex = Math\.max\(r\.am\.dewIndex, r\.pm\.dewIndex\);\s*if \(maxIndex <= 60\) safeCount\+\+;\s*else if \(maxIndex <= 80\) cautionCount\+\+;\s*else dangerCount\+\+;/g,
+  `if (r.am.dewIndex === null && r.pm.dewIndex === null) return;
+      const amDew = r.am.dewIndex !== null ? r.am.dewIndex : -1;
+      const pmDew = r.pm.dewIndex !== null ? r.pm.dewIndex : -1;
+      const maxIndex = Math.max(amDew, pmDew);
+      if (maxIndex < 0) return;
+      if (maxIndex <= 60) safeCount++;
+      else if (maxIndex <= 80) cautionCount++;
+      else dangerCount++;`
+);
 
 fs.writeFileSync('src/App.tsx', content);

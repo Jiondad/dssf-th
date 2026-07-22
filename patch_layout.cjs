@@ -1,63 +1,76 @@
 const fs = require('fs');
 let content = fs.readFileSync('src/App.tsx', 'utf8');
 
-// 1. Root wrapper
-const oldRootTop = `<div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-12 print:bg-white print:pb-0 print:min-h-0" id="app_root">`;
-const newRootTop = `<div className="flex items-center justify-center h-screen w-screen bg-slate-900 text-slate-800 font-sans antialiased overflow-hidden print:block print:bg-white print:h-auto print:overflow-visible" id="app_root">
-      
-      {/* 16:9 Aspect Ratio Wrapper */}
-      <div 
-        className="relative bg-slate-50 flex flex-col shadow-2xl overflow-hidden print:hidden" 
-        style={{ 
-          width: '100vw', 
-          maxWidth: 'calc(100vh * 16 / 9)', 
-          height: '100vh', 
-          maxHeight: 'calc(100vw * 9 / 16)',
-          aspectRatio: '16/9' 
-        }}
-      >`;
-content = content.replace(oldRootTop, newRootTop);
+const isDangerStr = "${maxDewIndexToday > 80 ? 'text-white' : 'text-slate-800'}";
+const isDangerMutedStr = "${maxDewIndexToday > 80 ? 'text-white/80' : 'text-slate-500'}";
+const isDanger600Str = "${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}";
+const isDanger900Str = "${maxDewIndexToday > 80 ? 'text-white' : 'text-slate-900'}";
 
-// 2. Header
-const oldHeader = `<header className="bg-slate-900 text-white shadow-md border-b border-slate-800 print:hidden" id="header_section">`;
-const newHeader = `<header className="bg-slate-900 text-white shadow-md border-b border-slate-800 shrink-0 print:hidden" id="header_section">`;
-content = content.replace(oldHeader, newHeader);
+// Replace animate
+content = content.replace(
+  `animate={{ backgroundColor: condensationStatus.bgColor.includes('emerald') ? '#d1fae5' : condensationStatus.bgColor.includes('amber') ? '#fef3c7' : '#ffe4e6' }}`,
+  `animate={{ backgroundColor: condensationStatus.bgColor.includes('emerald') ? '#d1fae5' : condensationStatus.bgColor.includes('amber') ? '#fef3c7' : '#ef4444' }}`
+);
 
-// 3. Main container
-const oldMain = `<main className="max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 mt-4 space-y-4 relative print:hidden">`;
-const newMain = `<main className="flex-1 flex flex-col min-h-0 w-full px-3 py-3 md:px-4 md:py-4 space-y-3 relative print:hidden">`;
-content = content.replace(oldMain, newMain);
+// Replace className of wrapper
+content = content.replace(
+  `className={\`rounded-xl border p-3 shadow-xs hover:shadow-md transition-all relative z-10 overflow-visible flex flex-col justify-between \${condensationStatus.borderColor} \${maxDewIndexToday > 80 ? 'animate-pulse' : ''}\`}`,
+  `className={\`rounded-xl border p-3 shadow-xs hover:shadow-md transition-all relative z-10 overflow-visible flex flex-col justify-between \${maxDewIndexToday > 80 ? 'border-red-600 bg-red-500 text-white animate-pulse' : condensationStatus.borderColor}\`}`
+);
 
-// 4. summary_cards_section
-const oldSummary = `<section className={\`transition-opacity duration-300 \${isLoadingData ? 'opacity-30' : 'opacity-100'} print:hidden\`} id="summary_cards_section">`;
-const newSummary = `<section className={\`transition-opacity duration-300 shrink-0 \${isLoadingData ? 'opacity-30' : 'opacity-100'} print:hidden\`} id="summary_cards_section">`;
-content = content.replace(oldSummary, newSummary);
+// Replace text-slate-800
+content = content.replace(
+  `<span className="text-sm text-slate-800 font-extrabold tracking-tight block">결로 위험 지수</span>`,
+  `<span className={\`text-sm font-extrabold tracking-tight block \${maxDewIndexToday > 80 ? 'text-white' : 'text-slate-800'}\`}>결로 위험 지수</span>`
+);
 
-// 5. monthly_chart_section
-const oldChartSection = `<section className="bg-white rounded-2xl border border-slate-200 p-3 md:p-4 shadow-xs print:hidden" id="monthly_chart_section">`;
-const newChartSection = `<section className="bg-white rounded-2xl border border-slate-200 p-3 shadow-xs print:hidden flex-1 flex flex-col min-h-0" id="monthly_chart_section">`;
-content = content.replace(oldChartSection, newChartSection);
+content = content.replace(
+  `<h3 className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Condensation</h3>`,
+  `<h3 className={\`text-[10px] font-medium uppercase tracking-wide \${maxDewIndexToday > 80 ? 'text-white/80' : 'text-slate-500'}\`}>Condensation</h3>`
+);
 
-// 6. chart_container
-const oldChartContainer = `<div className="h-[410px] md:h-[490px] w-full" id="chart_container">`;
-const newChartContainer = `<div className="flex-1 w-full min-h-0" id="chart_container">`;
-content = content.replace(oldChartContainer, newChartContainer);
+content = content.replace(
+  `<span className="text-[10px] text-slate-600 font-semibold block uppercase">오전(AM)</span>`,
+  `<span className={\`text-[10px] font-semibold block uppercase \${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}\`}>오전(AM)</span>`
+);
 
-// 7. monthly_table_section
-const oldTableSection = `<section className="bg-white rounded-2xl border border-slate-200 p-3 md:p-4 shadow-xs overflow-hidden" id="monthly_table_section">`;
-const newTableSection = `<section className="bg-white rounded-2xl border border-slate-200 p-3 shadow-xs overflow-hidden flex-1 flex flex-col min-h-0" id="monthly_table_section">`;
-content = content.replace(oldTableSection, newTableSection);
+content = content.replace(
+  `<span className="text-lg font-black font-mono text-slate-900">{currentRecord.am.dewIndex !== null ? currentRecord.am.dewIndex : "-"}</span>`,
+  `<span className={\`text-lg font-black font-mono \${maxDewIndexToday > 80 ? 'text-white' : 'text-slate-900'}\`}>{currentRecord.am.dewIndex !== null ? currentRecord.am.dewIndex : "-"}</span>`
+);
 
-// 8. ledger_table_wrapper
-const oldLedgerWrapper = `<div className="overflow-x-auto rounded-xl border border-slate-200 shadow-inner print:hidden" id="ledger_table_wrapper">`;
-const newLedgerWrapper = `<div className="overflow-auto flex-1 rounded-xl border border-slate-200 shadow-inner print:hidden" id="ledger_table_wrapper">`;
-content = content.replace(oldLedgerWrapper, newLedgerWrapper);
+content = content.replace(
+  `<span className="text-[10px] text-slate-600 font-bold">Pt</span>`,
+  `<span className={\`text-[10px] font-bold \${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}\`}>Pt</span>`
+);
 
-// 9. Close the 16:9 wrapper
-const oldMainEnd = `      </main>`;
-const newMainEnd = `      </main>
-      </div> {/* End 16:9 Wrapper */}`;
-content = content.replace(oldMainEnd, newMainEnd);
+content = content.replace(
+  `<span className="text-[10px] text-slate-600 font-semibold block uppercase">오후(PM)</span>`,
+  `<span className={\`text-[10px] font-semibold block uppercase \${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}\`}>오후(PM)</span>`
+);
+
+content = content.replace(
+  `<span className="text-lg font-black font-mono text-slate-900">{currentRecord.pm.dewIndex !== null ? currentRecord.pm.dewIndex : "-"}</span>`,
+  `<span className={\`text-lg font-black font-mono \${maxDewIndexToday > 80 ? 'text-white' : 'text-slate-900'}\`}>{currentRecord.pm.dewIndex !== null ? currentRecord.pm.dewIndex : "-"}</span>`
+);
+
+// Target needs replacing too
+content = content.replace(
+  `<span className="font-mono bg-slate-100 text-slate-600 px-1 py-0.5 rounded whitespace-nowrap">`,
+  `<span className={\`font-mono px-1 py-0.5 rounded whitespace-nowrap \${maxDewIndexToday > 80 ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-600'}\`}>`
+);
+
+// And the status text
+content = content.replace(
+  `<span className={\`font-bold flex items-center gap-1 \${condensationStatus.textColor} whitespace-nowrap\`}>`,
+  `<span className={\`font-bold flex items-center gap-1 \${maxDewIndexToday > 80 ? 'text-white' : condensationStatus.textColor} whitespace-nowrap\`}>`
+);
+
+// and Pt again
+content = content.replace(
+  `<span className="text-[10px] text-slate-600 font-bold">Pt</span>`,
+  `<span className={\`text-[10px] font-bold \${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}\`}>Pt</span>`
+);
 
 fs.writeFileSync('src/App.tsx', content);
-console.log("Layout patched!");
+console.log("Patched card");

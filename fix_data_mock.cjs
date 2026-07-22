@@ -1,7 +1,7 @@
 const fs = require('fs');
-let content = fs.readFileSync('src/data.ts', 'utf8');
+let content = fs.readFileSync('src/App.tsx', 'utf8');
 
-// Remove getMonthlyMockData completely
-content = content.replace(/\/\/ Generate deterministic realistic factory data for 31 days[\s\S]*$/, '');
+content = content.replace(/mockData/g, 'sheetData');
+content = content.replace(/setMockData/g, 'setSheetData');
 
-fs.writeFileSync('src/data.ts', content);
+fs.writeFileSync('src/App.tsx', content);

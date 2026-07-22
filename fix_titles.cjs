@@ -1,28 +1,65 @@
 const fs = require('fs');
 let content = fs.readFileSync('src/App.tsx', 'utf8');
 
+// Air Temp Summary
 content = content.replace(
-  /<span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">대기 온도<\/span>\s*<h3 className="text-lg font-bold text-slate-800 mt-0\.5">Air Temperature<\/h3>/,
-  `<span className="text-base text-slate-800 font-extrabold tracking-tight block">대기 온도</span>
-                  <h3 className="text-sm font-medium text-slate-500 mt-0.5 uppercase tracking-wide">Air Temperature</h3>`
+  /<span className="text-2xl font-bold font-mono text-slate-800">\{currentRecord\.am\.airTemp\}<\/span>/g,
+  '<span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.am.airTemp !== null ? currentRecord.am.airTemp : "-"}</span>'
+);
+content = content.replace(
+  /<span className="text-2xl font-bold font-mono text-slate-800">\{currentRecord\.pm\.airTemp\}<\/span>/g,
+  '<span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.pm.airTemp !== null ? currentRecord.pm.airTemp : "-"}</span>'
+);
+content = content.replace(
+  /일교차: \{Math\.round\(\(currentRecord\.pm\.airTemp - currentRecord\.am\.airTemp\) \* 10\) \/ 10\}℃/g,
+  '일교차: {currentRecord.pm.airTemp !== null && currentRecord.am.airTemp !== null ? Math.round((currentRecord.pm.airTemp - currentRecord.am.airTemp) * 10) / 10 + "℃" : "-"}'
 );
 
+// Surface Temp Summary
 content = content.replace(
-  /<span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">코일 표면 온도<\/span>\s*<h3 className="text-lg font-bold text-slate-800 mt-0\.5">Surface Temp\.<\/h3>/,
-  `<span className="text-base text-slate-800 font-extrabold tracking-tight block">코일 표면 온도</span>
-                  <h3 className="text-sm font-medium text-slate-500 mt-0.5 uppercase tracking-wide">Surface Temp.</h3>`
+  /<span className="text-2xl font-bold font-mono text-slate-800">\{currentRecord\.am\.surfaceTemp\}<\/span>/g,
+  '<span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.am.surfaceTemp !== null ? currentRecord.am.surfaceTemp : "-"}</span>'
+);
+content = content.replace(
+  /<span className="text-2xl font-bold font-mono text-slate-800">\{currentRecord\.pm\.surfaceTemp\}<\/span>/g,
+  '<span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.pm.surfaceTemp !== null ? currentRecord.pm.surfaceTemp : "-"}</span>'
+);
+content = content.replace(
+  /<span>대기대비차: 오전 \{Math\.round\(\(currentRecord\.am\.airTemp - currentRecord\.am\.surfaceTemp\) \* 10\) \/ 10\}℃ <span className="text-slate-300 mx-1">\|<\/span> 오후 \{Math\.round\(\(currentRecord\.pm\.airTemp - currentRecord\.pm\.surfaceTemp\) \* 10\) \/ 10\}℃<\/span>/g,
+  '<span>대기대비차: 오전 {currentRecord.am.airTemp !== null && currentRecord.am.surfaceTemp !== null ? Math.round((currentRecord.am.airTemp - currentRecord.am.surfaceTemp) * 10) / 10 + "℃" : "-"} <span className="text-slate-300 mx-1">|</span> 오후 {currentRecord.pm.airTemp !== null && currentRecord.pm.surfaceTemp !== null ? Math.round((currentRecord.pm.airTemp - currentRecord.pm.surfaceTemp) * 10) / 10 + "℃" : "-"}</span>'
 );
 
+// Humidity Summary
 content = content.replace(
-  /<span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">상대 습도<\/span>\s*<h3 className="text-lg font-bold text-slate-800 mt-0\.5">Humidity<\/h3>/,
-  `<span className="text-base text-slate-800 font-extrabold tracking-tight block">상대 습도</span>
-                  <h3 className="text-sm font-medium text-slate-500 mt-0.5 uppercase tracking-wide">Humidity</h3>`
+  /<span className="text-2xl font-bold font-mono text-slate-800">\{currentRecord\.am\.humidity\}<\/span>/g,
+  '<span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.am.humidity !== null ? currentRecord.am.humidity : "-"}</span>'
+);
+content = content.replace(
+  /<span className="text-2xl font-bold font-mono text-slate-800">\{currentRecord\.pm\.humidity\}<\/span>/g,
+  '<span className="text-2xl font-bold font-mono text-slate-800">{currentRecord.pm.humidity !== null ? currentRecord.pm.humidity : "-"}</span>'
+);
+content = content.replace(
+  /일교차: \{currentRecord\.am\.humidity - currentRecord\.pm\.humidity\}%/g,
+  '일교차: {currentRecord.am.humidity !== null && currentRecord.pm.humidity !== null ? (currentRecord.am.humidity - currentRecord.pm.humidity) + "%" : "-"}'
 );
 
+// Dew Index Summary
 content = content.replace(
-  /<span className="text-xs font-semibold uppercase tracking-wider opacity-85 text-slate-700">결로 위험 지수<\/span>\s*<h3 className="text-lg font-bold mt-0\.5 text-slate-900">Condensation Index<\/h3>/,
-  `<span className="text-base text-slate-900 font-extrabold tracking-tight block">결로 위험 지수</span>
-                    <h3 className="text-sm font-medium opacity-75 text-slate-700 mt-0.5 uppercase tracking-wide">Condensation Index</h3>`
+  /<span className="text-2xl font-black font-mono text-slate-900">\{currentRecord\.am\.dewIndex\}<\/span>/g,
+  '<span className="text-2xl font-black font-mono text-slate-900">{currentRecord.am.dewIndex !== null ? currentRecord.am.dewIndex : "-"}</span>'
+);
+content = content.replace(
+  /<span className="text-2xl font-black font-mono text-slate-900">\{currentRecord\.pm\.dewIndex\}<\/span>/g,
+  '<span className="text-2xl font-black font-mono text-slate-900">{currentRecord.pm.dewIndex !== null ? currentRecord.pm.dewIndex : "-"}</span>'
+);
+
+// calculateLocalDewIndex Math.max for maxCondensationIndex
+content = content.replace(
+  /return Math\.max\(currentRecord\.am\.dewIndex, currentRecord\.pm\.dewIndex\);/,
+  `if (currentRecord.am.dewIndex === null && currentRecord.pm.dewIndex === null) return 0;
+    if (currentRecord.am.dewIndex === null) return currentRecord.pm.dewIndex;
+    if (currentRecord.pm.dewIndex === null) return currentRecord.am.dewIndex;
+    return Math.max(currentRecord.am.dewIndex, currentRecord.pm.dewIndex);`
 );
 
 fs.writeFileSync('src/App.tsx', content);

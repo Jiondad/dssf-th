@@ -1,37 +1,25 @@
 const fs = require('fs');
 let content = fs.readFileSync('src/App.tsx', 'utf8');
 
-// 1. handleDateChange
+// Surface Temp
 content = content.replace(
-  /amAirTemp: existing\.am\.airTemp\.toString\(\),\s*amSurfaceTemp: existing\.am\.surfaceTemp\.toString\(\),\s*amHumidity: existing\.am\.humidity\.toString\(\),\s*pmAirTemp: existing\.pm\.airTemp\.toString\(\),\s*pmSurfaceTemp: existing\.pm\.surfaceTemp\.toString\(\),\s*pmHumidity: existing\.pm\.humidity\.toString\(\),/g,
-  `amAirTemp: existing.am.airTemp !== null ? existing.am.airTemp.toString() : "",
-          amSurfaceTemp: existing.am.surfaceTemp !== null ? existing.am.surfaceTemp.toString() : "",
-          amHumidity: existing.am.humidity !== null ? existing.am.humidity.toString() : "",
-          pmAirTemp: existing.pm.airTemp !== null ? existing.pm.airTemp.toString() : "",
-          pmSurfaceTemp: existing.pm.surfaceTemp !== null ? existing.pm.surfaceTemp.toString() : "",
-          pmHumidity: existing.pm.humidity !== null ? existing.pm.humidity.toString() : "",`
+  /<span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">코일 표면 온도<\/span>\s*<h3 className="text-lg font-bold text-slate-800 mt-0\.5">Surface Temp<\/h3>/,
+  `<span className="text-base text-slate-800 font-extrabold tracking-tight block">코일 표면 온도</span>
+                  <h3 className="text-sm font-medium text-slate-500 mt-0.5 uppercase tracking-wide">Surface Temp</h3>`
 );
 
-// 2. handleFormSubmit: calculateLocalDewIndex
+// Relative Humidity
 content = content.replace(
-  /const calculateLocalDewIndex = \(air: number, surf: number, hum: number\) => \{/,
-  `const calculateLocalDewIndex = (air: number | null, surf: number | null, hum: number | null) => {
-        if (air === null || surf === null || hum === null) return null;`
+  /<span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">상대 습도<\/span>\s*<h3 className="text-lg font-bold text-slate-800 mt-0\.5">Relative Humidity<\/h3>/,
+  `<span className="text-base text-slate-800 font-extrabold tracking-tight block">상대 습도</span>
+                  <h3 className="text-sm font-medium text-slate-500 mt-0.5 uppercase tracking-wide">Relative Humidity</h3>`
 );
 
-// 3. handleFormSubmit: payload values
+// Condensation Index
 content = content.replace(
-  /const amAirTemp = Number\(formData\.amAirTemp\);\s*const amSurfaceTemp = Number\(formData\.amSurfaceTemp\);\s*const amHumidity = Number\(formData\.amHumidity\);\s*const pmAirTemp = Number\(formData\.pmAirTemp\);\s*const pmSurfaceTemp = Number\(formData\.pmSurfaceTemp\);\s*const pmHumidity = Number\(formData\.pmHumidity\);/,
-  `const amAirTemp = formData.amAirTemp === "" ? null : Number(formData.amAirTemp);
-      const amSurfaceTemp = formData.amSurfaceTemp === "" ? null : Number(formData.amSurfaceTemp);
-      const amHumidity = formData.amHumidity === "" ? null : Number(formData.amHumidity);
-      const pmAirTemp = formData.pmAirTemp === "" ? null : Number(formData.pmAirTemp);
-      const pmSurfaceTemp = formData.pmSurfaceTemp === "" ? null : Number(formData.pmSurfaceTemp);
-      const pmHumidity = formData.pmHumidity === "" ? null : Number(formData.pmHumidity);`
+  /<span className="text-base text-slate-900 font-extrabold tracking-tight block">결로 위험 지수<\/span>\s*<h3 className="text-sm font-medium opacity-75 text-slate-700 mt-0\.5 uppercase tracking-wide">Condensation Index<\/h3>/,
+  `<span className="text-base text-slate-800 font-extrabold tracking-tight block">결로 위험 지수</span>
+                    <h3 className="text-sm font-medium text-slate-500 mt-0.5 uppercase tracking-wide">Condensation Index</h3>`
 );
-
-// 4. form inputs - remove required
-content = content.replace(/<input\s+type="number"\s+required/g, '<input type="number"');
-content = content.replace(/<input\n\s*type="number"\n\s*required/g, '<input\n                    type="number"');
 
 fs.writeFileSync('src/App.tsx', content);
