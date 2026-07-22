@@ -37,6 +37,8 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { fetchSpreadsheetData, getCondensationStatus, CondensationStatus } from "./data";
 import { DailyRecord, SensorKey } from "./types";
+const FACTORY_SHEET_MAP = { '평택포승공장': 'Data', '아산인주공장': 'Data2' } as const;
+
 
 // --- Custom Dew Index Colors & Dots ---
 const getDewColor = (value: number) => {
@@ -87,7 +89,7 @@ export default function App() {
       
       try {
         // Determine the simulated sheet name based on the factory
-        const sheetName = selectedFactory === '평택포승공장' ? 'Data' : 'Data2';
+        const sheetName = FACTORY_SHEET_MAP[selectedFactory];
         
         const newData = await fetchSpreadsheetData(sheetName, selectedYear, selectedMonth);
         
@@ -196,7 +198,7 @@ export default function App() {
       const pmHumidity = formData.pmHumidity === "" ? null : Number(formData.pmHumidity);
 
       const payload = {
-        sheetName: modalFactory === '평택포승공장' ? 'Data' : 'Data2',
+        sheetName: FACTORY_SHEET_MAP[modalFactory],
         factory: modalFactory,
         date: formData.date,
         amAirTemp,
@@ -214,7 +216,20 @@ export default function App() {
       const adjustedDate = new Date(dateObj.getTime() + userTimezoneOffset);
       const parsedDay = adjustedDate.getDate();
 
-      // Optimistic Update
+      // POST to Google Apps Script API
+      const response = await fetch("https://script.google.com/macros/s/AKfycbwGRuza0OfCDR-sQA3l3yu_aCAIdJPtKWobL8PwGVOsRDGYCW3O-EGo5oNSeGJKILtU4g/exec", {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Local State Update on Success
       if (modalFactory === selectedFactory && adjustedDate.getFullYear() === selectedYear && (adjustedDate.getMonth() + 1) === selectedMonth) {
         setSheetData(prev => {
           const newData = [...prev];
@@ -246,15 +261,6 @@ export default function App() {
         setSelectedDay(parsedDay);
       }
 
-      // POST to Google Apps Script API
-      await fetch("https://script.google.com/macros/s/AKfycbwGRuza0OfCDR-sQA3l3yu_aCAIdJPtKWobL8PwGVOsRDGYCW3O-EGo5oNSeGJKILtU4g/exec", {
-        method: "POST",
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8"
-        },
-        body: JSON.stringify(payload)
-      });
-
       alert("데이터가 성공적으로 등록되었습니다.");
       setIsModalOpen(false);
     } catch (error) {
@@ -262,16 +268,6 @@ export default function App() {
       alert("데이터 전송 중 오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
-      // Data Refetch for 100% Sync
-      setIsLoadingData(true);
-      try {
-        const sheetName = selectedFactory === '평택포승공장' ? 'Data' : 'Data2';
-        const newData = await fetchSpreadsheetData(sheetName, selectedYear, selectedMonth);
-        setSheetData(newData);
-      } catch (err) {
-        console.error("Failed to refetch data:", err);
-      }
-      setIsLoadingData(false);
     }
   };
   
