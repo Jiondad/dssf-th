@@ -1058,7 +1058,7 @@ export default function App() {
                        편차: {currentRecord.am.surfaceTemp !== null && currentRecord.pm.surfaceTemp !== null ? Math.round((currentRecord.pm.surfaceTemp - currentRecord.am.surfaceTemp) * 10) / 10 + "℃" : "-"}
                      </span>
                      <span className="font-mono bg-slate-100 text-slate-600 px-1 py-0.5 rounded whitespace-nowrap">
-                       Target: &gt; 대기온도
+                       Target: &gt; 이슬점(T_dew)
                      </span>
                    </div>
                  </motion.div>
