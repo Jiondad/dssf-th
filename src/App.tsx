@@ -79,12 +79,12 @@ export default function App() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`,
-    amAirTemp: "23.5",
-    amSurfaceTemp: "21.2",
-    amHumidity: "72",
-    pmAirTemp: "31.2",
-    pmSurfaceTemp: "28.5",
-    pmHumidity: "48",
+    amAirTemp: "",
+    amSurfaceTemp: "",
+    amHumidity: "",
+    pmAirTemp: "",
+    pmSurfaceTemp: "",
+    pmHumidity: "",
   });
 
   const handleDateChange = (dateVal: string) => {
@@ -106,7 +106,15 @@ export default function App() {
           pmHumidity: existing.pm.humidity !== null ? existing.pm.humidity.toString() : "",
          };
       }
-      return updated;
+      return {
+        ...updated,
+        amAirTemp: "",
+        amSurfaceTemp: "",
+        amHumidity: "",
+        pmAirTemp: "",
+        pmSurfaceTemp: "",
+        pmHumidity: "",
+      };
     });
   };
 
