@@ -13,10 +13,11 @@ interface SummaryCardsProps {
   selectedFactory: string;
   isLoadingData: boolean;
   sheetData: DailyRecord[];
+  daysInMonth: number;
 }
 
 const SummaryCards: React.FC<SummaryCardsProps> = ({
-  selectedMonth, selectedDay, setSelectedDay, selectedFactory, isLoadingData, sheetData
+  selectedMonth, selectedDay, setSelectedDay, selectedFactory, isLoadingData, sheetData, daysInMonth
 }) => {
   const currentRecord = useMemo(() => {
     const found = sheetData.find(r => r.day === selectedDay);
@@ -78,7 +79,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({
                  <div className="w-full sm:w-auto flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200">
                    <span className="text-[11px] font-semibold text-slate-500 whitespace-nowrap">일자 선택:</span>
                    <input 
-                     type="range" min={1} max={31} value={selectedDay}
+                     type="range" min={1} max={daysInMonth} value={selectedDay}
                      onChange={(e) => setSelectedDay(parseInt(e.target.value))}
                      className="w-24 md:w-32 h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                    />

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import {
-  Layers, Factory, RotateCcw, Play, Pause, ChevronDown, FileSpreadsheet, Printer, Plus, Calendar, ChevronLeft, ChevronRight, Loader2
+  Layers, Factory, RotateCcw, Play, Pause, ChevronDown, FileSpreadsheet, Printer, Plus, Calendar, ChevronLeft, ChevronRight, Loader2, CheckCircle2, AlertTriangle
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { fetchSpreadsheetData } from "./data";
@@ -77,6 +77,12 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalFactory, setModalFactory] = useState<'평택포승공장' | '아산인주공장'>('평택포승공장');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
   const [formData, setFormData] = useState({
     date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`,
     amAirTemp: "",
@@ -205,17 +211,18 @@ export default function App() {
         setSelectedDay(parsedDay);
       }
 
-      alert("데이터가 성공적으로 등록되었습니다.");
+      showToast("데이터가 성공적으로 등록되었습니다.", "success");
       setIsModalOpen(false);
     } catch (error) {
       console.error("Error submitting data:", error);
-      alert("데이터 전송 중 오류가 발생했습니다.");
+      showToast("데이터 전송 중 오류가 발생했습니다.", "error");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const fixedDays = useMemo(() => Array.from({ length: 31 }, (_, i) => i + 1), []);
+  const daysInMonth = useMemo(() => new Date(selectedYear, selectedMonth, 0).getDate(), [selectedYear, selectedMonth]);
+  const dynamicDays = useMemo(() => Array.from({ length: daysInMonth }, (_, i) => i + 1), [daysInMonth]);
 
   useEffect(() => {
     let intervalId: any;
@@ -307,10 +314,10 @@ export default function App() {
           </div>
         </div>
         <div className="mt-0">
-          <LedgerTable daysToRender={fixedDays.slice(0, 16)} isPrint={true} sheetData={sheetData} selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
+          <LedgerTable daysToRender={dynamicDays.slice(0, 16)} isPrint={true} sheetData={sheetData} selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
         </div>
         <div className="pt-3">
-          <LedgerTable daysToRender={fixedDays.slice(16, 31)} isPrint={true} sheetData={sheetData} selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
+          <LedgerTable daysToRender={dynamicDays.slice(16)} isPrint={true} sheetData={sheetData} selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
         </div>
         
         {/* Print Layout: Condensation Formula and Status */}
@@ -546,12 +553,13 @@ export default function App() {
           selectedFactory={selectedFactory}
           isLoadingData={isLoadingData}
           sheetData={sheetData}
+          daysInMonth={daysInMonth}
         />
         
 <MonthlyChart 
           selectedMonth={selectedMonth}
           sheetData={sheetData}
-          fixedDays={fixedDays}
+          dynamicDays={dynamicDays}
           selectedDay={selectedDay}
           setSelectedDay={setSelectedDay}
         />
@@ -615,7 +623,7 @@ export default function App() {
 
           {/* Scrollable Ledger Wrapper */}
           <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-inner print:hidden" id="ledger_table_wrapper">
-            <LedgerTable daysToRender={fixedDays} isPrint={false} sheetData={sheetData} selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
+            <LedgerTable daysToRender={dynamicDays} isPrint={false} sheetData={sheetData} selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
           </div>
           
 
@@ -639,6 +647,31 @@ export default function App() {
         handleDateChange={handleDateChange}
         handleFormSubmit={handleFormSubmit}
       />
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-lg shadow-xl border flex items-center gap-3 ${
+              toast.type === 'success' 
+                ? 'bg-white border-emerald-200 text-emerald-800' 
+                : 'bg-white border-rose-200 text-rose-800'
+            }`}
+          >
+            {toast.type === 'success' ? (
+              <div className="bg-emerald-100 p-1 rounded-full"><CheckCircle2 className="w-5 h-5 text-emerald-600" /></div>
+            ) : (
+              <div className="bg-rose-100 p-1 rounded-full"><AlertTriangle className="w-5 h-5 text-rose-600" /></div>
+            )}
+            <span className="font-semibold text-sm">{toast.message}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
+

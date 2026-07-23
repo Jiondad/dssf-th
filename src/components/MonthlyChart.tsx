@@ -3,7 +3,6 @@ import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine
 } from 'recharts';
 import { DailyRecord } from '../types';
-import { getCondensationStatus } from '../data';
 
 const getDewColor = (value: number) => {
   if (value <= 60) return '#10b981'; 
@@ -28,12 +27,12 @@ const CustomDewActiveDot = (props: any) => {
 interface MonthlyChartProps {
   selectedMonth: number;
   sheetData: DailyRecord[];
-  fixedDays: number[];
+  dynamicDays: number[];
   selectedDay: number;
   setSelectedDay: (day: number) => void;
 }
 
-const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, fixedDays, selectedDay, setSelectedDay }) => {
+const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, dynamicDays, selectedDay, setSelectedDay }) => {
   const [visibleLines, setVisibleLines] = useState<Record<string, boolean>>({
     '오전 대기온도': true, '오후 대기온도': true,
     '오전 표면온도': true, '오후 표면온도': true,
@@ -54,7 +53,7 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, f
   };
 
   const chartData = useMemo(() => {
-    return fixedDays.map(day => {
+    return dynamicDays.map(day => {
       const record = sheetData.find(r => r.day === day);
       if (!record) {
         return {
@@ -73,7 +72,7 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, f
         '오전 결로지수': record.am.dewIndex, '오후 결로지수': record.pm.dewIndex,
       };
     });
-  }, [sheetData, fixedDays]);
+  }, [sheetData, dynamicDays]);
 
   const dewOffsets = useMemo(() => {
     let amDewMin = 100, amDewMax = 0;
