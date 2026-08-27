@@ -34,8 +34,8 @@ interface MonthlyChartProps {
 
 const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, dynamicDays, selectedDay, setSelectedDay }) => {
   const [visibleLines, setVisibleLines] = useState<Record<string, boolean>>({
-    '오전 대기온도': true, '오후 대기온도': true,
-    '오전 표면온도': true, '오후 표면온도': true,
+    '오전 대기온도': false, '오후 대기온도': false,
+    '오전 표면온도': false, '오후 표면온도': false,
     '오전 상대습도': false, '오후 상대습도': false,
     '오전 결로지수': true, '오후 결로지수': true,
   });
@@ -74,6 +74,8 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
     });
   }, [sheetData, dynamicDays]);
 
+  
+  
   const dewOffsets = useMemo(() => {
     let amDewMin = 100, amDewMax = 0;
     let pmDewMin = 100, pmDewMax = 0;
@@ -135,24 +137,24 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                   onClick={() => toggleLine('오전 대기온도')}
                   className={`flex items-center gap-1.5 p-1 px-1.5 rounded-md text-[10px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
                     visibleLines['오전 대기온도'] 
-                      ? 'bg-white text-slate-900 border-blue-400 shadow-xs' 
+                      ? 'bg-white text-slate-900 border-orange-400 shadow-xs' 
                       : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
                   }`}
                   id="toggle_am_air"
                 >
-                  <span className="w-2 h-1.5 rounded-full bg-[#60a5fa] shrink-0"></span>
+                  <span className="w-3 h-0.5 rounded-sm bg-[#fb923c] shrink-0"></span>
                   AM 대기
                 </button>
                 <button 
                   onClick={() => toggleLine('오후 대기온도')}
                   className={`flex items-center gap-1.5 p-1 px-1.5 rounded-md text-[10px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
                     visibleLines['오후 대기온도'] 
-                      ? 'bg-white text-slate-900 border-blue-600 shadow-xs' 
+                      ? 'bg-white text-slate-900 border-orange-600 shadow-xs' 
                       : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
                   }`}
                   id="toggle_pm_air"
                 >
-                  <span className="w-2 h-1.5 rounded-full bg-[#2563eb] shrink-0"></span>
+                  <span className="w-3 h-0 border-b-[2px] border-dashed border-[#ea580c] shrink-0"></span>
                   PM 대기
                 </button>
 
@@ -161,24 +163,24 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                   onClick={() => toggleLine('오전 표면온도')}
                   className={`flex items-center gap-1.5 p-1 px-1.5 rounded-md text-[10px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
                     visibleLines['오전 표면온도'] 
-                      ? 'bg-white text-slate-900 border-teal-400 shadow-xs' 
+                      ? 'bg-white text-slate-900 border-sky-400 shadow-xs' 
                       : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
                   }`}
                   id="toggle_am_surface"
                 >
-                  <span className="w-2 h-1.5 rounded-full bg-[#2dd4bf] shrink-0"></span>
+                  <span className="w-3 h-0.5 rounded-sm bg-[#38bdf8] shrink-0"></span>
                   AM 표면
                 </button>
                 <button 
                   onClick={() => toggleLine('오후 표면온도')}
                   className={`flex items-center gap-1.5 p-1 px-1.5 rounded-md text-[10px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
                     visibleLines['오후 표면온도'] 
-                      ? 'bg-white text-slate-900 border-teal-700 shadow-xs' 
+                      ? 'bg-white text-slate-900 border-blue-600 shadow-xs' 
                       : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
                   }`}
                   id="toggle_pm_surface"
                 >
-                  <span className="w-2 h-1.5 rounded-full bg-[#0f766e] shrink-0"></span>
+                  <span className="w-3 h-0 border-b-[2px] border-dashed border-[#2563eb] shrink-0"></span>
                   PM 표면
                 </button>
 
@@ -192,7 +194,7 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                   }`}
                   id="toggle_am_humidity"
                 >
-                  <span className="w-2 h-1.5 rounded-full bg-[#a78bfa] shrink-0"></span>
+                  <span className="w-3 h-0.5 rounded-sm bg-[#a78bfa] shrink-0"></span>
                   AM 습도
                 </button>
                 <button 
@@ -204,7 +206,7 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                   }`}
                   id="toggle_pm_humidity"
                 >
-                  <span className="w-2 h-1.5 rounded-full bg-[#7c3aed] shrink-0"></span>
+                  <span className="w-3 h-0 border-b-[2px] border-dashed border-[#7c3aed] shrink-0"></span>
                   PM 습도
                 </button>
 
@@ -213,24 +215,24 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                   onClick={() => toggleLine('오전 결로지수')}
                   className={`flex items-center gap-1.5 p-1 px-1.5 rounded-md text-[10px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
                     visibleLines['오전 결로지수'] 
-                      ? 'bg-white text-slate-900 border-amber-400 shadow-xs' 
+                      ? 'bg-white text-slate-900 border-emerald-400 shadow-xs' 
                       : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
                   }`}
                   id="toggle_am_dew"
                 >
-                  <span className="w-2 h-1.5 rounded-full bg-[#fb923c] shrink-0"></span>
+                  <span className="w-3 h-0.5 rounded-sm bg-[#10b981] shrink-0"></span>
                   AM 결로
                 </button>
                 <button 
                   onClick={() => toggleLine('오후 결로지수')}
                   className={`flex items-center gap-1.5 p-1 px-1.5 rounded-md text-[10px] font-medium border transition-all whitespace-nowrap overflow-hidden ${
                     visibleLines['오후 결로지수'] 
-                      ? 'bg-white text-slate-900 border-rose-600 shadow-xs' 
+                      ? 'bg-white text-slate-900 border-emerald-600 shadow-xs' 
                       : 'bg-slate-100/50 text-slate-400 border-slate-200 hover:bg-slate-100'
                   }`}
                   id="toggle_pm_dew"
                 >
-                  <span className="w-2 h-1.5 rounded-full bg-[#e11d48] shrink-0"></span>
+                  <span className="w-3 h-0 border-b-[2px] border-dashed border-[#10b981] shrink-0"></span>
                   PM 결로
                 </button>
               </div>
@@ -267,6 +269,7 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                   }
                 }}
               >
+                
                 <defs>
                   <linearGradient id="amDewGradient" x1="0" y1="1" x2="0" y2="0">
                     <stop offset="0%" stopColor="#10b981" />
@@ -336,11 +339,11 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
 
                 {/* Condensation Risk Reference Line */}
                 <ReferenceLine 
-                  y={80} 
+                  y={81} 
                   stroke="#ef4444" 
                   strokeWidth={1.5} 
                   strokeDasharray="3 3" 
-                  label={{ value: '위험 기준선 (80 Pt)', position: 'insideTopRight', fill: '#ef4444', fontSize: 11, fontWeight: 'bold' }} 
+                  label={{ value: '위험 기준선 (81 Pt)', position: 'insideTopRight', fill: '#ef4444', fontSize: 11, fontWeight: 'bold' }} 
                   yAxisId="left" 
                 />
 
@@ -349,8 +352,8 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                   yAxisId="left"
                   type="monotone" 
                   dataKey="오전 대기온도" 
-                  stroke="#60a5fa" 
-                  strokeWidth={2.5}
+                  stroke="#fb923c" 
+                  strokeWidth={2}
                   dot={{ r: 2 }}
                   activeDot={{ r: 6 }}
                   hide={!visibleLines['오전 대기온도']}
@@ -359,8 +362,9 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                   yAxisId="left"
                   type="monotone" 
                   dataKey="오후 대기온도" 
-                  stroke="#2563eb" 
-                  strokeWidth={2.5}
+                  stroke="#ea580c" 
+                  strokeWidth={2}
+                  strokeDasharray="5 5"
                   dot={{ r: 2 }}
                   activeDot={{ r: 6 }}
                   hide={!visibleLines['오후 대기온도']}
@@ -369,7 +373,7 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                   yAxisId="left"
                   type="monotone" 
                   dataKey="오전 표면온도" 
-                  stroke="#2dd4bf" 
+                  stroke="#38bdf8" 
                   strokeWidth={2}
                   dot={{ r: 2 }}
                   activeDot={{ r: 6 }}
@@ -379,8 +383,9 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                   yAxisId="left"
                   type="monotone" 
                   dataKey="오후 표면온도" 
-                  stroke="#0f766e" 
+                  stroke="#2563eb" 
                   strokeWidth={2}
+                  strokeDasharray="5 5"
                   dot={{ r: 2 }}
                   activeDot={{ r: 6 }}
                   hide={!visibleLines['오후 표면온도']}
@@ -390,7 +395,7 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                   type="monotone" 
                   dataKey="오전 상대습도" 
                   stroke="#a78bfa" 
-                  strokeWidth={1.5}
+                  strokeWidth={2}
                   dot={{ r: 1 }}
                   activeDot={{ r: 5 }}
                   hide={!visibleLines['오전 상대습도']}
@@ -399,8 +404,9 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                   yAxisId="right"
                   type="monotone" 
                   dataKey="오후 상대습도" 
-                  stroke="#6d28d9" 
-                  strokeWidth={1.5}
+                  stroke="#7c3aed" 
+                  strokeWidth={2}
+                  strokeDasharray="5 5"
                   dot={{ r: 1 }}
                   activeDot={{ r: 5 }}
                   hide={!visibleLines['오후 상대습도']}
@@ -410,7 +416,7 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                   type="monotone" 
                   dataKey="오전 결로지수" 
                   stroke="url(#amDewGradient)" 
-                  strokeWidth={3}
+                  strokeWidth={4}
                   dot={(props: any) => <CustomDewDot {...props} isAm={true} />}
                   activeDot={(props: any) => <CustomDewActiveDot {...props} isAm={true} />}
                   hide={!visibleLines['오전 결로지수']}
@@ -420,7 +426,8 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                   type="monotone" 
                   dataKey="오후 결로지수" 
                   stroke="url(#pmDewGradient)" 
-                  strokeWidth={3}
+                  strokeWidth={4}
+                  strokeDasharray="5 5"
                   dot={(props: any) => <CustomDewDot {...props} isAm={false} />}
                   activeDot={(props: any) => <CustomDewActiveDot {...props} isAm={false} />}
                   hide={!visibleLines['오후 결로지수']}

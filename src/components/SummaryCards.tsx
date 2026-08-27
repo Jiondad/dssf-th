@@ -90,12 +90,12 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({
                  {/* Card 1: 대기온도 */}
                  <motion.div 
                    layoutId="card_air_temp"
-                   className="bg-blue-50/50 rounded-xl border border-blue-100 p-3 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
+                   className="bg-blue-100/70 rounded-xl border border-blue-100 p-3 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
                    id="card_air_temp"
                  >
                    <div className="flex justify-between items-start mb-2">
                      <div>
-                       <span className="text-base font-extrabold tracking-tight text-slate-900 block">대기 온도</span>
+                       <span className="text-2xl font-extrabold tracking-tight text-slate-900 block">대기 온도</span>
                        <h3 className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Air Temperature</h3>
                      </div>
                      <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
@@ -105,17 +105,17 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({
 
                    <div className="grid grid-cols-2 gap-2 divide-x divide-slate-100 mt-2">
                      <div className="flex flex-col justify-center">
-                       <span className="text-[10px] text-slate-400 font-semibold block uppercase">오전(AM)</span>
-                       <div className="flex items-baseline gap-0.5 mt-0.5">
-                         <span className="text-lg font-bold font-mono text-slate-800">{currentRecord.am.airTemp !== null ? currentRecord.am.airTemp : "-"}</span>
-                         <span className="text-[10px] text-slate-500 font-bold">℃</span>
+                       <span className="text-xs text-slate-400 font-semibold block uppercase">오전(AM)</span>
+                       <div className="flex items-baseline gap-1 mt-1">
+                         <span className="text-4xl font-bold font-mono text-slate-800">{currentRecord.am.airTemp !== null ? currentRecord.am.airTemp : "-"}</span>
+                         <span className="text-sm text-slate-500 font-bold">℃</span>
                        </div>
                      </div>
                      <div className="pl-2 flex flex-col justify-center">
-                       <span className="text-[10px] text-slate-400 font-semibold block uppercase">오후(PM)</span>
-                       <div className="flex items-baseline gap-0.5 mt-0.5">
-                         <span className="text-lg font-bold font-mono text-slate-800">{currentRecord.pm.airTemp !== null ? currentRecord.pm.airTemp : "-"}</span>
-                         <span className="text-[10px] text-slate-500 font-bold">℃</span>
+                       <span className="text-xs text-slate-400 font-semibold block uppercase">오후(PM)</span>
+                       <div className="flex items-baseline gap-1 mt-1">
+                         <span className="text-4xl font-bold font-mono text-slate-800">{currentRecord.pm.airTemp !== null ? currentRecord.pm.airTemp : "-"}</span>
+                         <span className="text-sm text-slate-500 font-bold">℃</span>
                        </div>
                      </div>
                    </div>
@@ -135,12 +135,12 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({
                  {/* Card 2: 코일표면온도 */}
                  <motion.div 
                    layoutId="card_surface_temp"
-                   className="bg-teal-50/50 rounded-xl border border-teal-100 p-3 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
+                   className="bg-teal-100/70 rounded-xl border border-teal-100 p-3 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
                    id="card_surface_temp"
                  >
                    <div className="flex justify-between items-start mb-2">
                      <div>
-                       <span className="text-base font-extrabold tracking-tight text-slate-900 block">코일 표면 온도</span>
+                       <span className="text-2xl font-extrabold tracking-tight text-slate-900 block">코일 표면 온도</span>
                        <h3 className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Surface Temp</h3>
                      </div>
                      <div className="p-1.5 bg-teal-50 text-teal-600 rounded-lg">
@@ -150,17 +150,17 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({
 
                    <div className="grid grid-cols-2 gap-2 divide-x divide-slate-100 mt-2">
                      <div className="flex flex-col justify-center">
-                       <span className="text-[10px] text-slate-400 font-semibold block uppercase">오전(AM)</span>
-                       <div className="flex items-baseline gap-0.5 mt-0.5">
-                         <span className="text-lg font-bold font-mono text-slate-800">{currentRecord.am.surfaceTemp !== null ? currentRecord.am.surfaceTemp : "-"}</span>
-                         <span className="text-[10px] text-slate-500 font-bold">℃</span>
+                       <span className="text-xs text-slate-400 font-semibold block uppercase">오전(AM)</span>
+                       <div className="flex items-baseline gap-1 mt-1">
+                         <span className="text-4xl font-bold font-mono text-slate-800">{currentRecord.am.surfaceTemp !== null ? currentRecord.am.surfaceTemp : "-"}</span>
+                         <span className="text-sm text-slate-500 font-bold">℃</span>
                        </div>
                      </div>
                      <div className="pl-2 flex flex-col justify-center">
-                       <span className="text-[10px] text-slate-400 font-semibold block uppercase">오후(PM)</span>
-                       <div className="flex items-baseline gap-0.5 mt-0.5">
-                         <span className="text-lg font-bold font-mono text-slate-800">{currentRecord.pm.surfaceTemp !== null ? currentRecord.pm.surfaceTemp : "-"}</span>
-                         <span className="text-[10px] text-slate-500 font-bold">℃</span>
+                       <span className="text-xs text-slate-400 font-semibold block uppercase">오후(PM)</span>
+                       <div className="flex items-baseline gap-1 mt-1">
+                         <span className="text-4xl font-bold font-mono text-slate-800">{currentRecord.pm.surfaceTemp !== null ? currentRecord.pm.surfaceTemp : "-"}</span>
+                         <span className="text-sm text-slate-500 font-bold">℃</span>
                        </div>
                      </div>
                    </div>
@@ -180,12 +180,12 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({
                  {/* Card 3: 상대습도 */}
                  <motion.div 
                    layoutId="card_humidity"
-                   className="bg-violet-50/50 rounded-xl border border-violet-100 p-3 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
+                   className="bg-violet-100/70 rounded-xl border border-violet-100 p-3 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
                    id="card_humidity"
                  >
                    <div className="flex justify-between items-start mb-2">
                      <div>
-                       <span className="text-base font-extrabold tracking-tight text-slate-900 block">상대 습도</span>
+                       <span className="text-2xl font-extrabold tracking-tight text-slate-900 block">상대 습도</span>
                        <h3 className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Relative Humidity</h3>
                      </div>
                      <div className="p-1.5 bg-violet-50 text-violet-600 rounded-lg">
@@ -195,17 +195,17 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({
 
                    <div className="grid grid-cols-2 gap-2 divide-x divide-slate-100 mt-2">
                      <div className="flex flex-col justify-center">
-                       <span className="text-[10px] text-slate-400 font-semibold block uppercase">오전(AM)</span>
-                       <div className="flex items-baseline gap-0.5 mt-0.5">
-                         <span className="text-lg font-bold font-mono text-slate-800">{currentRecord.am.humidity !== null ? currentRecord.am.humidity : "-"}</span>
-                         <span className="text-[10px] text-slate-500 font-bold">%</span>
+                       <span className="text-xs text-slate-400 font-semibold block uppercase">오전(AM)</span>
+                       <div className="flex items-baseline gap-1 mt-1">
+                         <span className="text-4xl font-bold font-mono text-slate-800">{currentRecord.am.humidity !== null ? currentRecord.am.humidity : "-"}</span>
+                         <span className="text-sm text-slate-500 font-bold">%</span>
                        </div>
                      </div>
                      <div className="pl-2 flex flex-col justify-center">
-                       <span className="text-[10px] text-slate-400 font-semibold block uppercase">오후(PM)</span>
-                       <div className="flex items-baseline gap-0.5 mt-0.5">
-                         <span className="text-lg font-bold font-mono text-slate-800">{currentRecord.pm.humidity !== null ? currentRecord.pm.humidity : "-"}</span>
-                         <span className="text-[10px] text-slate-500 font-bold">%</span>
+                       <span className="text-xs text-slate-400 font-semibold block uppercase">오후(PM)</span>
+                       <div className="flex items-baseline gap-1 mt-1">
+                         <span className="text-4xl font-bold font-mono text-slate-800">{currentRecord.pm.humidity !== null ? currentRecord.pm.humidity : "-"}</span>
+                         <span className="text-sm text-slate-500 font-bold">%</span>
                        </div>
                      </div>
                    </div>
@@ -234,7 +234,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({
                    <div>
                      <div className="flex justify-between items-start mb-2">
                        <div>
-                         <span className={`text-base font-extrabold tracking-tight block ${maxDewIndexToday > 80 ? 'text-white' : 'text-slate-900'}`}>결로 위험 지수</span>
+                         <span className={`text-2xl font-extrabold tracking-tight block ${maxDewIndexToday > 80 ? 'text-white' : 'text-slate-900'}`}>결로 위험 지수</span>
                          <h3 className={`text-[10px] font-medium uppercase tracking-wide ${maxDewIndexToday > 80 ? 'text-white/80' : 'text-slate-500'}`}>Condensation Index</h3>
                        </div>
                        <div className="relative group p-2 rounded-xl bg-white/80 cursor-help">
@@ -267,17 +267,17 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({
 
                      <div className="grid grid-cols-2 gap-2 divide-x divide-slate-200 mt-2">
                        <div className="flex flex-col justify-center">
-                         <span className={`text-[10px] font-semibold block uppercase ${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}`}>오전(AM)</span>
-                         <div className="flex items-baseline gap-0.5 mt-0.5">
-                           <span className={`text-lg font-black font-mono ${maxDewIndexToday > 80 ? 'text-white' : 'text-slate-900'}`}>{currentRecord.am.dewIndex !== null ? currentRecord.am.dewIndex : "-"}</span>
-                           <span className={`text-[10px] font-bold ${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}`}>Pt</span>
+                         <span className={`text-xs font-semibold block uppercase ${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}`}>오전(AM)</span>
+                         <div className="flex items-baseline gap-1 mt-1">
+                           <span className={`text-4xl font-black font-mono ${maxDewIndexToday > 80 ? 'text-white' : 'text-slate-900'}`}>{currentRecord.am.dewIndex !== null ? currentRecord.am.dewIndex : "-"}</span>
+                           <span className={`text-sm font-bold ${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}`}>Pt</span>
                          </div>
                        </div>
                        <div className="pl-2 flex flex-col justify-center">
-                         <span className={`text-[10px] font-semibold block uppercase ${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}`}>오후(PM)</span>
-                         <div className="flex items-baseline gap-0.5 mt-0.5">
-                           <span className={`text-lg font-black font-mono ${maxDewIndexToday > 80 ? 'text-white' : 'text-slate-900'}`}>{currentRecord.pm.dewIndex !== null ? currentRecord.pm.dewIndex : "-"}</span>
-                           <span className={`text-[10px] font-bold ${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}`}>Pt</span>
+                         <span className={`text-xs font-semibold block uppercase ${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}`}>오후(PM)</span>
+                         <div className="flex items-baseline gap-1 mt-1">
+                           <span className={`text-4xl font-black font-mono ${maxDewIndexToday > 80 ? 'text-white' : 'text-slate-900'}`}>{currentRecord.pm.dewIndex !== null ? currentRecord.pm.dewIndex : "-"}</span>
+                           <span className={`text-sm font-bold ${maxDewIndexToday > 80 ? 'text-white/90' : 'text-slate-600'}`}>Pt</span>
                          </div>
                        </div>
                      </div>

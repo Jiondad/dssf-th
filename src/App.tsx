@@ -63,7 +63,7 @@ export default function App() {
        
     timer = setInterval(() => {
       loadData(true);
-    }, 600000);
+    }, 1800000);
        
     return () => {
       isMounted = false;
