@@ -319,16 +319,16 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({
                <div className="bg-white border border-slate-200 rounded-xl p-3 shadow-xs h-[126px] flex flex-col justify-center">
                  <div className="grid grid-cols-3 gap-2 text-center h-full">
                    <div className="bg-emerald-50 rounded-lg p-2 border border-emerald-100 flex flex-col items-center justify-center h-full">
-                     <span className="text-[10px] text-emerald-800 block font-semibold mb-1">안전 일수</span>
-                     <span className="text-sm font-bold text-emerald-600 font-mono">{monthlyStats.safeCount}일</span>
+                     <span className="text-base lg:text-lg text-emerald-800 block font-bold mb-1">안전 일수</span>
+                     <span className="text-3xl font-extrabold text-emerald-600 font-mono">{monthlyStats.safeCount}일</span>
                    </div>
                    <div className="bg-amber-50 rounded-lg p-2 border border-amber-100 flex flex-col items-center justify-center h-full">
-                     <span className="text-[10px] text-amber-800 block font-semibold mb-1">주의 일수</span>
-                     <span className="text-sm font-bold text-amber-500 font-mono">{monthlyStats.cautionCount}일</span>
+                     <span className="text-base lg:text-lg text-amber-800 block font-bold mb-1">주의 일수</span>
+                     <span className="text-3xl font-extrabold text-amber-500 font-mono">{monthlyStats.cautionCount}일</span>
                    </div>
                    <div className="bg-rose-50 rounded-lg p-2 border border-rose-100 flex flex-col items-center justify-center h-full">
-                     <span className="text-[10px] text-rose-800 block font-semibold mb-1">위험 일수</span>
-                     <span className="text-sm font-bold text-rose-600 font-mono">{monthlyStats.dangerCount}일</span>
+                     <span className="text-base lg:text-lg text-rose-800 block font-bold mb-1">위험 일수</span>
+                     <span className="text-3xl font-extrabold text-rose-600 font-mono">{monthlyStats.dangerCount}일</span>
                    </div>
                  </div>
                </div>
