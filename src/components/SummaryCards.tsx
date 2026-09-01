@@ -141,7 +141,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({
                    <div className="flex justify-between items-start mb-2">
                      <div>
                        <span className="text-2xl font-extrabold tracking-tight text-slate-900 block">코일 표면 온도</span>
-                       <h3 className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Surface Temp</h3>
+                       <h3 className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Surface Temperature</h3>
                      </div>
                      <div className="p-1.5 bg-teal-50 text-teal-600 rounded-lg">
                        <Layers className="w-4 h-4" />
