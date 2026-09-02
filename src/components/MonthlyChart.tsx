@@ -309,9 +309,11 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                 <YAxis 
                   yAxisId="right"
                   orientation="right"
+                  domain={[0, 100]}
+                  ticks={[0, 20, 40, 60, 80, 100]}
                   tick={{ fill: '#4d4d4d', fontSize: 13 }}
                   axisLine={{ stroke: '#cbd5e1' }}
-                  label={{ value: '상대습도(%)', angle: 90, position: 'insideRight', offset: 10, fill: '#4d4d4d', style: { textAnchor: 'middle', fontSize: 13, fontWeight: 'bold' } }}
+                  label={{ value: '상대습도 (%)', angle: 90, position: 'insideRight', offset: 10, fill: '#4d4d4d', style: { textAnchor: 'middle', fontSize: 13, fontWeight: 'bold' } }}
                 />
 
                 {/* Custom Tooltip */}
