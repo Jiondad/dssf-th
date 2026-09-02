@@ -368,7 +368,7 @@ export default function App() {
             </div>
             <div>
               <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-sans">
-                대성스틸 결로 방지 모니터링
+                (주)대성스틸 결로 방지 모니터링 시스템
               </h1>
               <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-1.5 font-mono">
                 <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
