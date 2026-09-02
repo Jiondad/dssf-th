@@ -76,34 +76,7 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
 
   
   
-  const dewOffsets = useMemo(() => {
-    let amDewMin = 100, amDewMax = 0;
-    let pmDewMin = 100, pmDewMax = 0;
-    chartData.forEach(d => {
-      const am = d['오전 결로지수'];
-      const pm = d['오후 결로지수'];
-      if (am !== null) {
-        if (am < amDewMin) amDewMin = am;
-        if (am > amDewMax) amDewMax = am;
-      }
-      if (pm !== null) {
-        if (pm < pmDewMin) pmDewMin = pm;
-        if (pm > pmDewMax) pmDewMax = pm;
-      }
-    });
-    if (amDewMin >= amDewMax) { amDewMin = 0; amDewMax = 100; }
-    if (pmDewMin >= pmDewMax) { pmDewMin = 0; pmDewMax = 100; }
-
-    const getOffset = (val: number, min: number, max: number) => {
-      return Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100));
-    };
-
-    return {
-      am60: getOffset(60, amDewMin, amDewMax), am80: getOffset(80, amDewMin, amDewMax),
-      pm60: getOffset(60, pmDewMin, pmDewMax), pm80: getOffset(80, pmDewMin, pmDewMax),
-    };
-  }, [chartData]);
-
+  
   const yAxisDomain = useMemo(() => {
     let minT = 100, maxT = -100;
     chartData.forEach(d => {
@@ -268,27 +241,7 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                     setSelectedDay(Number(state.activeTooltipIndex) + 1);
                   }
                 }}
-              >
-                
-                <defs>
-                  <linearGradient id="amDewGradient" x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stopColor="#10b981" />
-                    <stop offset={`${dewOffsets.am60}%`} stopColor="#10b981" />
-                    <stop offset={`${dewOffsets.am60}%`} stopColor="#f59e0b" />
-                    <stop offset={`${dewOffsets.am80}%`} stopColor="#f59e0b" />
-                    <stop offset={`${dewOffsets.am80}%`} stopColor="#ef4444" />
-                    <stop offset="100%" stopColor="#ef4444" />
-                  </linearGradient>
-                  <linearGradient id="pmDewGradient" x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stopColor="#10b981" />
-                    <stop offset={`${dewOffsets.pm60}%`} stopColor="#10b981" />
-                    <stop offset={`${dewOffsets.pm60}%`} stopColor="#f59e0b" />
-                    <stop offset={`${dewOffsets.pm80}%`} stopColor="#f59e0b" />
-                    <stop offset={`${dewOffsets.pm80}%`} stopColor="#ef4444" />
-                    <stop offset="100%" stopColor="#ef4444" />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              >                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis 
                   dataKey="name" 
                   tick={{ fill: '#64748b', fontSize: 13 }}
@@ -417,7 +370,7 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                   yAxisId="left"
                   type="monotone" 
                   dataKey="오전 결로지수" 
-                  stroke="url(#amDewGradient)" 
+                  stroke="#10b981" 
                   strokeWidth={4}
                   dot={(props: any) => <CustomDewDot {...props} isAm={true} />}
                   activeDot={(props: any) => <CustomDewActiveDot {...props} isAm={true} />}
@@ -427,7 +380,7 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({ selectedMonth, sheetData, d
                   yAxisId="left"
                   type="monotone" 
                   dataKey="오후 결로지수" 
-                  stroke="url(#pmDewGradient)" 
+                  stroke="#10b981" 
                   strokeWidth={4}
                   strokeDasharray="5 5"
                   dot={(props: any) => <CustomDewDot {...props} isAm={false} />}
