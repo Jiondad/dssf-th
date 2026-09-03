@@ -18,7 +18,13 @@ export default function App() {
   const [selectedYear, setSelectedYear] = useState<number>(today.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number>(today.getMonth() + 1);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState<boolean>(false);
-  const [selectedFactory, setSelectedFactory] = useState<'평택포승공장' | '아산인주공장'>('평택포승공장');
+  const [selectedFactory, setSelectedFactory] = useState<'평택포승공장' | '아산인주공장'>(() => {
+    const saved = localStorage.getItem('dssf_selected_factory');
+    return (saved === '평택포승공장' || saved === '아산인주공장') ? saved : '평택포승공장';
+  });
+  useEffect(() => {
+    localStorage.setItem('dssf_selected_factory', selectedFactory);
+  }, [selectedFactory]);
   const [isFactoryPickerOpen, setIsFactoryPickerOpen] = useState<boolean>(false);
 
   const [sheetData, setSheetData] = useState<DailyRecord[]>([]);
@@ -237,6 +243,30 @@ export default function App() {
     return () => clearInterval(intervalId);
   }, [isPlaying]);
 
+
+
+  useEffect(() => {
+    let timerId: ReturnType<typeof setTimeout>;
+
+    const scheduleNextMidnight = () => {
+      const now = new Date();
+      const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+      const msUntilMidnight = midnight.getTime() - now.getTime();
+
+      timerId = setTimeout(() => {
+        const nextDay = new Date();
+        setSelectedYear(nextDay.getFullYear());
+        setSelectedMonth(nextDay.getMonth() + 1);
+        setSelectedDay(nextDay.getDate());
+        
+        scheduleNextMidnight();
+      }, msUntilMidnight + 1000); // Add 1 second buffer to ensure it's past midnight
+    };
+
+    scheduleNextMidnight();
+
+    return () => clearTimeout(timerId);
+  }, []);
 
   const monthlyStats = useMemo(() => {
     let safeCount = 0;
